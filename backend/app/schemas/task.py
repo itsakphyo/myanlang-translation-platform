@@ -11,6 +11,7 @@ class Task(Base):
     task_id = Column(Integer, primary_key=True, autoincrement=True)
     job_id = Column(Integer, ForeignKey("job.job_id", ondelete="CASCADE"), nullable=False, index=True)
     job_status = Column(Enum(JobStatus, name="jobstatus"), nullable=False, default=JobStatus.IN_PROGRESS)
+    # still not needed job status, but it will be useful in the future
     source_language_id = Column(Integer, ForeignKey("language.language_id"), nullable=False, index=True)
     source_text = Column(String, nullable=False)
     target_language_id = Column(Integer, ForeignKey("language.language_id"), nullable=False, index=True)

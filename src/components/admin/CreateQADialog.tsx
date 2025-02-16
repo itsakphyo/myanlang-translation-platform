@@ -85,7 +85,7 @@ import {
               px: 3,
             })}
           >
-            Create QA Member
+            Add new QA Member
           </DialogTitle>
           <DialogContent sx={{ py: 3, px: 3 }}>
             {/* Full Name */}

@@ -80,7 +80,7 @@ export default function JobCard({ job }: JobCardProps) {
     max_time_per_task: job.max_time_per_task,
     task_price: job.task_price,
     instructions: job.instructions,
-    ...(job.notes ? { notes: job.notes } : {}), // Add notes only if it's defined and not empty
+    ...(job.notes ? { notes: job.notes } : {}),
   };
   const createdDate = new Date(job.created_at).toLocaleDateString();
 
@@ -96,6 +96,7 @@ export default function JobCard({ job }: JobCardProps) {
 
   const jobProgressText = jobProgress ? formatJobProgress(jobProgress.completed_tasks, jobProgress.total_tasks, jobProgress.under_review_tasks) : '0/0 ⇡ 0';
 
+  // Style constants
   const cardStyle = {
     display: 'flex',
     flexDirection: isMobile ? 'column' : 'row',
@@ -108,9 +109,9 @@ export default function JobCard({ job }: JobCardProps) {
 
   const headerStyle = {
     p: 2,
+    width: isMobile ? '100%' : 250,
     background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
     color: theme.palette.primary.contrastText,
-    minWidth: isMobile ? '100%' : 250,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -118,8 +119,7 @@ export default function JobCard({ job }: JobCardProps) {
 
   const sectionStyle = {
     p: 2,
-    flexGrow: 1,
-    minWidth: isMobile ? '100%' : '200px',
+    width: isMobile ? '100%' : '500px', // fixed width
     backgroundColor: theme.palette.grey[100],
     borderLeft: isMobile ? 'none' : `1px solid ${theme.palette.divider}`,
     borderTop: isMobile ? `1px solid ${theme.palette.divider}` : 'none',
@@ -139,17 +139,63 @@ export default function JobCard({ job }: JobCardProps) {
     justifyContent: 'space-between',
   };
 
+  // Typography styles
+  const titleStyle = {
+    fontSize: '1.4rem',
+    fontWeight: 700,
+    letterSpacing: 0.2,
+    mb: 1,
+    fontFamily: theme.typography.fontFamily,
+    lineHeight: 1.2,
+  };
+
+  const subtitleStyle = {
+    fontSize: '0.85rem',
+    fontWeight: 500,
+    letterSpacing: 0.1,
+    fontFamily: 'monospace',
+    opacity: 0.9,
+  };
+
+  const detailLabelStyle = {
+    fontWeight: 600,
+    fontSize: '0.9rem',
+    color: theme.palette.text.primary,
+    display: 'inline',
+    mr: 0.5,
+  };
+
+  const detailValueStyle = {
+    fontWeight: 400,
+    fontSize: '0.9rem',
+    color: theme.palette.text.secondary,
+    display: 'inline',
+  };
+
+  const statusStyle = {
+    fontSize: '0.8rem',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    px: 1,
+    py: 0.5,
+    borderRadius: 1,
+    bgcolor: theme.palette.action.selected,
+    color: theme.palette.text.primary,
+    mt: 1,
+  };
+
   return (
     <Card sx={cardStyle}>
       {/* Header Section */}
       <CardContent sx={headerStyle}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+        <Typography variant="h6" sx={titleStyle}>
           {job.job_title}
         </Typography>
-        <Typography variant="body2" sx={{ mb: 0.5 }}>
-          ID: {job.job_id}
+        <Typography variant="body2" sx={{ ...subtitleStyle, mb: 0.5 }}>
+          JOB ID: {job.job_id}
         </Typography>
-        <Typography variant="caption" sx={{ opacity: 0.85 }}>
+        <Typography variant="caption" sx={{ fontSize: '0.75rem', opacity: 0.9 }}>
           Created: {createdDate}
         </Typography>
       </CardContent>
@@ -166,12 +212,12 @@ export default function JobCard({ job }: JobCardProps) {
             mb: isMobile ? 1 : 2,
           }}
         >
-          <Typography variant="body2" color="text.secondary">
-            Source: {job.source_language_name}
+          <Typography variant="body1" sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+            {job.source_language_name}
           </Typography>
-          {!isMobile && <ArrowForwardIcon color="action" sx={{ mx: 1 }} />}
-          <Typography variant="body2" color="text.secondary">
-            Target: {job.target_language_name}
+          {!isMobile && <ArrowForwardIcon color="action" sx={{ mx: 1, fontSize: '1.2rem' }} />}
+          <Typography variant="body1" sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+            {job.target_language_name}
           </Typography>
         </Box>
 
@@ -184,14 +230,17 @@ export default function JobCard({ job }: JobCardProps) {
             justifyContent: isMobile ? 'flex-start' : 'space-around',
           }}
         >
-          <Typography variant="body2" color="text.secondary">
-            <strong>Total Tasks:</strong> {job.total_tasks}
+          <Typography variant="body2">
+            <Box component="span" sx={detailLabelStyle}>Total Tasks:</Box>
+            <Box component="span" sx={detailValueStyle}>{job.total_tasks}</Box>
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            <strong>Max Time:</strong> {job.max_time_per_task} min
+          <Typography variant="body2">
+            <Box component="span" sx={detailLabelStyle}>Time/Task:</Box>
+            <Box component="span" sx={detailValueStyle}>{job.max_time_per_task} min</Box>
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            <strong>Price:</strong> ${job.task_price.toFixed(2)}
+          <Typography variant="body2">
+            <Box component="span" sx={detailLabelStyle}>Price/Task:</Box>
+            <Box component="span" sx={detailValueStyle}>{job.task_price.toFixed(2)}MMK</Box>
           </Typography>
         </Box>
       </CardContent>
@@ -200,21 +249,27 @@ export default function JobCard({ job }: JobCardProps) {
       <CardContent sx={footerStyle}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
           <Tooltip title={job.instructions} arrow>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Instructions:</strong> {truncateText(job.instructions, 80)}
+            <Typography variant="body2" sx={{ mb: 1, lineHeight: 1.4 }}>
+              <Box component="span" sx={detailLabelStyle}>Instructions:</Box>
+              <Box component="span" sx={{ ...detailValueStyle, fontStyle: 'italic' }}>
+                {truncateText(job.instructions, 80)}
+              </Box>
             </Typography>
           </Tooltip>
           {job.notes && (
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              <strong>Notes:</strong> {truncateText(job.notes, 80)}
+            <Typography variant="body2" sx={{ mb: 1, lineHeight: 1.4 }}>
+              <Box component="span" sx={detailLabelStyle}>Notes:</Box>
+              <Box component="span" sx={{ ...detailValueStyle, fontStyle: 'italic' }}>
+                {truncateText(job.notes, 80)}
+              </Box>
             </Typography>
           )}
-          <Typography variant="body2" color="text.secondary">
-            <strong>Status:</strong> {job.job_status}
-          </Typography>
+          <Box sx={statusStyle}>
+            {job.job_status}
+          </Box>
         </Box>
 
-        {/* Progress bar remains unchanged */}
+        {/* Progress Bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
           <Box sx={{ flexGrow: 1, mr: 1, height: 8, bgcolor: theme.palette.grey[300], borderRadius: 5, overflow: 'hidden' }}>
             <Box sx={{
@@ -222,19 +277,16 @@ export default function JobCard({ job }: JobCardProps) {
               height: '100%',
               display: 'flex',
             }}>
-              {/* Completed segment */}
               <Box sx={{
                 width: `${completedPercentage}%`,
                 bgcolor: theme.palette.primary.main,
                 height: '100%',
               }} />
-              {/* Under Review segment */}
               <Box sx={{
                 width: `${jobProgress ? (jobProgress.under_review_tasks / jobProgress.total_tasks) * 100 : 0}%`,
-                bgcolor: '#D4C5A9', // Light beige/tan color
+                bgcolor: '#D4C5A9',
                 height: '100%',
               }} />
-              {/* Open segment is the remaining space (grey background) */}
             </Box>
           </Box>
           <Tooltip title={jobProgressText} arrow>
@@ -262,7 +314,6 @@ export default function JobCard({ job }: JobCardProps) {
           <MoreVertIcon />
         </IconButton>
 
-        {/* The Menu appears when MoreVertIcon is clicked */}
         <Menu
           anchorEl={anchorEl}
           open={open}
