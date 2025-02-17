@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Auth from '@/pages/Auth';
-import Dashboard from '@/pages/UserDashboard';
+import UserDashboard from '@/pages/UserDashboard';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ForgotPassword from './pages/ForgetPassword';
 import CreatePassword from './pages/createQAPassword';
 import QADashboard from './pages/QADashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import TranslationTaskPage from './components/freelancer/Tasks';
 
 function App() {
   return (
@@ -16,35 +17,43 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <UserDashboard />
             </ProtectedRoute>
           }
         />
         <Route
-        path="/admin-dashboard"
-        element={
-          <ProtectedRoute>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
         />
         <Route
-        path="/qa-dashboard"
-        element={
-          <ProtectedRoute>
-            <QADashboard />
-          </ProtectedRoute>
-        }
+          path="/qa-dashboard"
+          element={
+            <ProtectedRoute>
+              <QADashboard />
+            </ProtectedRoute>
+          }
         />
         <Route path="/" element={<Navigate to="/auth" replace />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
-        path="/create-password"
-        element={
-          <ProtectedRoute>
-            <CreatePassword />
-          </ProtectedRoute>
-        }
+          path="/create-password"
+          element={
+            <ProtectedRoute>
+              <CreatePassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/explore-task"
+          element={
+            <ProtectedRoute>
+              <TranslationTaskPage />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </Router>

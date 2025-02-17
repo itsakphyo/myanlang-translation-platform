@@ -82,25 +82,29 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({ onC
             placeholder="Enter your translation here..."
             value={translation}
             onChange={(e) => setTranslation(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Typography variant="caption" color="text.secondary">
-                    {translation.length}/500
-                  </Typography>
-                </InputAdornment>
-              ),
-            }}
           />
         </Box>
 
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
-          {/* Buttons that will close the interface */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',              // allows buttons to wrap instead of overflowing
+            flexDirection: { xs: 'column', sm: 'row' }, // stack on extra-small screens, row on small+
+            gap: 2,
+            justifyContent: 'flex-end',
+            mt: 2
+          }}
+        >
           <Button
             variant="outlined"
             color="error"
             size="large"
-            sx={{ textTransform: 'none' }}
+            sx={{
+              textTransform: 'none',
+              // Smaller font size and padding on xs screens
+              fontSize: { xs: '0.75rem', md: '1rem' },
+              px: { xs: 2, sm: 4 }
+            }}
             onClick={onClose}
           >
             Reject &amp; Close
@@ -110,18 +114,25 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({ onC
             variant="contained"
             color="primary"
             size="large"
-            sx={{ textTransform: 'none', px: 4 }}
+            sx={{
+              textTransform: 'none',
+              fontSize: { xs: '0.75rem', md: '1rem' },
+              px: { xs: 2, sm: 4 }
+            }}
             onClick={onClose}
           >
             Submit &amp; Close
           </Button>
 
-          {/* Buttons that will show the next task */}
           <Button
             variant="outlined"
             color="error"
             size="large"
-            sx={{ textTransform: 'none' }}
+            sx={{
+              textTransform: 'none',
+              fontSize: { xs: '0.75rem', md: '1rem' },
+              px: { xs: 2, sm: 4 }
+            }}
             onClick={handleShowNext}
           >
             Reject &amp; Show Next
@@ -131,12 +142,18 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({ onC
             variant="contained"
             color="primary"
             size="large"
-            sx={{ textTransform: 'none', px: 4 }}
+            sx={{
+              textTransform: 'none',
+              fontSize: { xs: '0.75rem', md: '1rem' },
+              px: { xs: 2, sm: 4 }
+            }}
             onClick={handleShowNext}
           >
             Submit &amp; Show Next
           </Button>
         </Box>
+
+
       </Stack>
     </Paper>
   );

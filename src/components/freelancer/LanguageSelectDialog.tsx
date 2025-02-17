@@ -8,6 +8,8 @@ import {
   Select,
   MenuItem,
   Button,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 
 export interface LanguagePair {
@@ -45,10 +47,26 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
 
   const [selectedPairIndex, setSelectedPairIndex] = useState<number>(0);
 
+  // Use MUI's useTheme and useMediaQuery to detect screen size
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog 
+      open={open} 
+      onClose={onClose}
+      // Remove fullScreen to keep the dialog responsive on mobile
+      sx={{
+        '& .MuiDialog-paper': {
+          width: isMobile ? '90%' : 'auto',      // 90% width on mobile, auto on larger screens
+          maxWidth: isMobile ? '90%' : '500px',    // 90% max width on mobile, 500px on larger screens
+          margin: '16px auto',                    // Centered with margin on all screens
+          borderRadius: '8px',                     // Consistent border radius
+        },
+      }}
+    >
       <DialogTitle>Select Language Pair</DialogTitle>
-      <DialogContent sx={{ minWidth: 500, pt: '20px !important' }}>
+      <DialogContent sx={{ pt: '20px !important' }}>
         <Stack spacing={3}>
           <FormControl fullWidth>
             <Select

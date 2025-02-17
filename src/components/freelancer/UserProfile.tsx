@@ -1,13 +1,14 @@
 import React from 'react';
 import {
+  Box,
   Container,
   Typography,
-  Grid,
-  Divider,
+  Avatar,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
+  ListItemText,
+  Divider,
 } from '@mui/material';
 import {
   Email as EmailIcon,
@@ -32,128 +33,107 @@ const user = {
 
 const UserProfile = () => {
   return (
-    <Container 
-      maxWidth={false} 
-      sx={{ py: 4, px: 1, backgroundColor: '#f5f5f5' }} 
-    >
-      <Grid container spacing={1}>
-        {/* Detailed Information */}
-        <Grid item xs={12} md={12} sx={{ mx: 'auto' }}>
-          <Typography
-            variant="h4"
-            align="center"
-            sx={{ mt: 1, mb: 1, fontWeight: 700, color: 'primary.main' }} 
-          >
-            {user.full_name}
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            align="center"
-            sx={{ mb: 1, color: 'text.secondary', fontStyle: 'italic' }} 
-          >
-            Freelancer ID: {user.freelancer_id}
-          </Typography>
-          <List sx={{ width: '90%', mx: 'auto' }}>
-            {/* Email */}
-            <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0', borderRadius: 2 } }}>
-              <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}> 
-                <EmailIcon color="primary" sx={{ fontSize: 24 }} /> 
-              </ListItemIcon>
-              <ListItemText
-                primary="Email"
-                primaryTypographyProps={{ fontWeight: 600, color: 'text.primary' }}
-                secondary={user.email}
-                secondaryTypographyProps={{ color: 'text.secondary' }}
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" sx={{ mx: 0 }} />
+    <Box sx={{ width: '100%', backgroundColor: '#f5f5f5' }}>
+      {/* Full-Width Header */}
+      <Box
+        sx={{
+          background:'linear-gradient(135deg, #2196F3 30%, #21CBF3 90%)',
+          height: 200,
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Avatar sx={{ bgcolor: 'white', width: 100, height: 100 }}>
+          <PersonIcon sx={{ fontSize: 60, color: '#2196F3' }} />
+        </Avatar>
+      </Box>
 
-            {/* Age */}
-            <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0', borderRadius: 2 } }}> 
-              <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
-                <PersonIcon color="primary" sx={{ fontSize: 24 }} /> 
-              </ListItemIcon>
-              <ListItemText
-                primary="Age"
-                primaryTypographyProps={{ fontWeight: 600, color: 'text.primary' }}
-                secondary={user.age}
-                secondaryTypographyProps={{ color: 'text.secondary' }}
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" sx={{ mx: 0 }} />
+      {/* Profile Information */}
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Typography variant="h4" align="center" sx={{ fontWeight: 700, mb: 1 }}>
+          {user.full_name}
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          align="center"
+          sx={{ mb: 2, color: 'text.secondary', fontStyle: 'italic' }}
+        >
+          Freelancer ID: {user.freelancer_id}
+        </Typography>
 
-            {/* Phone Number */}
-            <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0', borderRadius: 2 } }}>
-              <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
-                <PhoneIcon color="primary" sx={{ fontSize: 24 }} /> 
-              </ListItemIcon>
-              <ListItemText
-                primary="Phone Number"
-                primaryTypographyProps={{ fontWeight: 600, color: 'text.primary' }}
-                secondary={user.phone_number || 'Not provided'}
-                secondaryTypographyProps={{ color: 'text.secondary' }}
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" sx={{ mx: 0 }} />
+        <List sx={{ width: '100%', mx: 'auto' }}>
+          {/* Email */}
+          <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0' } }}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <EmailIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText primary="Email" secondary={user.email} />
+          </ListItem>
+          <Divider component="li" />
 
-            {/* Total Earnings */}
-            <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0', borderRadius: 2 } }}> 
-              <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
-                <MonetizationOnIcon color="primary" sx={{ fontSize: 24 }} />
-              </ListItemIcon>
-              <ListItemText
-                primary="Total Earnings"
-                primaryTypographyProps={{ fontWeight: 600, color: 'text.primary' }}
-                secondary={`$${user.total_earnings}`}
-                secondaryTypographyProps={{ color: 'text.secondary' }}
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" sx={{ mx: 0 }} />
+          {/* Age */}
+          <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0' } }}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <PersonIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText primary="Age" secondary={user.age} />
+          </ListItem>
+          <Divider component="li" />
 
-            {/* Total Withdrawn */}
-            <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0', borderRadius: 2 } }}>
-              <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
-                <WalletIcon color="primary" sx={{ fontSize: 24 }} />
-              </ListItemIcon>
-              <ListItemText
-                primary="Total Withdrawn"
-                primaryTypographyProps={{ fontWeight: 600, color: 'text.primary' }}
-                secondary={`$${user.total_withdrawn}`}
-                secondaryTypographyProps={{ color: 'text.secondary' }}
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" sx={{ mx: 0 }} />
+          {/* Phone Number */}
+          <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0' } }}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <PhoneIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText
+              primary="Phone Number"
+              secondary={user.phone_number || 'Not provided'}
+            />
+          </ListItem>
+          <Divider component="li" />
 
-            {/* Current Balance */}
-            <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0', borderRadius: 2 } }}> 
-              <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
-                <WalletIcon color="primary" sx={{ fontSize: 24 }} /> 
-              </ListItemIcon>
-              <ListItemText
-                primary="Current Balance"
-                primaryTypographyProps={{ fontWeight: 600, color: 'text.primary' }}
-                secondary={`$${user.current_balance}`}
-                secondaryTypographyProps={{ color: 'text.secondary' }}
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" sx={{ mx: 0 }} />
+          {/* Total Earnings */}
+          <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0' } }}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <MonetizationOnIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText primary="Total Earnings" secondary={`$${user.total_earnings}`} />
+          </ListItem>
+          <Divider component="li" />
 
-            {/* Pending Withdrawal */}
-            <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0', borderRadius: 2 } }}> 
-              <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
-                <PendingActionsIcon color="primary" sx={{ fontSize: 24 }} /> 
-              </ListItemIcon>
-              <ListItemText
-                primary="Pending Withdrawal"
-                primaryTypographyProps={{ fontWeight: 600, color: 'text.primary' }}
-                secondary={`$${user.pending_withdrawal}`}
-                secondaryTypographyProps={{ color: 'text.secondary' }}
-              />
-            </ListItem>
-          </List>
-        </Grid>
-      </Grid>
-    </Container>
+          {/* Total Withdrawn */}
+          <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0' } }}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <WalletIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText primary="Total Withdrawn" secondary={`$${user.total_withdrawn}`} />
+          </ListItem>
+          <Divider component="li" />
+
+          {/* Current Balance */}
+          <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0' } }}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <WalletIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText primary="Current Balance" secondary={`$${user.current_balance}`} />
+          </ListItem>
+          <Divider component="li" />
+
+          {/* Pending Withdrawal */}
+          <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0' } }}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <PendingActionsIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText
+              primary="Pending Withdrawal"
+              secondary={`$${user.pending_withdrawal}`}
+            />
+          </ListItem>
+        </List>
+      </Container>
+    </Box>
   );
 };
 
