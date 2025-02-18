@@ -31,5 +31,5 @@ app.include_router(job_router, tags=["job"], prefix="/job")
 app.include_router(task_router, tags=["task"], prefix="/task")
 app.include_router(qa_member_router, tags=["qa_member"], prefix="/qa_member")
 
-# if __name__ == "__main__":
-#     uvicorn.run(app, host="localhost", port=8000)
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

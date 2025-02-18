@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from ..schemas.task import Task
 from ..schemas.job import Job
 from ..schemas.language import Language
+from ..schemas.task import Task
 import pandas as pd
 import io
 
@@ -55,3 +56,51 @@ async def download_tasks(job_id: int, db: Session = Depends(get_db)):
     # Create a streamable response
     response_stream = io.StringIO(csv_data)
     return StreamingResponse(response_stream, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=tasks.csv"})
+
+from fastapi import HTTPException, Depends
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+import logging
+
+logger = logging.getLogger(__name__)
+
+@router.get("/get_all_languages_pairs")
+async def get_all_languages_pairs(db: Session = Depends(get_db)):
+    try:
+        # Fetch unique language pairs (IDs)
+        unique_pairs = db.query(Task.source_language_id, Task.target_language_id).distinct().all()
+
+        if not unique_pairs:
+            logger.warning("No language pairs found.")
+            return []
+
+        # Fetch all languages and create an ID-to-name mapping
+        languages_query = db.query(Language).all()
+
+        if not languages_query:
+            logger.warning("Language table is empty.")
+            raise HTTPException(status_code=404, detail="No languages found in the database.")
+
+        languages = {lang.language_id: lang.language_name.lower() for lang in languages_query}
+
+        # Convert language IDs to names, handling missing IDs
+        language_pairs = [
+            {
+                "source": languages.get(pair[0], "unknown"),
+                "target": languages.get(pair[1], "unknown")
+            }
+            for pair in unique_pairs
+        ]
+
+        logger.info(f"Retrieved {len(language_pairs)} language pairs.")
+
+        return language_pairs
+
+    except SQLAlchemyError as e:
+        logger.error(f"Database error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error. Please try again later.")
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -11,11 +11,8 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-
-export interface LanguagePair {
-  source: string;
-  target: string;
-}
+import { LanguagePair } from '@/types/language';
+import { useLanguagePairs } from '@/hooks/useTask';
 
 interface LanguageSelectDialogProps {
   open: boolean;
@@ -28,28 +25,22 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
   onClose, 
   onConfirm 
 }) => {
-  const language_pairs: LanguagePair[] = [
-    { source: 'english', target: 'burmese' },
-    { source: 'english', target: 'chinese' },
-    { source: 'english', target: 'french' },
-    { source: 'english', target: 'german' },
-    { source: 'english', target: 'hindi' },
-    { source: 'english', target: 'italian' },
-    { source: 'english', target: 'japanese' },
-    { source: 'english', target: 'korean' },
-    { source: 'english', target: 'portuguese' },
-    { source: 'english', target: 'russian' },
-    { source: 'english', target: 'spanish' },
-    { source: 'english', target: 'thai' },
-    { source: 'english', target: 'vietnamese' },
-    // Add more pairs as needed
-  ];
 
   const [selectedPairIndex, setSelectedPairIndex] = useState<number>(0);
 
   // Use MUI's useTheme and useMediaQuery to detect screen size
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const { getAllLanguagePairs } = useLanguagePairs();
+  const language_pairs: LanguagePair[] = getAllLanguagePairs.data ?? [];
+
+  // Reset selection when language pairs change.
+  useEffect(() => {
+    if (language_pairs.length > 0) {
+      setSelectedPairIndex(0);
+    }
+  }, [language_pairs]);
 
   return (
     <Dialog 
