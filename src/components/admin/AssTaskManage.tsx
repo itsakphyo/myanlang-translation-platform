@@ -2,49 +2,47 @@ import { Backdrop, Box, SpeedDial, SpeedDialAction, SpeedDialIcon, Modal, Typogr
 import Grid2 from '@mui/material/Grid2';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from "react";
-import QAMemberCreateDialog from "./CreateQADialog";
-import { useQA } from "@/hooks/useQA";
-import { QAMember as QAMemberType } from "@/types/qaMember";
 import CreateAssJobDialog from "./CreateAssJobDialog";
 import CreateLanguageDialog from "./CreateLanguageDialog";
-
-import JQACard from "./qaCard";
+import { useJob } from "@/hooks/useJob";
+import AssTaskCard from "./AssTaskCard";
+import { AssJob } from "@/types/job";
 
 export default function TaskManage() {
     const [open, setOpen] = useState(false);
     const [isCreateQAOpen, setIsCreateQAOpen] = useState(false);
     const [isCreateNewLanguageOpen, setIsCreateNewLanguageOpen] = useState(false);
 
-    // const { getAllQAMembers } = useQA();
-    // const { data: qa_members, isLoading, isError, refetch } = getAllQAMembers;
+    const { getAllAssJobs } = useJob();
+    const { data: assJobs, isLoading, isError, refetch } = getAllAssJobs;
 
     const handleOpen = async () => {
         setOpen(true);
-        // await refetch();
+        await refetch();
     }
     const handleClose = async () => {
         setOpen(false);
-        // await refetch();
+        await refetch();
     }
 
-    const handleCreateQAOpen = async () => {
+    const handleCreateAssTaskOpen = async () => {
         setIsCreateQAOpen(true);
-        // await refetch();
+        await refetch();
     };
 
-    const handleCreateQAClose = async () => {
+    const handleCreateAssTaskClose = async () => {
         setIsCreateQAOpen(false);
-        // await refetch();
+        await refetch();
     };
 
     const handleCreateLanguageOpen = async () => {
         setIsCreateNewLanguageOpen(true);
-        // await refetch();
+        await refetch();
     };
 
     const handleCreateLanguageClose = async () => {
         setIsCreateNewLanguageOpen(false);
-        // await refetch();
+        await refetch();
     };
 
     return (
@@ -68,31 +66,31 @@ export default function TaskManage() {
                 <CreateLanguageDialog open={isCreateNewLanguageOpen} onClose={handleCreateLanguageClose} />
             </Modal>
 
-            <Modal open={isCreateQAOpen} onClose={handleCreateQAClose} sx={{ zIndex: 1300 }}>
-                <CreateAssJobDialog open={isCreateQAOpen} onClose={handleCreateQAClose} />
+            <Modal open={isCreateQAOpen} onClose={handleCreateAssTaskClose} sx={{ zIndex: 1300 }}>
+                <CreateAssJobDialog open={isCreateQAOpen} onClose={handleCreateAssTaskClose} />
             </Modal>
 
 
-            {/* {!isLoading && !isError && qa_members && (
-        <Grid2 container spacing={2} sx={{ width: '100%', justifyContent: 'center' }}>
-          {qa_members.map((qa_member: QAMemberType) => (
-            <Grid2
-              key={qa_member.qa_member_id}
-              sx={{
-                width: '96%',
-                marginLeft: '2%',
-                marginRight: '2%',
-                position: 'relative',
-              }}
-              component="div"
-            >
-              <Typography variant="h5" gutterBottom>
-                <JQACard member={qa_member} />
-              </Typography>
-            </Grid2>
-          ))}
-        </Grid2>
-      )} */}
+            {!isLoading && !isError && assJobs && (
+                <Grid2 container spacing={2} sx={{ width: '100%', justifyContent: 'center' }}>
+                    {assJobs.map((assJobs: AssJob) => (
+                        <Grid2
+                            key={assJobs.job_id}
+                            sx={{
+                                width: '96%',
+                                marginLeft: '2%',
+                                marginRight: '2%',
+                                position: 'relative',
+                            }}
+                            component="div"
+                        >
+                            <Typography variant="h5" gutterBottom>
+                                <AssTaskCard job={assJobs} />
+                            </Typography>
+                        </Grid2>
+                    ))}
+                </Grid2>
+            )}
 
             <Backdrop open={open} onClick={handleClose} sx={{ zIndex: 1300 }} />
             <SpeedDial
@@ -107,7 +105,7 @@ export default function TaskManage() {
                     icon={<AddIcon />}
                     tooltipTitle="Add-Assessment-Task"
                     tooltipOpen
-                    onClick={handleCreateQAOpen}
+                    onClick={handleCreateAssTaskOpen}
                 />
                 <SpeedDialAction
                     icon={<AddIcon />}

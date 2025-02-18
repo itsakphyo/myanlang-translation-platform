@@ -7,7 +7,7 @@ import { useQA } from "@/hooks/useQA";
 import { QAMember as QAMemberType } from "@/types/qaMember";
 
 
-import JQACard from "./qaCard";
+import QACard from "./qaCard";
 
 export default function QADashboard() {
   const [open, setOpen] = useState(false);
@@ -75,7 +75,7 @@ export default function QADashboard() {
               component="div"
             >
               <Typography variant="h5" gutterBottom>
-                <JQACard member={qa_member} />
+                <QACard member={qa_member} />
               </Typography>
             </Grid2>
           ))}

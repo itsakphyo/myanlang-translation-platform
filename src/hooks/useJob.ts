@@ -38,6 +38,15 @@ export const useJob = () => {
         },
     });
 
+    const getAllAssJobs = useQuery({
+        queryKey: ["assjobs"], // Ensure consistent casing
+            queryFn: async () => {
+            const response = await axios.get(`${API_URL}/job/get_all_ass_jobs`);
+            console.log(response.data);
+            return response.data;
+        },
+    });
+
     const getJobProgress = (jobId: number) => useQuery({
         queryKey: ["job_progress", jobId],
         queryFn: async () => {
@@ -67,6 +76,7 @@ export const useJob = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["jobs"] });
+            queryClient.invalidateQueries({ queryKey: ["assjobs"] });
         },
     });
 
@@ -81,6 +91,7 @@ export const useJob = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["jobs"] });
+            queryClient.invalidateQueries({ queryKey: ["assjobs"] });
         },
     });
 
@@ -102,7 +113,10 @@ export const useJob = () => {
             });
             return response.data;
         },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["assjobs"] });
+        },
     });
 
-    return { createJob, getAllJobs, deleteJob, getJobProgress, downloadTasks, updateJob, createAssessmentJob };
+    return { createJob, getAllJobs, deleteJob, getJobProgress, downloadTasks, updateJob, createAssessmentJob, getAllAssJobs };
 };

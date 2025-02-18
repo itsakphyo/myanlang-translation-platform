@@ -17,7 +17,7 @@ import {
     member: QAMember;
   }
   
-  export default function JQACard({ member }: QACardProps) {
+  export default function QACard({ member }: QACardProps) {
     const [removeQADialogOpen, setRemoveQADialogOpen] = useState(false);
     const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
     const theme = useTheme();

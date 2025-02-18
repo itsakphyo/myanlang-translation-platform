@@ -22,7 +22,7 @@ export default function DeleteDialog({ open, onClose, job_id, job_title }: Delet
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (inputValue !== `DELETE ${job_title}`) return; // why i cannot pass ${job_title} here?
+        if (inputValue !== `DELETE ${job_title}`) return;
         deleteJob.mutate(job_id);
         onClose();
         setInputValue('');

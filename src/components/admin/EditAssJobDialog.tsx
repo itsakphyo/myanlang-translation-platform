@@ -22,7 +22,7 @@ interface EditJobProps {
 }
 
 
-export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps) {
+export default function EditAssJobDialog({ open, onClose, job_id, editjob }: EditJobProps) {
     const theme = useTheme();
     const [jobTitle, setJobTitle] = useState(editjob.job_title);
     const [sourceLanguage, setSourceLanguage] = useState(editjob.source_language_id);
@@ -49,13 +49,8 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
         event.preventDefault();
         setErrorMessage('');
 
-        // Validate required fields
         if (!maxTimePerTask) {
             setErrorMessage('Please specify the max time per task');
-            return;
-        }
-        if (!taskPrice) {
-            setErrorMessage('Task price should be greater than 0');
             return;
         }
         if (!sourceLanguage) {
@@ -87,7 +82,7 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
         };
 
         updateJob.mutate(
-            { job_id: jobData.job_id, data: jobData },  // Ensure correct structure
+            { job_id: jobData.job_id, data: jobData },
             {
                 onSuccess: (data) => {
                     console.log("Job updated:", data);
@@ -100,13 +95,6 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
             }
         );
     };
-
-    // if (isLoading) {
-    //     return <Typography>Loading languages...</Typography>;
-    // }
-    // if (error) {
-    //     return <Typography color="error">Error fetching languages: {error.message}</Typography>;
-    // }
 
     return (
         <Dialog
@@ -149,38 +137,7 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
                         value={jobTitle}
                         onChange={(e) => setJobTitle(e.target.value)}
                     />
-                    {/* Source Language */}
-                    {/* <FormControl fullWidth required margin="dense" variant="outlined">
-                        <InputLabel id="source-language-label">Source Language</InputLabel>
-                        <Select
-                            labelId="source-language-label"
-                            value={sourceLanguage}
-                            onChange={handleSourceLanguageChange}
-                            label="Source Language"
-                        >
-                            {data?.map((language: Language) => (
-                                <MenuItem key={language.language_id} value={language.language_id}>
-                                    {language.language_name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl> */}
-                    {/* Target Language */}
-                    {/* <FormControl fullWidth required margin="dense" variant="outlined">
-                        <InputLabel id="target-language-label">Target Language</InputLabel>
-                        <Select
-                            labelId="target-language-label"
-                            value={targetLanguage}
-                            onChange={handleTargetLanguageChange}
-                            label="Target Language"
-                        >
-                            {data?.map((language: Language) => (
-                                <MenuItem key={language.language_id} value={language.language_id}>
-                                    {language.language_name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl> */}
+
                     {/* Max Time Per Task */}
                     <TextField
                         required
@@ -194,19 +151,7 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
                         value={maxTimePerTask || ''}
                         onChange={(e) => setMaxTimePerTask(Number(e.target.value))}
                     />
-                    {/* Task Price */}
-                    <TextField
-                        required
-                        margin="dense"
-                        id="task_price"
-                        name="task_price"
-                        label="Task Price"
-                        type="number"
-                        fullWidth
-                        variant="outlined"
-                        value={taskPrice || ''}
-                        onChange={(e) => setTaskPrice(Number(e.target.value))}
-                    />
+
                     {/* Instructions */}
                     <TextField
                         required
