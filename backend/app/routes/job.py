@@ -46,7 +46,6 @@ async def create_job(
     db.refresh(new_job)
 
     for _, row in df.iterrows():
-        print('hi')
         print(row.iloc[0])
         task = Task(
             job_id=new_job.job_id,
@@ -63,9 +62,9 @@ async def create_job(
 
     return {"message": "Job created successfully"}
 
-@router.get("/get_all_jobs")
+@router.get("/get_all_jobs") #update for ass filter
 async def get_all_jobs(db: Session = Depends(get_db)):
-    jobs = db.query(Job).all()
+    jobs = db.query(Job).filter(Job.is_assessment == "f").all()
     for job in jobs:
         job.source_language_name = db.query(Language).filter(Language.language_id == job.source_language_id).first().language_name
         job.target_language_name = db.query(Language).filter(Language.language_id == job.target_language_id).first().language_name
@@ -132,3 +131,54 @@ async def update_job(job_id: int, job: JobUpdateInput, db: Session = Depends(get
 
     return {"message": "Job and related tasks updated successfully", "updated_job": db_job}
 
+
+
+@router.post("/create_assessment_job")
+async def create_assessment_job(
+    job_title: str = Form(...),
+    source_language_id: int = Form(...),
+    target_language_id: int = Form(...),
+    max_time_per_task: int = Form(...),
+    instructions: str = Form(...),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    csv_content = await file.read()
+    csv_file = io.BytesIO(csv_content)
+    df = pd.read_csv(csv_file, header=None)
+
+    task_price = 0 
+    
+    new_job = Job(
+        job_title=job_title,
+        source_language_id=source_language_id,
+        target_language_id=target_language_id,
+        total_tasks=len(df),
+        max_time_per_task=max_time_per_task,
+        created_at=datetime.now(),
+        task_price=task_price,
+        instructions=instructions,
+        notes="",
+        is_assessment=True
+    )
+
+    db.add(new_job)
+    db.commit()
+    db.refresh(new_job)
+
+    for _, row in df.iterrows():
+        print(row.iloc[0])
+        task = Task(
+            job_id=new_job.job_id,
+            source_language_id=source_language_id,
+            source_text=row.iloc[0], 
+            target_language_id=target_language_id,
+            max_time_per_task=max_time_per_task,
+            task_price=task_price,
+            is_assessment=True
+        )
+        db.add(task)
+        db.commit()
+        db.refresh(task)
+
+    return {"message": "Job created successfully"}

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from .base import Base
+from pydantic import BaseModel
 
 class Language(Base):
     __tablename__ = "language"
@@ -32,3 +33,6 @@ class Language(Base):
         back_populates="target_language", 
         overlaps="freelancer_language_pairs_source"
     )
+
+class LanguageCreate(BaseModel):
+    language_name: str

@@ -24,15 +24,6 @@ export default function QADashboard() {
     setOpen(false);
     // await refetch();
   }
-//   const handleCreateJobOpen = async () => {
-//     setIsCreateJobOpen(true);
-//     await refetch();
-//   };
-
-  // const handleCreateJobClose = async () => {
-  //   setIsCreateJobOpen(false);
-  //   // await refetch();
-  // };
 
   const handleCreateQAOpen = async () => {
     setIsCreateQAOpen(true);

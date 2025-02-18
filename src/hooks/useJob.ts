@@ -84,5 +84,25 @@ export const useJob = () => {
         },
     });
 
-    return { createJob, getAllJobs, deleteJob, getJobProgress, downloadTasks, updateJob };
+    const createAssessmentJob = useMutation({
+        mutationFn: async (data: JobFormData) => {
+            const formData = new FormData();
+            formData.append("job_title", data.title);
+            formData.append("source_language_id", data.source_language_id.toString());
+            formData.append("target_language_id", data.target_language_id.toString());
+            formData.append("max_time_per_task", data.max_time_per_task.toString());
+            formData.append("instructions", data.instructions);
+
+            formData.append("file", data.csv);
+
+            const response = await axios.post(`${API_URL}/job/create_assessment_job`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            return response.data;
+        },
+    });
+
+    return { createJob, getAllJobs, deleteJob, getJobProgress, downloadTasks, updateJob, createAssessmentJob };
 };

@@ -109,7 +109,7 @@ export default function TranslationTaskPage() {
                 if (!selectedLanguagePair) {
                   navigate('/dashboard');
                 } else {
-                  alert("You have unsaved changes. Please submit your translation or or close the task before leaving.");
+                  alert("You have unsaved changes. Please submit your translation or close the task before leaving.");
                 }
               }}
             />
@@ -121,7 +121,7 @@ export default function TranslationTaskPage() {
               if (!selectedLanguagePair) {
                 setDialogOpen(true);
               } else {
-                alert("You have unsaved changes. Please submit your translation or or close the taskn before changing languages.");
+                alert("You have unsaved changes. Please submit your translation or close the task before changing languages.");
               }
             }}
             sx={{

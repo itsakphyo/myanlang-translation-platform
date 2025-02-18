@@ -7,12 +7,14 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
-import JobDashboard from '@/components/admin/JobDashboard';
+import JobDashboard from '@/components/admin/JobManage';
 import Payment from '@/components/admin/Payment';
 import Issue from '@/components/admin/Issue';
-import QADashboard from '@/components/admin/QADashboard';
+import QADashboard from '@/components/admin/QAManage';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import logo from '@/assets/images/logo.png';
 import { useNavigate } from 'react-router-dom';
+import TaskManage from '@/components/admin/TaskManage';
 
 export default function DashboardLayoutBranding({ window }: { window?: () => Window }) {
   const router = useDemoRouter('/dashboard');
@@ -52,6 +54,12 @@ export default function DashboardLayoutBranding({ window }: { window?: () => Win
       segment: 'qa-management',
       title: 'QA Management',
       icon: <GroupsIcon />,
+    },
+    {
+      kind: 'page',
+      segment: 'assessment-tasks',
+      title: 'Assessment Tasks',
+      icon: <TaskAltIcon />,
     },
     {
       kind: 'page',
@@ -113,6 +121,8 @@ export default function DashboardLayoutBranding({ window }: { window?: () => Win
         return <Payment />;
       case 'qa-management':
         return <QADashboard />;
+      case 'assessment-tasks':
+        return <TaskManage />;
       case 'wrong-source-language':
       case 'payment-delay':
       case 'accuracy-appeal':

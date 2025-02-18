@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const useQA = () => {
-    const queryClient = useQueryClient(); // Add this
+    const queryClient = useQueryClient(); 
     const navigate = useNavigate();
 
 

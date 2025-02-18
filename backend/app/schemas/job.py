@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Boolean
 from sqlalchemy.orm import relationship
 from .base import Base
 from pydantic import BaseModel, ConfigDict
@@ -16,6 +16,7 @@ class Job(Base):
     target_language_id = Column(Integer, ForeignKey("language.language_id"), nullable=False, index=True)
     total_tasks = Column(Integer, nullable=True)
     job_status = Column(Enum(JobStatus, name="jobstatus"), nullable=False, default=JobStatus.IN_PROGRESS)
+    is_assessment = Column(Boolean, nullable=False, default=False)
     max_time_per_task = Column(Integer, nullable=False, default=10)
     created_at = Column(DateTime, nullable=False)
     task_price = Column(Float, nullable=False)
