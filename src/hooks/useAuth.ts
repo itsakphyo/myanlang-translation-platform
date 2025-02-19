@@ -1,8 +1,27 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { LoginFormData, RegisterFormData, VerificationData } from '@/types/auth';
 
 const API_URL = import.meta.env.VITE_API_URL;
+
+export const useCurrentUser = () => {
+  return useQuery({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
+      
+      const response = await axios.get(`${API_URL}/register/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    },
+    enabled: !!localStorage.getItem('token'),
+    retry: false,
+  });
+};
 
 export const useAuth = () => {
   const isAuthenticated = !!localStorage.getItem('token');

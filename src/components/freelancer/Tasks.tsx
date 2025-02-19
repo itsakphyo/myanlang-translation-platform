@@ -1,26 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Container, Button, Box, Typography } from "@mui/material";
-import { Language, ArrowDropDown } from "@mui/icons-material";
+import { Language, ArrowDropDown, ArrowRightAlt } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import LanguageSelectDialog from "@/components/freelancer/LanguageSelectDialog";
-import { LanguagePair } from "@/types/language";
 import TaskTranslationInterface from "@/components/freelancer/TaskTranslationInterface";
-import ArrowRightAlt from '@mui/icons-material/ArrowRightAlt';
 import logo from '@/assets/images/logo.png';
 import { useNavigate } from 'react-router-dom';
+import { useCurrentUser } from '@/hooks/useAuth';
+import { useFreelancerLanguagePair } from "@/hooks/useLanguagePair";
+import { LanguagePair } from "@/types/language";
 
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#1e3a8a',
-    },
-    secondary: {
-      main: '#db2777',
-    },
+    primary: { main: '#1e3a8a' },
+    secondary: { main: '#db2777' },
   },
-  typography: {
-    fontFamily: 'Inter, sans-serif',
-  },
+  typography: { fontFamily: 'Inter, sans-serif' },
   components: {
     MuiButton: {
       styleOverrides: {
@@ -35,9 +30,7 @@ const theme = createTheme({
     MuiTextField: {
       styleOverrides: {
         root: {
-          '& .MuiOutlinedInput-root': {
-            borderRadius: '12px',
-          },
+          '& .MuiOutlinedInput-root': { borderRadius: '12px' },
         },
       },
     },
@@ -47,20 +40,115 @@ const theme = createTheme({
 export default function TranslationTaskPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedLanguagePair, setSelectedLanguagePair] = useState<LanguagePair | null>(null);
+  const { data: user } = useCurrentUser();
   const navigate = useNavigate();
 
-  // Warn the user if they try to reload or close the page with unsaved changes.
+  // State to hold parameters for the language pair query.
+  const [languagePairParams, setLanguagePairParams] = useState<{
+    freelancerId: number;
+    sourceLanguageId: number;
+    targetLanguageId: number;
+  } | null>(null);
+
+  // Call the hook at the top level.
+  const {
+    data: languagePairData,
+    isLoading: languagePairLoading,
+    error: languagePairError,
+    refetch: refetchLanguagePair,
+  } = useFreelancerLanguagePair(
+    languagePairParams?.freelancerId || 0,
+    languagePairParams?.sourceLanguageId || 0,
+    languagePairParams?.targetLanguageId || 0
+  );
+
+  // Log the query results whenever they change.
+  useEffect(() => {
+    if (languagePairParams) {
+      console.log("Language Pair Data:", languagePairData);
+      console.log("Loading:", languagePairLoading);
+      console.log("Error:", languagePairError);
+    }
+  }, [languagePairData, languagePairLoading, languagePairError, languagePairParams]);
+
+  // This function updates the query parameters and triggers a refetch.
+  const handleFreelancerLanguagePairStatus = (
+    freelancerId: number,
+    sourceLanguageId: number,
+    targetLanguageId: number
+  ) => {
+    setLanguagePairParams({ freelancerId, sourceLanguageId, targetLanguageId });
+    refetchLanguagePair();
+  };
+
+  const getLanguagePairStatusMessage = () => {
+    // Case 1: No language pair selected.
+    if (!selectedLanguagePair) {
+      return {
+        title: 'Welcome to MyanLang Translation!',
+        body: 'Please select a source and target language to begin your translation task. Let’s get started!',
+      };
+    }
+
+    // Loading or invalid data
+    if (languagePairLoading || !languagePairData || ('message' in languagePairData)) {
+      return {
+        title: '⏳ Loading...',
+        body: '🔄 Fetching language pair details, please wait a moment...',
+      };
+    }
+
+    // Case 2: Status is "complete" but accuracy is below 50.
+    if (languagePairData.status === 'complete' && (languagePairData.accuracy_rate ?? 0) < 50) {
+      return {
+        title: '⚠️ Language Pair Not Available',
+        body: `Your accuracy rate is ${languagePairData.accuracy_rate}%, which does not meet our minimum requirement of 50%.  
+               You can choose another language pair, try again later, or submit an appeal request if you believe this rating is incorrect.`,
+      };
+    }
+
+    // Case 3: Status is "under_review".
+    if (languagePairData.status === 'under_review') {
+      return {
+        title: '🔍 Review In Progress',
+        body: 'Our QA team is currently reviewing your assessment task for this language pair. Please wait until the review process is completed. Thank you for your patience!',
+      };
+    }
+
+    // Case 4: Status is "not_found".
+    if (languagePairData.status === 'not_found') {
+      return {
+        title: '📝 Assessment Required',
+        body: 'The selected language pair was not found in our system. To proceed, please complete an assessment test Let’s get you started!',
+      };
+    }
+
+    // If everything is fine, return null (no message needed)
+    return null;
+  };
+
+
+  const message = getLanguagePairStatusMessage();
+
+  const showAssessmentButton = languagePairData?.status === 'not_found';
+
+  const showAppealButton = languagePairData?.status === 'complete' && (languagePairData.accuracy_rate ?? 0) < 50;
+
+
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (selectedLanguagePair) {
+      if (selectedLanguagePair &&
+        !languagePairLoading &&
+        languagePairData &&
+        !('message' in languagePairData) &&
+        languagePairData.status === 'complete' &&
+        (languagePairData.accuracy_rate ?? 0) > 50) {
         event.preventDefault();
         event.returnValue = ''; // Required for Chrome
       }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [selectedLanguagePair]);
 
   const handleShowNext = () => {
@@ -106,7 +194,10 @@ export default function TranslationTaskPage() {
               alt="MyanLang logo"
               style={{ height: '50px', cursor: 'pointer' }}
               onClick={() => {
-                if (!selectedLanguagePair) {
+                if (!selectedLanguagePair ||
+                  (selectedLanguagePair &&
+                    languagePairData &&
+                    (languagePairData.status !== 'complete' || (languagePairData.accuracy_rate ?? 0) <= 50))) {
                   navigate('/dashboard');
                 } else {
                   alert("You have unsaved changes. Please submit your translation or close the task before leaving.");
@@ -118,7 +209,13 @@ export default function TranslationTaskPage() {
           {/* Language Selection Button */}
           <Button
             onClick={() => {
-              if (!selectedLanguagePair) {
+              // Allow language change if:
+              // 1. No language pair is selected OR
+              // 2. Selected language pair doesn't meet requirements
+              if (!selectedLanguagePair ||
+                (selectedLanguagePair &&
+                  languagePairData &&
+                  (languagePairData.status !== 'complete' || (languagePairData.accuracy_rate ?? 0) <= 50))) {
                 setDialogOpen(true);
               } else {
                 alert("You have unsaved changes. Please submit your translation or close the task before changing languages.");
@@ -158,8 +255,7 @@ export default function TranslationTaskPage() {
           </Button>
         </Box>
 
-        {/* Welcome Message */}
-        {!selectedLanguagePair && (
+        {message && (
           <Box
             display="flex"
             flexDirection="column"
@@ -168,12 +264,34 @@ export default function TranslationTaskPage() {
             textAlign="center"
             sx={{ mt: 4 }}
           >
-            <Typography variant="h5" color="textSecondary" gutterBottom>
-              Welcome to MyanLang Translation
+            <Typography variant="h5" color="textPrimary" gutterBottom marginBottom={3}>
+              {message.title}
             </Typography>
-            <Typography variant="body1" color="textSecondary">
-              Please select a source and target language to begin your translation task.
+            <Typography variant="body1" color="textPrimary" sx={{ whiteSpace: 'pre-line' }} >
+              {message.body}
             </Typography>
+            {/* Show Assessment Button only when needed */}
+            {showAssessmentButton && (
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() => window.location.href = '/assessment'}
+              >
+                Take Assessment Test
+              </Button>
+            )}
+            {/* Show Appeal Button only when needed */}
+            {showAppealButton && (
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ mt: 2 }}
+                onClick={() => window.location.href = '/appeal'}
+              >
+                Submit Appeal Request
+              </Button>
+            )}
           </Box>
         )}
 
@@ -184,17 +302,27 @@ export default function TranslationTaskPage() {
           onConfirm={(pair) => {
             setSelectedLanguagePair(pair);
             console.log('Selected Language Pair:', pair);
+            console.log('User:', user);
             setDialogOpen(false);
+            if (user) {
+              // Update query parameters and trigger the query.
+              handleFreelancerLanguagePairStatus(user?.freelancer_id, pair.source_id, pair.target_id);
+            }
           }}
         />
 
         {/* Task Translation Interface */}
-        {selectedLanguagePair && (
-          <TaskTranslationInterface
-            onClose={() => setSelectedLanguagePair(null)}
-            onShowNext={handleShowNext}
-          />
-        )}
+        {selectedLanguagePair &&
+          !languagePairLoading &&
+          languagePairData &&
+          !('message' in languagePairData) &&
+          languagePairData.status === 'complete' &&
+          (languagePairData.accuracy_rate ?? 0) > 50 && (
+            <TaskTranslationInterface
+              onClose={() => setSelectedLanguagePair(null)}
+              onShowNext={handleShowNext}
+            />
+          )}
       </Container>
     </ThemeProvider>
   );

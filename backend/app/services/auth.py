@@ -102,9 +102,14 @@ async def get_current_user(
         raise credentials_exception
 
     # Query the database for the user with the provided email
-    user = db.query(Freelancer).filter(Freelancer.email == email).first()
+    for model in [Freelancer, Admin, QAMember]:
+        user = db.query(model).filter(model.email == email).first()
+        if user:
+            break
+
     if user is None:
         raise credentials_exception
+
     
     # Return the user object, which will be passed to endpoints that depend on this function
     return user

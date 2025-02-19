@@ -82,13 +82,20 @@ async def login(form_data: LoginRequest, db: Session = Depends(get_db)):
 
     return response_data
 
-@router.get("/auth/me", response_model=FreelancerResponse)
+@router.get("/auth/me")
 async def read_current_user(current_user: Freelancer = Depends(get_current_user)):
     """
     This endpoint returns the current user's information.
     It ensures the user info is always fresh by querying the database.
     """
-    return current_user
+    # Convert the current_user object to a dictionary
+    user_dict = {key: value for key, value in current_user.__dict__.items() if key != "password_hash"}
+    
+    # Remove the '_sa_instance_state' key added by SQLAlchemy
+    user_dict.pop('_sa_instance_state', None)
+    
+    return user_dict
+
 
 @router.post("/token")
 async def login_for_access_token(

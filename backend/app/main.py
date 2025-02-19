@@ -8,6 +8,7 @@ from .routes.all_languages import router as all_languages_router
 from .routes.job import router as job_router
 from .routes.task import router as task_router
 from .routes.qa_member import router as qa_member_router
+from .routes.freelancer import router as freelancer_router
 
 app = FastAPI()
 
@@ -30,6 +31,7 @@ app.include_router(all_languages_router, tags=["all_languages"], prefix="/all_la
 app.include_router(job_router, tags=["job"], prefix="/job")
 app.include_router(task_router, tags=["task"], prefix="/task")
 app.include_router(qa_member_router, tags=["qa_member"], prefix="/qa_member")
+app.include_router(freelancer_router, tags=["freelancer"], prefix="/freelancer")
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
