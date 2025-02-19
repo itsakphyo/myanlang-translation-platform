@@ -18,51 +18,64 @@ import {
   AccountBalanceWallet as WalletIcon,
   PendingActions as PendingActionsIcon,
 } from '@mui/icons-material';
-
-const user = {
-  freelancer_id: 1,
-  full_name: 'Aung Khant Phyo',
-  email: 'itsakphyo@gmail.com',
-  age: 18,
-  phone_number: '+123456789',
-  total_earnings: 1000,
-  total_withdrawn: 500,
-  current_balance: 500,
-  pending_withdrawal: 200,
-};
+import { useCurrentUser } from '@/hooks/useAuth';
 
 const UserProfile = () => {
+  const { data: user } = useCurrentUser();
+  console.log(user);
+
+  // Show a loading state until the user data is available
+  if (!user) {
+    return (
+      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Typography variant="h6" color="textSecondary">
+          Loading user information...
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ width: '100%', backgroundColor: '#f5f5f5' }}>
       {/* Full-Width Header */}
       <Box
         sx={{
-          background:'linear-gradient(135deg, #2196F3 30%, #21CBF3 90%)',
-          height: 200,
+          background: 'linear-gradient(135deg, #2196F3 30%, #21CBF3 90%)',
+          height: 150,
           width: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          flexDirection: 'column',
         }}
       >
-        <Avatar sx={{ bgcolor: 'white', width: 100, height: 100 }}>
-          <PersonIcon sx={{ fontSize: 60, color: '#2196F3' }} />
-        </Avatar>
-      </Box>
-
-      {/* Profile Information */}
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Typography variant="h4" align="center" sx={{ fontWeight: 700, mb: 1 }}>
+        <Typography
+          variant="h4"
+          align="center"
+          sx={{
+            fontWeight: 700,
+            mb: 1,
+            color: '#FFFFFF',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+          }}
+        >
           {user.full_name}
         </Typography>
         <Typography
           variant="subtitle1"
           align="center"
-          sx={{ mb: 2, color: 'text.secondary', fontStyle: 'italic' }}
+          sx={{
+            color: '#E0E0E0',
+            fontStyle: 'italic',
+            textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
+          }}
         >
-          Freelancer ID: {user.freelancer_id}
+          User ID: {user.freelancer_id}
         </Typography>
+      </Box>
 
+      {/* Profile Information */}
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         <List sx={{ width: '100%', mx: 'auto' }}>
           {/* Email */}
           <ListItem sx={{ py: 1, '&:hover': { backgroundColor: '#f0f0f0' } }}>
