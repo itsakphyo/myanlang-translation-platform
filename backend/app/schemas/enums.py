@@ -30,3 +30,7 @@ class PaymentMethod(Enum):
 class WithdrawalStatus(Enum):
     UNDER_PROCESSING = "under_processing"
     PROCESSED = "processed"
+
+class AssTaskStatus(Enum):
+    UNDER_REVIEW = "under_review"
+    COMPLETE = "complete"

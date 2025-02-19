@@ -67,8 +67,13 @@ logger = logging.getLogger(__name__)
 @router.get("/get_all_languages_pairs")
 async def get_all_languages_pairs(db: Session = Depends(get_db)):
     try:
-        # Fetch unique language pairs (IDs)
-        unique_pairs = db.query(Task.source_language_id, Task.target_language_id).distinct().all()
+        unique_pairs_diff = db.query(Task.source_language_id, Task.target_language_id).filter(Task.source_language_id != Task.target_language_id).distinct()
+
+        unique_pairs_same = db.query(Task.source_language_id, Task.target_language_id).filter(Task.source_language_id == Task.target_language_id).distinct()
+
+        unique_pairs = unique_pairs_diff.union(unique_pairs_same).all()
+
+        print("Pair:",unique_pairs)
 
         if not unique_pairs:
             logger.warning("No language pairs found.")
