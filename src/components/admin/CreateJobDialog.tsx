@@ -134,14 +134,6 @@ export default function CreateJob({ open, onClose }: CreateJobProps) {
       onClose={onClose}
       fullWidth
       maxWidth="sm"
-      slotProps={{
-        paper: {
-          sx: {
-            borderRadius: 3,
-            overflow: 'hidden',
-          },
-        },
-      }}
     >
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle

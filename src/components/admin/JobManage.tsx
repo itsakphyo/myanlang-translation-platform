@@ -42,16 +42,14 @@ export default function JobDashboard() {
         textAlign: 'center',
         position: 'relative',
         minHeight: '100vh',
-        zIndex: 1300,
+        // zIndex: 1300,
         width: '100%',
       }}
     >
       {isLoading && <Box>Loading jobs...</Box>}
       {isError && <Box>Error loading jobs.</Box>}
 
-      <Modal open={isCreateJobOpen} onClose={handleCreateJobClose} sx={{ zIndex: 1300 }}>
-        <CreateJobDialog open={isCreateJobOpen} onClose={handleCreateJobClose} />
-      </Modal>
+      <CreateJobDialog open={isCreateJobOpen} onClose={handleCreateJobClose} />
 
       {!isLoading && !isError && jobs && (
         <Grid2 container spacing={2} sx={{ width: '100%', justifyContent: 'center' }}>
@@ -66,16 +64,17 @@ export default function JobDashboard() {
               }}
               component="div"
             >
-              <JobCard job={job} /> 
+              <JobCard job={job} />
             </Grid2>
           ))}
+          <Box sx={{ height: 100 }} />
         </Grid2>
       )}
 
-      <Backdrop open={open} onClick={handleClose} sx={{ zIndex: 1300 }} />
+      <Backdrop open={open} onClick={handleClose} sx={{ zIndex: 1500 }} />
       <SpeedDial
         ariaLabel="SpeedDial tooltip example"
-        sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1300 }}
+        sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1500 }}
         icon={<SpeedDialIcon />}
         onClose={handleClose}
         onOpen={handleOpen}

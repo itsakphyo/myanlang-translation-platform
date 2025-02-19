@@ -55,20 +55,13 @@ export default function TaskManage() {
                 textAlign: 'center',
                 position: 'relative',
                 minHeight: '100vh',
-                zIndex: 1300,
                 width: '100%',
             }}
         >
-            {/* {isLoading && <Box>Loading jobs...</Box>}
-      {isError && <Box>Error loading jobs.</Box>} */}
 
-            <Modal open={isCreateNewLanguageOpen} onClose={handleCreateLanguageClose} sx={{ zIndex: 1300 }}>
-                <CreateLanguageDialog open={isCreateNewLanguageOpen} onClose={handleCreateLanguageClose} />
-            </Modal>
+            <CreateLanguageDialog open={isCreateNewLanguageOpen} onClose={handleCreateLanguageClose} />
 
-            <Modal open={isCreateQAOpen} onClose={handleCreateAssTaskClose} sx={{ zIndex: 1300 }}>
-                <CreateAssJobDialog open={isCreateQAOpen} onClose={handleCreateAssTaskClose} />
-            </Modal>
+            <CreateAssJobDialog open={isCreateQAOpen} onClose={handleCreateAssTaskClose} />
 
 
             {!isLoading && !isError && assJobs && (
@@ -89,13 +82,14 @@ export default function TaskManage() {
                             </Typography>
                         </Grid2>
                     ))}
+                    <Box sx={{ height: 100 }} />
                 </Grid2>
             )}
 
-            <Backdrop open={open} onClick={handleClose} sx={{ zIndex: 1300 }} />
+            <Backdrop open={open} onClick={handleClose} sx={{ zIndex: 1500 }} />
             <SpeedDial
                 ariaLabel="SpeedDial tooltip example"
-                sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1300 }}
+                sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1500 }}
                 icon={<SpeedDialIcon />}
                 onClose={handleClose}
                 onOpen={handleOpen}

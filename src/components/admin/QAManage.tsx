@@ -45,7 +45,7 @@ export default function QADashboard() {
         textAlign: 'center',
         position: 'relative',
         minHeight: '100vh',
-        zIndex: 1300,
+        // zIndex: 1300,
         width: '100%',
       }}
     >
@@ -56,10 +56,7 @@ export default function QADashboard() {
         <CreateJobDialog open={isCreateJobOpen} onClose={handleCreateJobClose} />
       </Modal> */}
 
-      <Modal open={isCreateQAOpen} onClose={handleCreateQAClose} sx={{ zIndex: 1300 }}>
-        <QAMemberCreateDialog open={isCreateQAOpen} onClose={handleCreateQAClose} />
-      </Modal>
-      
+        <QAMemberCreateDialog open={isCreateQAOpen} onClose={handleCreateQAClose} />    
 
       {!isLoading && !isError && qa_members && (
         <Grid2 container spacing={2} sx={{ width: '100%', justifyContent: 'center' }}>
@@ -79,13 +76,14 @@ export default function QADashboard() {
               </Typography>
             </Grid2>
           ))}
+          <Box sx={{ height: 100 }} />
         </Grid2>
       )}
 
-      <Backdrop open={open} onClick={handleClose} sx={{ zIndex: 1300 }} />
+      <Backdrop open={open} onClick={handleClose} sx={{ zIndex: 1500  }} />
       <SpeedDial
         ariaLabel="SpeedDial tooltip example"
-        sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1300 }}
+        sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1500  }}
         icon={<SpeedDialIcon />}
         onClose={handleClose}
         onOpen={handleOpen}

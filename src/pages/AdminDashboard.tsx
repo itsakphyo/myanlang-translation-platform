@@ -99,6 +99,7 @@ export default function DashboardLayoutBranding({ window }: { window?: () => Win
   const demoTheme = createTheme({
     zIndex: {
       drawer: 1301,
+      modal: 1400,
     },
     cssVariables: {
       colorSchemeSelector: 'data-toolpad-color-scheme',
@@ -150,7 +151,6 @@ export default function DashboardLayoutBranding({ window }: { window?: () => Win
       }}
       theme={demoTheme}
       window={window ? window() : undefined}
-      sx={{ zIndex: 1301 }}
     >
       <DashboardLayout
         sx={{
