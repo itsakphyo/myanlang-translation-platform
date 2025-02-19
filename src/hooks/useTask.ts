@@ -4,7 +4,7 @@ import { LanguagePair } from "@/types/language";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const useLanguagePairs = () => {
+export const useTask = () => {
   const getAllLanguagePairs = useQuery<LanguagePair[]>({
     queryKey: ["languagePairs"],
     queryFn: async () => {

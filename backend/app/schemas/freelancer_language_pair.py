@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, Float, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, Float, ForeignKey, UniqueConstraint, Enum
 from sqlalchemy.orm import relationship
 from .base import Base
+from .enums import AssSubmission
 
 class FreelancerLanguagePair(Base):
     __tablename__ = "freelancer_language_pair"
@@ -17,6 +18,7 @@ class FreelancerLanguagePair(Base):
     freelancer_id = Column(Integer, ForeignKey("freelancer.freelancer_id"), nullable=False, index=True)
     source_language_id = Column(Integer, ForeignKey("language.language_id"), nullable=False, index=True)
     target_language_id = Column(Integer, ForeignKey("language.language_id"), nullable=False, index=True)
+    status = Column(Enum(AssSubmission, name="ass_submission_status"), nullable=False, default=AssSubmission.UNDER_REVIEW)
     accuracy_rate = Column(Float, nullable=False, default=100.0)
     
     freelancer = relationship("Freelancer", back_populates="language_pairs")

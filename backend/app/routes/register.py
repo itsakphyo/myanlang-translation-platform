@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from ..schemas.freelancer import *
 from ..core.database import get_db
 from sqlalchemy.orm import Session
-from ..services.auth import send_verification_email, get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, check_existing_user
+from ..services.auth import get_current_user, send_verification_email, get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, check_existing_user
 from datetime import timedelta
 
 router = APIRouter()    
@@ -81,3 +82,49 @@ async def login(form_data: LoginRequest, db: Session = Depends(get_db)):
 
     return response_data
 
+@router.get("/auth/me", response_model=FreelancerResponse)
+async def read_current_user(current_user: Freelancer = Depends(get_current_user)):
+    """
+    This endpoint returns the current user's information.
+    It ensures the user info is always fresh by querying the database.
+    """
+    return current_user
+
+@router.post("/token")
+async def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(), 
+    db: Session = Depends(get_db)
+):
+    """
+    This endpoint is used for the OAuth2 flow (Swagger UI).
+    It accepts form data (username and password) and returns the access token.
+    """
+    # Use form_data.username as the email
+    existing_user, user_type = await check_existing_user(db, form_data.username)
+    
+    if existing_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not verify_password(form_data.password, existing_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": existing_user.email}, expires_delta=access_token_expires
+    )
+
+    response_data = {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user_type": user_type,
+    }
+
+    if user_type == "qa_member":
+        response_data["initial_password"] = existing_user.initial_password
+        response_data["user_id"] = existing_user.qa_member_id
+
+    return response_data

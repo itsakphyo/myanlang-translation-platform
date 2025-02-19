@@ -12,7 +12,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { LanguagePair } from '@/types/language';
-import { useLanguagePairs } from '@/hooks/useTask';
+import { useTask } from '@/hooks/useTask';
 
 interface LanguageSelectDialogProps {
   open: boolean;
@@ -32,7 +32,7 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { getAllLanguagePairs } = useLanguagePairs();
+  const { getAllLanguagePairs } = useTask();
   const language_pairs: LanguagePair[] = getAllLanguagePairs.data ?? [];
 
   // Reset selection when language pairs change.
@@ -49,7 +49,7 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
       // Remove fullScreen to keep the dialog responsive on mobile
       sx={{
         '& .MuiDialog-paper': {
-          width: isMobile ? '90%' : 'auto',      // 90% width on mobile, auto on larger screens
+          width: isMobile ? '90%' : '500px',      // 90% width on mobile, auto on larger screens
           maxWidth: isMobile ? '90%' : '500px',    // 90% max width on mobile, 500px on larger screens
           margin: '16px auto',                    // Centered with margin on all screens
           borderRadius: '8px',                     // Consistent border radius

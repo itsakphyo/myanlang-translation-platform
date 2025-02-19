@@ -5,7 +5,7 @@ from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends, status
 from ..core.database import get_db
 from ..core.config import get_settings
 from ..schemas.freelancer import Freelancer
@@ -30,7 +30,7 @@ conf = ConnectionConfig(
 )
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/register/token")
 
 def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
@@ -78,3 +78,33 @@ async def check_existing_user(db: Session, email: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")
+
+async def get_current_user(
+    token: str = Depends(oauth2_scheme), 
+    db: Session = Depends(get_db)
+):
+    # Exception to raise if credentials are invalid
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
+    try:
+        # Decode the JWT token
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            # If the token payload doesn't have an email, raise an error
+            raise credentials_exception
+    except JWTError:
+        # Any error in decoding the token results in an authentication error
+        raise credentials_exception
+
+    # Query the database for the user with the provided email
+    user = db.query(Freelancer).filter(Freelancer.email == email).first()
+    if user is None:
+        raise credentials_exception
+    
+    # Return the user object, which will be passed to endpoints that depend on this function
+    return user

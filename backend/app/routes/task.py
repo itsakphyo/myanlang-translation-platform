@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from ..schemas.task import Task
 from ..schemas.job import Job
 from ..schemas.language import Language
-from ..schemas.task import Task
 import pandas as pd
 import io
 
@@ -67,13 +66,11 @@ logger = logging.getLogger(__name__)
 @router.get("/get_all_languages_pairs")
 async def get_all_languages_pairs(db: Session = Depends(get_db)):
     try:
-        unique_pairs_diff = db.query(Task.source_language_id, Task.target_language_id).filter(Task.source_language_id != Task.target_language_id).distinct()
+        unique_pairs_diff = db.query(Job.source_language_id, Job.target_language_id).filter(Job.source_language_id != Job.target_language_id, Job.is_assessment == "t").distinct()
 
-        unique_pairs_same = db.query(Task.source_language_id, Task.target_language_id).filter(Task.source_language_id == Task.target_language_id).distinct()
+        unique_pairs_same = db.query(Job.source_language_id, Job.target_language_id).filter(Job.source_language_id == Job.target_language_id, Job.is_assessment == "t").distinct()
 
         unique_pairs = unique_pairs_diff.union(unique_pairs_same).all()
-
-        print("Pair:",unique_pairs)
 
         if not unique_pairs:
             logger.warning("No language pairs found.")
@@ -91,6 +88,8 @@ async def get_all_languages_pairs(db: Session = Depends(get_db)):
         # Convert language IDs to names, handling missing IDs
         language_pairs = [
             {
+                "source_id": pair[0],
+                "target_id": pair[1],
                 "source": languages.get(pair[0], "unknown"),
                 "target": languages.get(pair[1], "unknown")
             }

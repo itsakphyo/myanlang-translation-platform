@@ -5,6 +5,8 @@ export interface Language {
 
 
 export interface LanguagePair {
+  source_id: number;
+  target_id: number;
   source: string;
   target: string;
 }

@@ -56,6 +56,7 @@ class LoginRequest(BaseModel):
     password: str
 
 class FreelancerResponse(BaseModel):
+    freelancer_id: int
     full_name: str
     email: EmailStr
     age: int

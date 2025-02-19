@@ -183,6 +183,7 @@ export default function TranslationTaskPage() {
           onClose={() => setDialogOpen(false)}
           onConfirm={(pair) => {
             setSelectedLanguagePair(pair);
+            console.log('Selected Language Pair:', pair);
             setDialogOpen(false);
           }}
         />

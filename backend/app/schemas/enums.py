@@ -34,3 +34,7 @@ class WithdrawalStatus(Enum):
 class AssTaskStatus(Enum):
     UNDER_REVIEW = "under_review"
     COMPLETE = "complete"
+
+class AssSubmission(Enum):
+    UNDER_REVIEW = "under_review"
+    COMPLETE = "complete"
