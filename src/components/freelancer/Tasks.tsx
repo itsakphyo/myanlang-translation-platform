@@ -352,7 +352,7 @@ export default function TranslationTaskPage() {
           )}
 
         {takingAssessment && tasks && (
-          <AssTaskTranslationInterface tasks={tasks} onClose={() => { setTakingAssessment(false); setSelectedLanguagePair(null); }} /> // when this dialog is closed, setTakingAssessment(false) and setSelectedLanguagePair(null) should be called
+          <AssTaskTranslationInterface tasks={tasks} freelancerId={user.freelancer_id} onClose={() => { setTakingAssessment(false); setSelectedLanguagePair(null); }} /> // when this dialog is closed, setTakingAssessment(false) and setSelectedLanguagePair(null) should be called
         )}
       </Container>
     </ThemeProvider>

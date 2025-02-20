@@ -36,7 +36,7 @@ const UserProfile = () => {
   }
 
   return (
-    <Box sx={{ width: '100%', backgroundColor: '#f5f5f5' }}>
+    <Box sx={{ width: '100%', backgroundColor: '#f5f5f5',     minHeight: '100vh', height: 'auto',}}>
       {/* Full-Width Header */}
       <Box
         sx={{

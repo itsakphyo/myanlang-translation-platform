@@ -129,7 +129,7 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
             }}
           >
             <AccountCircleIcon
-              style={{ fontSize: 40, color: theme.palette.primary.main, marginLeft: '10px' }}
+              style={{ fontSize: 40, color: '#4f4f4f', marginLeft: '10px' }}
             />
           </Box>
         ),

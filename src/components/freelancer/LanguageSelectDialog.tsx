@@ -10,6 +10,7 @@ import {
   Button,
   useMediaQuery,
   useTheme,
+  Box,
 } from '@mui/material';
 import { LanguagePair } from '@/types/language';
 import { useTask } from '@/hooks/useTask';
@@ -20,10 +21,10 @@ interface LanguageSelectDialogProps {
   onConfirm: (pair: LanguagePair) => void;
 }
 
-const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({ 
-  open, 
-  onClose, 
-  onConfirm 
+const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
+  open,
+  onClose,
+  onConfirm
 }) => {
 
   const [selectedPairIndex, setSelectedPairIndex] = useState<number>(0);
@@ -43,8 +44,8 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
   }, [language_pairs]);
 
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={onClose}
       // Remove fullScreen to keep the dialog responsive on mobile
       sx={{
@@ -66,16 +67,22 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
             >
               {language_pairs.map((pair, index) => (
                 <MenuItem key={index} value={index}>
-                  {`${pair.source.charAt(0).toUpperCase() + pair.source.slice(1)} → ${
-                    pair.target.charAt(0).toUpperCase() + pair.target.slice(1)
-                  }`}
+                  <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+                    <Box sx={{ flex: 1, textAlign: 'left' }}>
+                      {pair.source.charAt(0).toUpperCase() + pair.source.slice(1)}
+                    </Box>
+                    <Box sx={{ mx: 1 }}>→</Box>
+                    <Box sx={{ flex: 1, textAlign: 'right' , marginRight: '10px'}}>
+                      {pair.target.charAt(0).toUpperCase() + pair.target.slice(1)}
+                    </Box>
+                  </Box>
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-          <Button 
-            fullWidth 
-            variant="contained" 
+          <Button
+            fullWidth
+            variant="contained"
             onClick={() => {
               onConfirm(language_pairs[selectedPairIndex]);
               onClose();

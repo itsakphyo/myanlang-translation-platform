@@ -1,5 +1,4 @@
 export interface AssTask {
-
     task_id: number;
     instruction: string;
     max_time_per_task: number;
@@ -10,3 +9,8 @@ export interface AssTask {
 
 }
 
+export interface AssessmentAttempt {
+    freelancer_id: number;
+    task_id: number;
+    submission_text: string;
+}
