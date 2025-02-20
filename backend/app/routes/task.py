@@ -108,3 +108,63 @@ async def get_all_languages_pairs(db: Session = Depends(get_db)):
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
+from sqlalchemy.orm import aliased
+
+@router.get("/get_assessment_tasks_up_to_5")
+async def get_assessment_tasks_up_to_5(source_language_id: int, target_language_id: int, db: Session = Depends(get_db)):
+    try:
+        # Define table aliases for source and target languages
+        SourceLanguage = aliased(Language)
+        TargetLanguage = aliased(Language)
+
+        # Join Task with Job and Language tables to fetch language names
+        tasks = (
+            db.query(
+                Task.task_id,
+                Task.source_text,
+                Task.translated_text,
+                Task.max_time_per_task,
+                Job.instructions.label("instruction"),
+                SourceLanguage.language_name.label("source_language_name"),
+                TargetLanguage.language_name.label("target_language_name"),
+            )
+            .join(Job, Task.job_id == Job.job_id)
+            .join(SourceLanguage, Task.source_language_id == SourceLanguage.language_id)
+            .join(TargetLanguage, Task.target_language_id == TargetLanguage.language_id)
+            .filter(
+                Task.source_language_id == source_language_id,
+                Task.target_language_id == target_language_id,
+                Task.is_assessment == "t"
+            )
+            .limit(5)
+            .all()
+        )
+
+        if not tasks:
+            logger.warning("No pending assessment tasks found.")
+            return []
+
+        # Convert results to dictionaries
+        task_dicts = [
+            {
+                "task_id": t.task_id,
+                "instruction": t.instruction,
+                "max_time_per_task": t.max_time_per_task,
+                "source_text": t.source_text,
+                "translated_text": t.translated_text,
+                "source_language_name": t.source_language_name,
+                "target_language_name": t.target_language_name,
+            }
+            for t in tasks
+        ]
+
+        logger.info(f"Retrieved {len(task_dicts)} assessment tasks.")
+        return task_dicts
+
+    except SQLAlchemyError as e:
+        logger.error(f"Database error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error. Please try again later.")
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")

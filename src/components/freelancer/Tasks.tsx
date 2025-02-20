@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { useCurrentUser } from '@/hooks/useAuth';
 import { useFreelancerLanguagePair } from "@/hooks/useLanguagePair";
 import { LanguagePair } from "@/types/language";
+import { useAssessmentTasks } from "@/hooks/useAssTask";
+import AssTaskTranslationInterface from "@/components/freelancer/AssTaskTranslationInterface";
 
 const theme = createTheme({
   palette: {
@@ -40,6 +42,7 @@ const theme = createTheme({
 export default function TranslationTaskPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedLanguagePair, setSelectedLanguagePair] = useState<LanguagePair | null>(null);
+  const [takingAssessment, setTakingAssessment] = useState(false);
   const { data: user } = useCurrentUser();
   const navigate = useNavigate();
 
@@ -62,6 +65,16 @@ export default function TranslationTaskPage() {
     languagePairParams?.targetLanguageId || 0
   );
 
+  const { data: tasks, isLoading: tasksLoading } = useAssessmentTasks(languagePairParams?.sourceLanguageId || 0,
+    languagePairParams?.targetLanguageId || 0);
+
+  const handleGetAsstask = () => {
+    console.log("Tasks:", tasks);
+    console.log("Loading:", tasksLoading);
+  }
+
+  // const { data: tasks, isLoading } = useAssessmentTasks(1, 1);
+
   // Log the query results whenever they change.
   useEffect(() => {
     if (languagePairParams) {
@@ -82,6 +95,11 @@ export default function TranslationTaskPage() {
   };
 
   const getLanguagePairStatusMessage = () => {
+
+    if (takingAssessment) {
+      return null
+    }
+
     // Case 1: No language pair selected.
     if (!selectedLanguagePair) {
       return {
@@ -137,19 +155,28 @@ export default function TranslationTaskPage() {
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (selectedLanguagePair &&
-        !languagePairLoading &&
-        languagePairData &&
-        !('message' in languagePairData) &&
-        languagePairData.status === 'complete' &&
-        (languagePairData.accuracy_rate ?? 0) > 50) {
+      if (
+        takingAssessment ||  
+        (selectedLanguagePair &&
+          !languagePairLoading &&
+          languagePairData &&
+          !("message" in languagePairData) &&
+          languagePairData.status === "complete" &&
+          (languagePairData.accuracy_rate ?? 0) > 50)
+      ) {
         event.preventDefault();
-        event.returnValue = ''; // Required for Chrome
+        event.returnValue = ""; // Required for Chrome
       }
     };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [selectedLanguagePair]);
+  
+    window.addEventListener("beforeunload", handleBeforeUnload, { capture: true });
+  
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload, { capture: true });
+    };
+  }, [selectedLanguagePair, takingAssessment]);
+  
+  
 
   const handleShowNext = () => {
     console.log("Loading the next translation task.");
@@ -196,7 +223,7 @@ export default function TranslationTaskPage() {
               onClick={() => {
                 if (!selectedLanguagePair ||
                   (selectedLanguagePair &&
-                    languagePairData &&
+                    languagePairData && !takingAssessment &&
                     (languagePairData.status !== 'complete' || (languagePairData.accuracy_rate ?? 0) <= 50))) {
                   navigate('/dashboard');
                 } else {
@@ -214,7 +241,7 @@ export default function TranslationTaskPage() {
               // 2. Selected language pair doesn't meet requirements
               if (!selectedLanguagePair ||
                 (selectedLanguagePair &&
-                  languagePairData &&
+                  languagePairData && !takingAssessment &&
                   (languagePairData.status !== 'complete' || (languagePairData.accuracy_rate ?? 0) <= 50))) {
                 setDialogOpen(true);
               } else {
@@ -243,19 +270,17 @@ export default function TranslationTaskPage() {
             {selectedLanguagePair ? (
               `${selectedLanguagePair.source.charAt(0).toUpperCase() + selectedLanguagePair.source.slice(1)}`
             ) : (
-              'Select Source Language'
+              'Choose Source Language '
             )}
-            <ArrowRightAlt sx={{ mx: 1 }} />
+            {selectedLanguagePair && <ArrowRightAlt sx={{ mx: 1 }} />}
             {selectedLanguagePair ? (
               `${selectedLanguagePair.target.charAt(0).toUpperCase() + selectedLanguagePair.target.slice(1)}`
             ) : (
-              'Target Language Here'
+              'and Target Language'
             )}
             <ArrowDropDown sx={{ ml: 1 }} />
           </Button>
         </Box>
-
-
 
         {message && (
           <Box
@@ -273,18 +298,18 @@ export default function TranslationTaskPage() {
               {message.body}
             </Typography>
             {/* Show Assessment Button only when needed */}
-            {showAssessmentButton && (
+            {showAssessmentButton && selectedLanguagePair && (
               <Button
                 variant="contained"
                 color="primary"
                 sx={{ mt: 2 }}
-                onClick={() => window.location.href = '/assessment'}
+                onClick={() => { setTakingAssessment(true); handleGetAsstask(); }}
               >
                 Take Assessment Test
               </Button>
             )}
             {/* Show Appeal Button only when needed */}
-            {showAppealButton && (
+            {showAppealButton && selectedLanguagePair && (
               <Button
                 variant="contained"
                 color="secondary"
@@ -325,6 +350,10 @@ export default function TranslationTaskPage() {
               onShowNext={handleShowNext}
             />
           )}
+
+        {takingAssessment && tasks && (
+          <AssTaskTranslationInterface tasks={tasks} onClose={() => { setTakingAssessment(false); setSelectedLanguagePair(null); }} /> // when this dialog is closed, setTakingAssessment(false) and setSelectedLanguagePair(null) should be called
+        )}
       </Container>
     </ThemeProvider>
   );

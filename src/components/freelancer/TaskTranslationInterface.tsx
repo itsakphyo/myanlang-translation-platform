@@ -6,7 +6,6 @@ import {
   Typography,
   LinearProgress,
   TextField,
-  InputAdornment,
   Button,
 } from '@mui/material';
 import Paid from '@mui/icons-material/Paid';
