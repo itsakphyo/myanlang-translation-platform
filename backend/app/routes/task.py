@@ -283,7 +283,7 @@ def submit_task(
     if elapsed > task.max_time_per_task:
         task.task_status = "OPEN"
         db.commit()
-        raise HTTPException(status_code=400, detail="Time to complete the task has expired")
+        return SubmitTaskResponse(message="Time to complete the task has expired")
     
     task.translated_text = submission.translated_text
     task.submitted_at = now
