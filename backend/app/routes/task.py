@@ -2,11 +2,19 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, B
 from fastapi.responses import StreamingResponse
 from ..core.database import get_db
 from sqlalchemy.orm import Session
-from ..schemas.task import Task
+from ..schemas.task import *
 from ..schemas.job import Job
 from ..schemas.language import Language
 import pandas as pd
 import io
+from sqlalchemy.exc import SQLAlchemyError
+import logging
+from datetime import datetime, timezone
+from sqlalchemy import text
+from zoneinfo import ZoneInfo
+from sqlalchemy.orm import aliased
+
+logger = logging.getLogger(__name__)
 
 
 router = APIRouter()
@@ -56,12 +64,7 @@ async def download_tasks(job_id: int, db: Session = Depends(get_db)):
     response_stream = io.StringIO(csv_data)
     return StreamingResponse(response_stream, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=tasks.csv"})
 
-from fastapi import HTTPException, Depends
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
-import logging
 
-logger = logging.getLogger(__name__)
 
 @router.get("/get_all_languages_pairs")
 async def get_all_languages_pairs(db: Session = Depends(get_db)):
@@ -168,3 +171,124 @@ async def get_assessment_tasks_up_to_5(source_language_id: int, target_language_
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+
+
+
+@router.get("/task/open", response_model=OpenTaskResponse)
+def get_open_task(
+    params: OpenTaskRequest = Depends(),  # accepts query parameters
+    db: Session = Depends(get_db)
+):
+    try:
+        now = datetime.now(timezone.utc)
+        SourceLanguage = aliased(Language)
+        TargetLanguage = aliased(Language)
+
+        task_data = (
+            db.query(
+                    Task.task_id,
+                    Task.source_text,
+                    Task.translated_text,
+                    Task.max_time_per_task,
+                    Job.instructions.label("instruction"),
+                    SourceLanguage.language_name.label("source_language_name"),
+                    TargetLanguage.language_name.label("target_language_name"),
+                    Task.task_status,   # For checking the status condition
+                )
+                .join(Job, Task.job_id == Job.job_id)
+                .join(SourceLanguage, Task.source_language_id == SourceLanguage.language_id)
+                .join(TargetLanguage, Task.target_language_id == TargetLanguage.language_id)
+                .filter(
+                    Task.source_language_id == params.source_language_id,
+                    Task.target_language_id == params.target_language_id,
+                    Task.is_assessment == "f",
+                    (
+                        (Task.task_status == "OPEN")
+                        |
+                        (
+                            (Task.task_status == "ASSIGNED_TO_FL") &
+                            (Task.assigned_at.isnot(None)) &
+                            text("(task.assigned_at + (task.max_time_per_task || ' minutes')::interval) < now()")
+                        )
+                    )
+                )
+                .order_by(Task.task_id)
+                .with_for_update(skip_locked=True)
+                .first()
+            )
+        
+        if not task_data:
+            raise HTTPException(status_code=404, detail="No available task found")
+        
+        task_to_update = db.query(Task).filter(Task.task_id == task_data.task_id).first()
+        task_to_update.assigned_freelancer_id = params.freelancer_id
+        task_to_update.assigned_at = now
+        task_to_update.task_status = "ASSIGNED_TO_FL"
+        db.commit()
+
+        return OpenTaskResponse(
+            task_id=task_data.task_id,
+            instruction=task_data.instruction,
+            max_time_per_task=task_data.max_time_per_task,
+            source_text=task_data.source_text,
+            translated_text=task_data.translated_text,
+            source_language_name=task_data.source_language_name,
+            target_language_name=task_data.target_language_name,
+        )
+
+    except SQLAlchemyError as e:
+        logger.error(f"Database error: {str(e)}")
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Internal server error. Please try again later.")
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        db.rollback()
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+
+# ---------- Route 2: Submit a Task ----------
+
+
+@router.post("/task/submit", response_model=SubmitTaskResponse)
+def submit_task(
+    submission: SubmitTaskRequest,
+    db: Session = Depends(get_db)
+):
+    now = datetime.now(timezone.utc)
+    
+    task = db.query(Task).filter(
+        Task.task_id == submission.task_id,
+        Task.assigned_freelancer_id == submission.freelancer_id,
+        Task.task_status == "ASSIGNED_TO_FL"
+    ).first()
+    
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found or not assigned to you")
+    
+    if task.assigned_at is None:
+        raise HTTPException(status_code=400, detail="Task has no assignment time set")
+    
+    # Assume your stored time is in local time (e.g., 'Asia/Bangkok' for UTC+7)
+    local_tz = ZoneInfo("Asia/Bangkok")
+    # First, treat the naive time as local
+    assigned_local = task.assigned_at.replace(tzinfo=local_tz)
+    # Convert to UTC
+    assigned_at_aware = assigned_local.astimezone(timezone.utc)
+    
+    elapsed = (now - assigned_at_aware).total_seconds() / 60  # elapsed time in minutes
+    print("Elapsed time in minutes:", elapsed)
+    print("Max time per task:", task.max_time_per_task)
+    print("Aware assigned time:", assigned_at_aware)
+    
+    if elapsed > task.max_time_per_task:
+        task.task_status = "OPEN"
+        db.commit()
+        raise HTTPException(status_code=400, detail="Time to complete the task has expired")
+    
+    task.translated_text = submission.translated_text
+    task.submitted_at = now
+    task.task_status = "UNDER_REVIEW"
+    db.commit()
+    
+    return SubmitTaskResponse(message="Task submitted successfully")
+

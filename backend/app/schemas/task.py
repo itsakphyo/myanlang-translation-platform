@@ -3,7 +3,8 @@ from sqlalchemy.orm import relationship
 from .base import Base
 from .job import JobStatus
 from .enums import TaskStatus
-
+from pydantic import BaseModel
+from typing import Optional
 
 class Task(Base):
     __tablename__ = "task"
@@ -37,3 +38,24 @@ class Task(Base):
     qa_assigned = relationship("QAMember", foreign_keys=[qa_assigned_id])
     qa_reviewed = relationship("QAMember", foreign_keys=[qa_reviewed_by_id])
 
+class OpenTaskRequest(BaseModel):
+    freelancer_id: int
+    source_language_id: int
+    target_language_id: int
+
+class OpenTaskResponse(BaseModel):
+    task_id: int
+    instruction: str
+    max_time_per_task: int
+    source_text: str
+    translated_text: Optional[str]
+    source_language_name: str
+    target_language_name: str
+
+class SubmitTaskRequest(BaseModel):
+    freelancer_id: int
+    task_id: int
+    translated_text: str
+
+class SubmitTaskResponse(BaseModel):
+    message: str
