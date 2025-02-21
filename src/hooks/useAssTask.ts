@@ -4,7 +4,7 @@ import { AssTask } from "@/types/task"; // Adjust the import path as needed
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const useAssessmentTasks = (source_language_id: number, target_language_id: number) => {
+export const useAssessmentTasks = (source_language_id: number, target_language_id: number,   enabled?: boolean) => {
   return useQuery<AssTask[]>({
     queryKey: ["assessmentTasks", source_language_id, target_language_id],
     queryFn: async (): Promise<AssTask[]> => {
@@ -14,5 +14,6 @@ export const useAssessmentTasks = (source_language_id: number, target_language_i
       // Using the generic type ensures that response.data is typed as AssTask[]
       return response.data;
     },
+    enabled: enabled,
   });
 };

@@ -20,7 +20,8 @@ export interface LanguagePairResponse {
 export const useFreelancerLanguagePair = (
   freelancerId: number,
   sourceLanguageId: number,
-  targetLanguageId: number
+  targetLanguageId: number,
+  enabled?: boolean
 ): UseQueryResult<LanguagePairResponse, Error> => {
   return useQuery<LanguagePairResponse, Error>({
     // Query key ensures caching per unique combination of parameters.
@@ -36,6 +37,6 @@ export const useFreelancerLanguagePair = (
       return response.data;
     },
     // Enable the query only if all parameters are provided.
-    enabled: Boolean(freelancerId && sourceLanguageId && targetLanguageId),
+    enabled: enabled,
   });
 };

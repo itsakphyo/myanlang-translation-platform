@@ -176,7 +176,7 @@ async def get_assessment_tasks_up_to_5(source_language_id: int, target_language_
 
 @router.get("/task/open", response_model=OpenTaskResponse)
 def get_open_task(
-    params: OpenTaskRequest = Depends(),  # accepts query parameters
+    params: OpenTaskRequest = Depends(),
     db: Session = Depends(get_db)
 ):
     try:

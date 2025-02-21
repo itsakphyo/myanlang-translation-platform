@@ -64,8 +64,6 @@ router = APIRouter()
     # when qa reviewing assessment attempt, update for both same language pair
     # when qa reviewing assessment attempt, update for both same language pair
 
-router = APIRouter()
-
 def add_language_pair(db: Session, freelancer_id: int, source_language_id: int, target_language_id: int):
     """Helper function to add a freelancer's language pair if it doesn't already exist."""
     exists = db.query(FreelancerLanguagePair).filter_by(
