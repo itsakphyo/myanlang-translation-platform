@@ -275,7 +275,8 @@ def submit_task(
     # Convert to UTC
     assigned_at_aware = assigned_local.astimezone(timezone.utc)
     
-    elapsed = (now - assigned_at_aware).total_seconds() / 60  # elapsed time in minutes
+    elapsed_initial = (now - assigned_at_aware).total_seconds() / 60  # elapsed time in minutes
+    elapsed = elapsed_initial + 1 
     print("Elapsed time in minutes:", elapsed)
     print("Max time per task:", task.max_time_per_task)
     print("Aware assigned time:", assigned_at_aware)
