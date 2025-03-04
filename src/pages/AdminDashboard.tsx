@@ -16,7 +16,7 @@ import logo from '@/assets/images/logo.png';
 import { useNavigate } from 'react-router-dom';
 import TaskManage from '@/components/admin/AssTaskManage';
 
-export default function DashboardLayoutBranding({ window }: { window?: () => Window }) {
+export default function AdminDashboard({ window }: { window?: () => Window }) {
   const router = useDemoRouter('/dashboard');
   const currentSegment = router.pathname.split('/').pop() || 'job-dashboard';
   const navigate = useNavigate();

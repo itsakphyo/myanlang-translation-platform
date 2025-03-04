@@ -76,7 +76,10 @@ async def login(form_data: LoginRequest, db: Session = Depends(get_db)):
     }
 
     # Ensure initial_password is returned only for QA members
+    if user_type == "freelancer":
+        response_data["full_name"] = existing_user.full_name
     if user_type == "qa_member":
+        response_data["full_name"] = existing_user.full_name
         response_data["initial_password"] = existing_user.initial_password
         response_data["user_id"] = existing_user.qa_member_id
 

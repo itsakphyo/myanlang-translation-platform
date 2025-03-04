@@ -25,6 +25,7 @@ export default function Login() {
       const response = await login.mutateAsync(formData);
       
       if (response.access_token && response.token_type) {
+        localStorage.setItem('userName', response.full_name);
         localStorage.setItem('token', response.access_token);
         localStorage.setItem('userType', response.user_type);
         

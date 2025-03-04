@@ -35,5 +35,5 @@ app.include_router(qa_member_router, tags=["qa_member"], prefix="/qa_member")
 app.include_router(freelancer_router, tags=["freelancer"], prefix="/freelancer")
 app.include_router(assessment_router, tags=["assessment"], prefix="/assessment")
 
-if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
+# if __name__ == "__main__":
+#     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

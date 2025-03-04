@@ -8,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 
 export const useTask = () => {
+  
   // Example query for all language pairs.
   const getAllLanguagePairs = useQuery<LanguagePair[], Error>({
     queryKey: ["languagePairs"],
@@ -17,8 +18,6 @@ export const useTask = () => {
     },
   });
 
-  // The inner hook for open tasks.
-  // Here we use Omit to remove `queryKey` from the options type.
   const useOpenTask = (
     freelancerId: number,
     sourceLanguageId: number,

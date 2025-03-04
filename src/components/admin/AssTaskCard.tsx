@@ -92,7 +92,7 @@ export default function AssTaskCard({ job }: AssTaskCardProps) {
 
   const headerStyle = {
     p: 2,
-    flexGrow: 1,
+    width: isMobile ? '100%' : 250,
     background: 'linear-gradient(135deg, #00ACC1 0%, #26C6DA 100%)',
     color: theme.palette.primary.contrastText,
     display: 'flex',

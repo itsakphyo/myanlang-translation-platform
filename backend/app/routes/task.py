@@ -3,8 +3,12 @@ from fastapi.responses import StreamingResponse
 from ..core.database import get_db
 from sqlalchemy.orm import Session
 from ..schemas.task import *
+from ..schemas.enums import TaskStatus as TaskStatus
+from ..schemas.enums import AssTaskStatus as AssTaskStatus
+from ..schemas.assessment_attempt import AssessmentAttempt
 from ..schemas.job import Job
 from ..schemas.language import Language
+from sqlalchemy.sql import func
 import pandas as pd
 import io
 from sqlalchemy.exc import SQLAlchemyError
@@ -293,3 +297,71 @@ def submit_task(
     
     return SubmitTaskResponse(message="Task submitted successfully")
 
+@router.get("/get_all_task_info")
+def get_all_task_info(db: Session = Depends(get_db)):
+    # Query for Assessment Tasks:
+    # Join AssessmentAttempt with Task to obtain the language pair
+    assessment_total = (
+        db.query(func.count(AssessmentAttempt.attempt_id))
+          .join(Task, Task.task_id == AssessmentAttempt.task_id)
+          .filter(AssessmentAttempt.attempt_status == AssTaskStatus.UNDER_REVIEW)
+          .scalar()
+    )
+
+    assessment_pairs = (
+        db.query(
+            func.least(Task.source_language_id, Task.target_language_id).label("lang1"),
+            func.greatest(Task.source_language_id, Task.target_language_id).label("lang2"),
+            func.count(AssessmentAttempt.attempt_id).label("pair_count")
+        )
+        .join(Task, Task.task_id == AssessmentAttempt.task_id)
+        .filter(AssessmentAttempt.attempt_status == AssTaskStatus.UNDER_REVIEW)
+        .group_by("lang1", "lang2")
+        .all()
+    )
+
+    # Query for Submission Tasks:
+    # From Task table where is_assessment is False and task_status is UNDER_REVIEW
+    submission_total = (
+        db.query(func.count(Task.task_id))
+          .filter(Task.is_assessment.is_(False), Task.task_status == TaskStatus.UNDER_REVIEW)
+          .scalar()
+    )
+
+    submission_pairs = (
+        db.query(
+            func.least(Task.source_language_id, Task.target_language_id).label("lang1"),
+            func.greatest(Task.source_language_id, Task.target_language_id).label("lang2"),
+            func.count(Task.task_id).label("pair_count")
+        )
+        .filter(Task.is_assessment.is_(False), Task.task_status == TaskStatus.UNDER_REVIEW)
+        .group_by("lang1", "lang2")
+        .all()
+    )
+
+    result = {
+        "assessmenttask": {
+            "total": assessment_total,
+            "task_by_language_pair": [
+                {
+                    "sourcelanguage_id": row.lang1,
+                    "targetlanguage_id": row.lang2,
+                    "count": row.pair_count
+                }
+                for row in assessment_pairs
+            ]
+        },
+        "task": {
+            "total": submission_total,
+            "task_by_language_pair": [
+                {
+                    "sourcelanguage_id": row.lang1,
+                    "targetlanguage_id": row.lang2,
+                    "count": row.pair_count
+                }
+                for row in submission_pairs
+            ]
+        }
+    }
+
+    return result

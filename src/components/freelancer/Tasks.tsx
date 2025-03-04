@@ -393,86 +393,12 @@ export default function TranslationTaskPage() {
                 sourceLanguageId: pair.source_id,
                 targetLanguageId: pair.target_id,
               });
-              handleGetOpenTask(); // Ensure this is called the thins is this is not calling or callijg late
+              handleGetOpenTask();
             }
           }}
         />
-
-
-        {/* Task Translation Interface */}
-        {/* {selectedLanguagePair &&
-          !languagePairLoading &&
-          languagePairData &&
-          !("message" in languagePairData) &&
-          languagePairData.status === "complete" &&
-          (languagePairData.accuracy_rate ?? 0) > 50 && (
-            <>
-              {taskLoading ? (
-                <LinearProgress />
-              ) : task ? (
-                <TaskTranslationInterface
-                  task={task}
-                  onClose={() => setSelectedLanguagePair(null)}
-                  onShowNext={handleShowNext}
-                />
-              ) : (
-                <Box sx={{ p: 4, textAlign: "center" }}>
-                  <Typography variant="body1" color="error">
-                    No available tasks for this language pair
-                  </Typography>
-                  <Button variant="outlined" sx={{ mt: 2 }} onClick={handleGetOpenTask}>
-                    Retry
-                  </Button>
-                </Box>
-              )}
-              {taskLoading ? (
-                <LinearProgress />
-              ) : task ? (
-                <TaskTranslationInterface
-                  task={task}
-                  onClose={() => setSelectedLanguagePair(null)}
-                  onShowNext={handleShowNext}
-                />
-              ) : (
-                <Box sx={{ p: 4, textAlign: "center" }}>
-                  <Typography variant="body1" color="error">
-                    No available tasks for this language pair
-                  </Typography>
-                  <Button variant="outlined" sx={{ mt: 2 }} onClick={handleGetOpenTask}>
-                    Retry
-                  </Button>
-                </Box>
-              )}
-            </>
-          )} */}
-
-        {/* {selectedLanguagePair &&
-          !languagePairLoading &&
-          languagePairData &&
-          !("message" in languagePairData) &&
-          languagePairData.status === "complete" &&
-          (languagePairData.accuracy_rate ?? 0) > 50 && (
-            <>
-              {taskLoading ? (
-                <LinearProgress />
-              ) : task ? (
-                <TaskTranslationInterface
-                  task={task}
-                  onClose={() => setSelectedLanguagePair(null)}
-                  onShowNext={handleShowNext}
-                />
-              ) : (
-                <Box sx={{ p: 4, textAlign: "center" }}>
-                  <Typography variant="body1" color="error">
-                    No available tasks for this language pair
-                  </Typography>
-                  <Button variant="outlined" sx={{ mt: 2 }} onClick={handleGetOpenTask}>
-                    Retry
-                  </Button>
-                </Box>
-              )}
-            </>
-          )} */}
+        
+        {/* Translation Task Interface */}
         {selectedLanguagePair &&
           !languagePairLoading &&
           languagePairData &&
