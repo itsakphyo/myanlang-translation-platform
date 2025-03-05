@@ -28,6 +28,7 @@ export default function Login() {
         localStorage.setItem('userName', response.full_name);
         localStorage.setItem('token', response.access_token);
         localStorage.setItem('userType', response.user_type);
+        localStorage.setItem('userId', response.userId);
         
         if (response.user_type === "admin") {
           navigate('/admin-dashboard');

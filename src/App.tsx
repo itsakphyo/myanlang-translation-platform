@@ -7,6 +7,7 @@ import CreatePassword from './pages/createQAPassword';
 import QADashboard from './pages/QADashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import TranslationTaskPage from './components/freelancer/Tasks';
+import TaskReviewPage from './components/qa/TaskReviewPage';
 
 function App() {
   return (
@@ -52,6 +53,14 @@ function App() {
           element={
             <ProtectedRoute>
               <TranslationTaskPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/qa-dashboard/review-task"
+          element={
+            <ProtectedRoute>
+              <TaskReviewPage />
             </ProtectedRoute>
           }
         />

@@ -100,7 +100,7 @@ export default function QADashboard() {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => navigate('/qa-dashboard/review-submissions')}
+                  onClick={() => navigate('/qa-dashboard/review-task')}
                   sx={{
                     py: 2,
                     px: 4,
@@ -148,7 +148,7 @@ export default function QADashboard() {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => navigate('/qa-dashboard/review-assessments')}
+                  onClick={() => navigate('/qa-dashboard/review-task')}
                   sx={{
                     py: 2,
                     px: 4,

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, Enum, Boolean
 from sqlalchemy.orm import relationship
 from .base import Base
 from .enums import AssTaskStatus
@@ -13,6 +13,7 @@ class AssessmentAttempt(Base):
     freelancer_id = Column(Integer, ForeignKey("freelancer.freelancer_id"), nullable=False, index=True)
     submission_text = Column(String, nullable=True) 
     attempt_status = Column(Enum(AssTaskStatus, name="ass_task_status"), nullable=False, default=AssTaskStatus.UNDER_REVIEW)
+    decision = Column(Boolean, nullable=True)
 
     # Use string-based relationships to avoid circular imports
     # task = relationship("Task", back_populates="assessment_attempts")

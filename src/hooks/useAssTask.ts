@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AssTask } from "@/types/task"; // Adjust the import path as needed
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -16,4 +16,20 @@ export const useAssessmentTasks = (source_language_id: number, target_language_i
     },
     enabled: enabled,
   });
+};
+
+export const useDataCheckTasks = () => {
+
+  const sentData = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await axios.post(`${API_URL}/assessment/check_submit_data`, data, {
+        headers: {
+          'Content-Type': 'application/json',  // Ensure the Content-Type is set to application/json
+        }
+      });
+      return response.data;
+    },
+  });
+
+  return sentData;
 };

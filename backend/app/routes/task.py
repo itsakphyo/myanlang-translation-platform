@@ -365,3 +365,61 @@ def get_all_task_info(db: Session = Depends(get_db)):
     }
 
     return result
+
+@router.get("/get_assessment_tasks")
+def get_assessment_tasks(source_language_id: int, target_language_id: int, db: Session = Depends(get_db)):
+    """
+    Returns grouped assessment tasks for each unique combination of
+    (freelancer_id, source_language_id, target_language_id) where the assessment
+    attempt status is UNDER_REVIEW.
+    """
+    try:
+        # Create aliases for the Language table for source and target languages.
+        source_lang_alias = aliased(Language)
+        target_lang_alias = aliased(Language)
+
+        # Query all tasks, assessment attempts, and join with the source and target language tables.
+        results = (
+            db.query(Task, AssessmentAttempt, source_lang_alias, target_lang_alias)
+            .join(AssessmentAttempt, Task.task_id == AssessmentAttempt.task_id)
+            .join(source_lang_alias, Task.source_language_id == source_lang_alias.language_id)
+            .join(target_lang_alias, Task.target_language_id == target_lang_alias.language_id)
+            .filter(
+                Task.source_language_id == source_language_id,
+                Task.target_language_id == target_language_id,
+                AssessmentAttempt.attempt_status == AssTaskStatus.UNDER_REVIEW
+            )
+            .all()
+        )
+
+        if not results:
+            raise HTTPException(
+                status_code=404,
+                detail="No assessment tasks found for the specified language pair"
+            )
+
+        # Group results by the tuple (freelancer_id, source_language_id, target_language_id)
+        grouped_data = {}
+        for task, attempt, src_lang, tgt_lang in results:
+            key = (attempt.freelancer_id, task.source_language_id, task.target_language_id)
+            if key not in grouped_data:
+                grouped_data[key] = {
+                    "userId": attempt.freelancer_id,
+                    "sourceLanguageId": task.source_language_id,
+                    "targetLanguageId": task.target_language_id,
+                    "sourceLanguage": src_lang.language_name,
+                    "targetLanguage": tgt_lang.language_name,
+                    "tasks": []
+                }
+            grouped_data[key]["tasks"].append({
+                "taskId": task.task_id,
+                "originalText": task.source_text,
+                "submittedText": attempt.submission_text
+            })
+
+        # Return the grouped data as a list of objects.
+        return list(grouped_data.values())
+
+    except SQLAlchemyError as e:
+        logger.error(f"Database error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")

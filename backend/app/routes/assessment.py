@@ -49,6 +49,22 @@ from ..core.database import get_db
 from ..schemas.assessment_attempt import AssessmentAttempt, AssessmentAttemptInput
 from ..schemas.freelancer_language_pair import FreelancerLanguagePair
 from ..schemas.task import Task  # ensure Task model is imported
+from typing import Any
+
+from pydantic import BaseModel
+from typing import List
+
+class ReviewData(BaseModel):
+    taskid: int
+    originalText: str
+    submittedText: str
+    status: str
+
+class CheckSubmitRequest(BaseModel):
+    data: List[ReviewData]
+    fl_id: int
+    source_lang_id: int  # Corrected from 'source_lang_id'
+    target_lang_id: int  # Corrected from 'target_lang_id'
 
 router = APIRouter()
     # when qa reviewing assessment attempt, update for both same language pair
@@ -121,7 +137,10 @@ async def create_assessment_attempts(
 
     return {"message": f"{len(attempts)} assessment attempt(s) created successfully"}
 
-
+@router.post("/check_submit_data")
+async def check_submit_data(reviews: CheckSubmitRequest):
+    print(reviews)
+    return {"message": "Data received successfully"}
 
 
     # when qa reviewing assessment attempt, update for both same language pair
