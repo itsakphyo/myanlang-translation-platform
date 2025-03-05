@@ -253,7 +253,7 @@ def get_open_task(
 # ---------- Route 2: Submit a Task ----------
 
 
-@router.post("/task/submit", response_model=SubmitTaskResponse)
+@router.post("/submit", response_model=SubmitTaskResponse)
 def submit_task(
     submission: SubmitTaskRequest,
     db: Session = Depends(get_db)
@@ -291,6 +291,7 @@ def submit_task(
         return SubmitTaskResponse(message="Time to complete the task has expired")
     
     task.translated_text = submission.translated_text
+    task.submitted_by_id = submission.freelancer_id
     task.submitted_at = now
     task.task_status = "UNDER_REVIEW"
     db.commit()

@@ -12,6 +12,7 @@ import Paid from '@mui/icons-material/Paid';
 import AccessTime from '@mui/icons-material/AccessTime';
 import Translate from '@mui/icons-material/Translate';
 import { OpenTask } from "@/types/task";
+import { useTask } from '@/hooks/useTask';
 
 interface TaskTranslationInterfaceProps {
   task: OpenTask | null;
@@ -51,11 +52,14 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
 
   const userId = JSON.parse(localStorage.getItem('userId') || '{}');
 
+  const { submitTask } = useTask();
+
   const handleSubmit = () => {
     if (task) {
-      console.log("Task ID:", task.task_id);
-      console.log("Freelancer ID:", userId);
-      console.log("Translated Text:", translation);
+      submitTask(task.task_id, userId, translation);
+    }
+    else {
+      console.error('Task data is not available.');
     }
   };
 
