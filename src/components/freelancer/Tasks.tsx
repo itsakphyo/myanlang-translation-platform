@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Container, Button, Box, Typography, LinearProgress } from "@mui/material";
 import { Language, ArrowDropDown, ArrowRightAlt } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -49,7 +49,6 @@ export default function TranslationTaskPage() {
   const navigate = useNavigate();
 
   // Query parameters for the open task query.
-  // Note: Initial values are 0 (which we want to avoid in the API call).
   const [queryParams, setQueryParams] = useState<{
     freelancerId: number;
     sourceLanguageId: number;
@@ -66,13 +65,34 @@ export default function TranslationTaskPage() {
     queryParams.freelancerId,
     queryParams.sourceLanguageId,
     queryParams.targetLanguageId,
-    {
-      enabled: false,
-    }
+    { enabled: false }
   );
 
+  // Use a ref to hold the last task's ID (avoids triggering extra renders)
+  const lastTaskIdRef = useRef<number | null>(null);
+  // State for the task to be displayed in the UI.
+  const [currentTask, setCurrentTask] = useState<OpenTask | null>(null);
+
+  // When the language pair changes, clear any stored task info.
+  useEffect(() => {
+    lastTaskIdRef.current = null;
+    setCurrentTask(null);
+  }, [selectedLanguagePair]);
+
+  // When a new task is fetched, update currentTask only if the task's ID is different.
+  useEffect(() => {
+    if (task) {
+      if (lastTaskIdRef.current === null || task.task_id !== lastTaskIdRef.current) {
+        setCurrentTask(task);
+        lastTaskIdRef.current = task.task_id;
+      } else {
+        // The fetched task is the same as the last one; clear the UI.
+        setCurrentTask(null);
+      }
+    }
+  }, [task]);
+
   // Update queryParams when the user triggers a new task.
-  // Note: We no longer call refetch() here because the new state update happens asynchronously.
   const handleGetOpenTask = useCallback(() => {
     if (selectedLanguagePair && user?.freelancer_id) {
       const newQueryParams = {
@@ -80,7 +100,7 @@ export default function TranslationTaskPage() {
         sourceLanguageId: selectedLanguagePair.source_id,
         targetLanguageId: selectedLanguagePair.target_id,
       };
-      console.log("Setting queryParams:", newQueryParams); // Debug log
+      console.log("Setting queryParams:", newQueryParams);
       setQueryParams(newQueryParams);
     }
   }, [selectedLanguagePair, user]);
@@ -92,24 +112,20 @@ export default function TranslationTaskPage() {
       queryParams.sourceLanguageId !== 0 &&
       queryParams.targetLanguageId !== 0
     ) {
-      console.log("Refetching tasks with queryParams:", queryParams); // Debug log
+      console.log("Refetching tasks with queryParams:", queryParams);
       refetch();
     }
   }, [queryParams, refetch]);
-  // State to hold language pair parameters.
+
+  // State for language pair and assessment queries.
   const [languagePairParams, setLanguagePairParams] = useState<{
     freelancerId: number;
     sourceLanguageId: number;
     targetLanguageId: number;
   } | null>(null);
-
-  // Boolean state to control whether the language pair query should run.
   const [languagePairQueryEnabled, setLanguagePairQueryEnabled] = useState(false);
-
-  // Boolean state to control whether the assessment tasks query should run.
   const [assessmentQueryEnabled, setAssessmentQueryEnabled] = useState(false);
 
-  // Fetch language pair data only when explicitly enabled.
   const {
     data: languagePairData,
     isLoading: languagePairLoading,
@@ -122,20 +138,17 @@ export default function TranslationTaskPage() {
     languagePairQueryEnabled
   );
 
-  // Fetch assessment tasks only when explicitly enabled.
   const { data: tasks, isLoading: tasksLoading } = useAssessmentTasks(
     languagePairParams ? languagePairParams.sourceLanguageId : 0,
     languagePairParams ? languagePairParams.targetLanguageId : 0,
     assessmentQueryEnabled
   );
 
-  // Function to log assessment tasks (optional).
   const handleGetAsstask = useCallback(() => {
     console.log("Tasks:", tasks);
     console.log("Loading:", tasksLoading);
   }, [tasks, tasksLoading]);
 
-  // Log language pair data when parameters exist.
   useEffect(() => {
     if (languagePairParams) {
       console.log("Language Pair Data:", languagePairData);
@@ -144,7 +157,6 @@ export default function TranslationTaskPage() {
     }
   }, [languagePairData, languagePairLoading, languagePairError, languagePairParams]);
 
-  // Update language pair status and enable its query.
   const handleFreelancerLanguagePairStatus = useCallback(
     async (freelancerId: number, sourceLanguageId: number, targetLanguageId: number) => {
       setLanguagePairParams({ freelancerId, sourceLanguageId, targetLanguageId });
@@ -153,7 +165,6 @@ export default function TranslationTaskPage() {
     []
   );
 
-  // Get language pair status message based on current state and data.
   const getLanguagePairStatusMessage = useCallback(() => {
     if (takingAssessment) return null;
 
@@ -199,7 +210,8 @@ export default function TranslationTaskPage() {
   const message = getLanguagePairStatusMessage();
   const showAssessmentButton = languagePairData?.status === "not_found";
   const showAppealButton =
-    languagePairData?.status === "complete" && (languagePairData.accuracy_rate ?? 0) < 50;
+    languagePairData?.status === "complete" &&
+    (languagePairData.accuracy_rate ?? 0) < 50;
 
   // Prevent accidental navigation if there are unsaved changes.
   useEffect(() => {
@@ -211,21 +223,23 @@ export default function TranslationTaskPage() {
           languagePairData &&
           !("message" in languagePairData) &&
           languagePairData.status === "complete" &&
-          (languagePairData.accuracy_rate ?? 0) > 50)
+          (languagePairData.accuracy_rate ?? 0) > 50) &&
+          currentTask
       ) {
         event.preventDefault();
-        event.returnValue = ""; // For Chrome
+        event.returnValue = "";
       }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload, { capture: true });
     return () =>
       window.removeEventListener("beforeunload", handleBeforeUnload, { capture: true });
-  }, [selectedLanguagePair, takingAssessment, languagePairData, languagePairLoading]);
+  }, [selectedLanguagePair, takingAssessment, languagePairData, languagePairLoading, task]);
 
-  // Show the next task manually.
+  // When the user clicks "Next", clear the displayed task immediately then update the query parameters.
   const handleShowNext = useCallback(() => {
     console.log("Loading the next translation task.");
+    setCurrentTask(null);
     handleGetOpenTask();
   }, [handleGetOpenTask]);
 
@@ -278,7 +292,8 @@ export default function TranslationTaskPage() {
                     languagePairData &&
                     !takingAssessment &&
                     (languagePairData.status !== "complete" ||
-                      (languagePairData.accuracy_rate ?? 0) <= 50))
+                      (languagePairData.accuracy_rate ?? 0) <= 50)) ||
+                  !currentTask
                 ) {
                   navigate("/dashboard");
                 } else {
@@ -297,7 +312,8 @@ export default function TranslationTaskPage() {
                   languagePairData &&
                   !takingAssessment &&
                   (languagePairData.status !== "complete" ||
-                    (languagePairData.accuracy_rate ?? 0) <= 50))
+                    (languagePairData.accuracy_rate ?? 0) <= 50)) ||
+                !currentTask
               ) {
                 setDialogOpen(true);
               } else {
@@ -397,7 +413,7 @@ export default function TranslationTaskPage() {
             }
           }}
         />
-        
+
         {/* Translation Task Interface */}
         {selectedLanguagePair &&
           !languagePairLoading &&
@@ -408,9 +424,9 @@ export default function TranslationTaskPage() {
             <>
               {taskLoading ? (
                 <LinearProgress />
-              ) : task ? (
+              ) : currentTask ? (
                 <TaskTranslationInterface
-                  task={task}
+                  task={currentTask}
                   onClose={() => setSelectedLanguagePair(null)}
                   onShowNext={handleShowNext}
                 />
@@ -426,7 +442,6 @@ export default function TranslationTaskPage() {
               )}
             </>
           )}
-
 
         {/* Assessment Task Interface */}
         {takingAssessment && tasks && (

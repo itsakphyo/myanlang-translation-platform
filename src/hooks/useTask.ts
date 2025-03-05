@@ -28,7 +28,7 @@ export const useTask = () => {
       queryKey: ["openTask", freelancerId, sourceLanguageId, targetLanguageId],
       queryFn: async (): Promise<OpenTask> => {
         const response = await axios.get<OpenTask>(
-          `${API_URL}/task/task/open?freelancer_id=${freelancerId}&source_language_id=${sourceLanguageId}&target_language_id=${targetLanguageId}`
+          `${API_URL}/task/open?freelancer_id=${freelancerId}&source_language_id=${sourceLanguageId}&target_language_id=${targetLanguageId}`
         );
         return response.data;
       },

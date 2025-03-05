@@ -178,7 +178,7 @@ async def get_assessment_tasks_up_to_5(source_language_id: int, target_language_
 
 
 
-@router.get("/task/open", response_model=OpenTaskResponse)
+@router.get("/open", response_model=OpenTaskResponse)
 def get_open_task(
     params: OpenTaskRequest = Depends(),
     db: Session = Depends(get_db)
@@ -280,7 +280,7 @@ def submit_task(
     assigned_at_aware = assigned_local.astimezone(timezone.utc)
     
     elapsed_initial = (now - assigned_at_aware).total_seconds() / 60  # elapsed time in minutes
-    elapsed = elapsed_initial + 1 
+    elapsed = elapsed_initial - 1 
     print("Elapsed time in minutes:", elapsed)
     print("Max time per task:", task.max_time_per_task)
     print("Aware assigned time:", assigned_at_aware)

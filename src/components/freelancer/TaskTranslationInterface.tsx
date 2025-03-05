@@ -28,7 +28,6 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   const totalTime = task?.max_time_per_task ? task.max_time_per_task * 60 : 900;
   const [remainingTime, setRemainingTime] = useState(totalTime);
 
-
   useEffect(() => {
     if (task) {
       setTranslation(task.translated_text || '');
@@ -50,6 +49,16 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   const minutes = Math.floor(remainingTime / 60);
   const seconds = remainingTime % 60;
 
+  const userId = JSON.parse(localStorage.getItem('userId') || '{}');
+
+  const handleSubmit = () => {
+    if (task) {
+      console.log("Task ID:", task.task_id);
+      console.log("Freelancer ID:", userId);
+      console.log("Translated Text:", translation);
+    }
+  };
+
   if (!task) {
     return (
       <Paper sx={{ p: 4, borderRadius: 4, boxShadow: 3 }}>
@@ -60,22 +69,14 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
     );
   }
 
-  // dooooooooooooooooooooooooooooo not prevent when reload buttommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-  // dooooooooooooooooooooooooooooo not prevent when reload buttommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-  // dooooooooooooooooooooooooooooo not prevent when reload buttommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-  // dooooooooooooooooooooooooooooo not prevent when reload buttommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-  // dooooooooooooooooooooooooooooo not prevent when reload buttommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-  // dooooooooooooooooooooooooooooo not prevent when reload buttommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-  // dooooooooooooooooooooooooooooo not prevent when reload buttommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-
   return (
     <Paper sx={{ p: 4, borderRadius: 4, boxShadow: 3 }}>
       <Stack spacing={3}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           <Paid color="primary" />
           <Typography variant="h6" color="primary.main">
-            Reward: {'200 Kyat'}
-            {/* task.reward || */}
+            {/* Reward: {'200 Kyat'} */}
+            task.reward ||
           </Typography>
           <AccessTime color="primary" />
           <Typography variant="h6" color="primary.main">
@@ -143,7 +144,10 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
               fontSize: { xs: '0.75rem', md: '1rem' },
               px: { xs: 2, sm: 4 }
             }}
-            onClick={onClose}
+            onClick={() => {
+              handleSubmit();
+              onClose();
+            }}
           >
             Reject &amp; Close
           </Button>
@@ -157,7 +161,10 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
               fontSize: { xs: '0.75rem', md: '1rem' },
               px: { xs: 2, sm: 4 }
             }}
-            onClick={onClose}
+            onClick={() => {
+              handleSubmit();
+              onClose();
+            }}
           >
             Submit &amp; Close
           </Button>
@@ -171,7 +178,10 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
               fontSize: { xs: '0.75rem', md: '1rem' },
               px: { xs: 2, sm: 4 }
             }}
-            onClick={onShowNext}
+            onClick={() => {
+              handleSubmit();
+              onShowNext();
+            }}
           >
             Submit &amp; Show Next
           </Button>
