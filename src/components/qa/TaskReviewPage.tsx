@@ -18,7 +18,8 @@ import BulkSubmissionReview from "@/components/qa/BulkSubmissionReview";
 import { useAssessmentTasksForReview } from "@/hooks/useAssTaskForReview";
 import { LanguagePair } from "@/types/language";
 import logo from "@/assets/images/logo.png";
-import { useDataCheckTasks } from "@/hooks/useAssTask"
+import { useAssReviewedSubmit } from "@/hooks/useAssTask"
+import { useQueryClient } from '@tanstack/react-query';
 
 // Modern theme configuration
 const theme = createTheme({
@@ -76,8 +77,8 @@ const TaskTypeToggle = ({ value, icon, label, ...props }: { value: string; icon:
 );
 
 const TaskReviewContent = ({ selectedLanguagePair, taskType, assTaskOpen, setAssTaskOpen, setSelectedLanguagePair }: { selectedLanguagePair: LanguagePair | null, taskType: "assessment" | "submission", assTaskOpen: boolean, setAssTaskOpen: (open: boolean) => void, setSelectedLanguagePair: (pair: LanguagePair | null) => void }) => {
-  const shouldFetchBulkData = taskType === "submission" && !!selectedLanguagePair;
-  const { mutate: sentData } = useDataCheckTasks();
+  const queryClient = useQueryClient();
+  const { mutate: sentData } = useAssReviewedSubmit();
   
   const { data, error, isLoading } = useAssessmentTasksForReview(
     selectedLanguagePair?.source_id ?? 0,
@@ -109,16 +110,23 @@ const TaskReviewContent = ({ selectedLanguagePair, taskType, assTaskOpen, setAss
     return <SubmissionTaskReviewInterface {...dummyData} />;
   }
 
-  const handleSubmit = (data:any) => {
+  const handleSubmit = (data: any) => {
     console.log("The data I send is ", JSON.stringify(data));
-    sentData(data);
+    sentData(data, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['assessmentTasks', selectedLanguagePair?.source_id, selectedLanguagePair?.target_id] });
+        setAssTaskOpen(false);
+        setSelectedLanguagePair(null);
+        queryClient.setQueryData(['assessmentTasks', selectedLanguagePair?.source_id, selectedLanguagePair?.target_id], []);
+      },
+    });
   };
 
   return (
     <>
       {isLoading && <Typography variant="body1">Loading bulk review data...</Typography>}
-      {error && <Typography color="error">Error loading bulk review data.</Typography>}
-      {data?.length > 0 && assTaskOpen && (
+      {error && <Typography color="error">No Assessment Tasks To Review For This Language Pair</Typography>}
+      {data?.length > 0 && assTaskOpen && data[0]?.tasks && (
         <BulkSubmissionReview
           data={data[0]}
           onSubmit={handleSubmit}
@@ -131,7 +139,6 @@ const TaskReviewContent = ({ selectedLanguagePair, taskType, assTaskOpen, setAss
     </>
   );
 };
-
 
 export default function TaskReviewPage() {
   const [dialogOpen, setDialogOpen] = useState(false);

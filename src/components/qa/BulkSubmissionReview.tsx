@@ -59,7 +59,7 @@ const BulkSubmissionReview: React.FC<BulkSubmissionReviewProps & { onClose: () =
         submittedText: task.submittedText,
         status: reviews[index] as 'approved' | 'rejected'
       })),
-      fl_id: data.userId, // Assuming userId corresponds to fl_id
+      fl_id: data.userId,
       source_lang_id: data.sourceLanguageId,
       target_lang_id: data.targetLanguageId,
     };

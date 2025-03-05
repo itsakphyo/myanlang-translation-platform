@@ -18,13 +18,13 @@ export const useAssessmentTasks = (source_language_id: number, target_language_i
   });
 };
 
-export const useDataCheckTasks = () => {
+export const useAssReviewedSubmit = () => {
 
   const sentData = useMutation({
     mutationFn: async (data: any) => {
-      const response = await axios.post(`${API_URL}/assessment/check_submit_data`, data, {
+      const response = await axios.post(`${API_URL}/assessment/update_ass_reviewed_data`, data, {
         headers: {
-          'Content-Type': 'application/json',  // Ensure the Content-Type is set to application/json
+          'Content-Type': 'application/json',
         }
       });
       return response.data;
