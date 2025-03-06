@@ -7,6 +7,7 @@ from ..schemas.enums import TaskStatus as TaskStatus
 from ..schemas.enums import AssTaskStatus as AssTaskStatus
 from ..schemas.freelancer import Freelancer
 from ..schemas.assessment_attempt import AssessmentAttempt
+from ..schemas.freelancer_language_pair import FreelancerLanguagePair
 from ..schemas.qa_member import QAMember
 from ..schemas.job import Job
 from ..schemas.language import Language
@@ -430,51 +431,6 @@ def get_assessment_tasks(source_language_id: int, target_language_id: int, db: S
         logger.error(f"Database error: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-
-# @router.get("/get_submitted_tasks")
-# async def get_submitted_tasks(
-#     qa_id: int, source_language_id: int, target_language_id: int, db: Session = Depends(get_db)
-# ):
-#     try:
-#         # Check if the QA Member exists before assigning
-#         qa_member = db.query(QAMember).filter(QAMember.qa_member_id == qa_id).first()
-#         if not qa_member:
-#             raise HTTPException(status_code=400, detail="QA Member not found")
-
-#         task = db.query(Task).filter(
-#             Task.source_language_id == source_language_id,
-#             Task.target_language_id == target_language_id,
-#             Task.is_assessment.is_(False),
-#             Task.task_status == "UNDER_REVIEW",
-#             Task.qa_assigned_at.is_(None),
-#             Task.qa_assigned_id.is_(None)
-#         ).first()
-
-#         if task is None:
-#             raise HTTPException(status_code=404, detail="Task not found")
-
-#         # Assign the task to the QA member
-#         task.qa_assigned_at = datetime.now(timezone.utc)
-#         task.qa_assigned_id = qa_id
-#         db.commit()
-#         db.refresh(task)
-
-#         source_language = db.query(Language).filter(Language.language_id == source_language_id).first()
-#         target_language = db.query(Language).filter(Language.language_id == target_language_id).first()
-
-#         if not source_language or not target_language:
-#             raise HTTPException(status_code=404, detail="One or both languages not found")
-
-#         return {
-#             "task": task,
-#             "source_language": source_language.language_name,
-#             "target_language": target_language.language_name
-#         }
-
-#     except SQLAlchemyError as e:
-#         logger.error(f"Database error: {str(e)}")
-#         raise HTTPException(status_code=500, detail="Internal server error")
-
 @router.get("/get_submitted_tasks")
 async def get_submitted_tasks(
     qa_id: int, source_language_id: int, target_language_id: int, db: Session = Depends(get_db)
@@ -544,19 +500,35 @@ def submit_qa_review(
     
     if not task:
         raise HTTPException(status_code=404, detail="Task not found or not assigned to you")
-    
-    task.qa_reviewed_by_id = review_data.qa_id
-    task.qa_reviewed_at = now
-    submitted_fl_id = task.submitted_by_id
 
+    submitted_fl_id = task.submitted_by_id
+    source_language_id = task.source_language_id
+    target_language_id = task.target_language_id
+
+    freelancer_language_pair = db.query(FreelancerLanguagePair).filter(
+            FreelancerLanguagePair.freelancer_id == submitted_fl_id,
+            FreelancerLanguagePair.source_language_id == source_language_id,
+            FreelancerLanguagePair.target_language_id == target_language_id
+        ).first()
+    
+    # For an approved task:
     if review_data.decision:
         task.task_status = TaskStatus.COMPLETE
+        task.qa_reviewed_by_id = review_data.qa_id
+        task.qa_reviewed_at = now
+
         freelancer = db.query(Freelancer).filter(Freelancer.freelancer_id == submitted_fl_id).first()
         task_price = task.task_price
         freelancer.total_earnings += task_price
         freelancer.current_balance += task_price
 
-        # neeed more update here
+        # Increment complete tasks
+        previous_complete_task = freelancer_language_pair.complete_task or 0
+        freelancer_language_pair.complete_task = previous_complete_task + 1
+
+        # Recalculate accuracy: (approved tasks / total complete tasks) * 100
+        current_rejected = freelancer_language_pair.rejected_task or 0
+        freelancer_language_pair.accuracy_rate = (((previous_complete_task + 1) - current_rejected) / (previous_complete_task + 1)) * 100
 
     else:
         task.task_status = TaskStatus.OPEN
@@ -567,10 +539,14 @@ def submit_qa_review(
         task.submitted_at = None
         task.qa_assigned_id = None
         task.qa_assigned_at = None
-        
 
-        # neeed more update here
+        # For a rejected task, complete_task remains unchanged; only update rejected count
+        previous_complete_task = freelancer_language_pair.complete_task or 0
+        freelancer_language_pair.complete_task = previous_complete_task + 1
+        previous_rejected_task = freelancer_language_pair.rejected_task or 0
+        freelancer_language_pair.rejected_task = previous_rejected_task + 1
 
+        freelancer_language_pair.accuracy_rate = (((previous_complete_task + 1) - (previous_rejected_task + 1)) / (previous_complete_task + 1)) * 100
 
 
     db.commit()

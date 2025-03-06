@@ -9,6 +9,8 @@ import {
   createTheme,
   Button,
   Box,
+  Divider,
+  Chip,
 } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import logo from '@/assets/images/logo.png';
@@ -84,7 +86,7 @@ export default function QADashboard() {
           <Typography variant="h4" sx={{ mb: 4 }}>
             Welcome, {userName}!
           </Typography>
-          
+
           {isLoading ? (
             <Typography>Loading...</Typography>
           ) : error ? (
@@ -95,8 +97,7 @@ export default function QADashboard() {
                 As a valued member of the MyanLang QA team, your attention to detail is essential in ensuring the quality and accuracy of our text data collection.
               </Typography>
 
-              <Box sx={{ display: 'flex', gap: 4, justifyContent: 'center', mt: 4 }}>
-                {/* Review Submission Tasks */}
+              {/* <Box sx={{ display: 'flex', gap: 4, justifyContent: 'center', mt: 4 }}>
                 <Button
                   variant="contained"
                   color="primary"
@@ -144,7 +145,6 @@ export default function QADashboard() {
                   </Box>
                 </Button>
 
-                {/* Review Assessment Tasks */}
                 <Button
                   variant="contained"
                   color="secondary"
@@ -191,7 +191,167 @@ export default function QADashboard() {
                     </Typography>
                   </Box>
                 </Button>
+              </Box> */}
+              {/* <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => navigate('/qa-dashboard/review-task')}
+                  sx={{
+                    py: 2,
+                    px: 4,
+                    borderRadius: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 4,
+                    boxShadow: 3,
+                    width: '100%',
+                    maxWidth: 600,
+                    background: 'linear-gradient(45deg, primary.main 0%, secondary.main 100%)',
+                    '&:hover': {
+                      boxShadow: 5,
+                      transform: 'scale(1.02)',
+                      transition: 'all 0.2s ease'
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: 'common.white', mb: 0.5 }}>
+                      Review Tasks
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                      <Chip
+                        label="Submissions"
+                        size="small"
+                        sx={{
+                          bgcolor: 'rgba(255,255,255,0.15)',
+                          color: 'white',
+                          '& .MuiChip-label': { px: 1.5 }
+                        }}
+                      />
+                      <Chip
+                        label="Assessments"
+                        size="small"
+                        sx={{
+                          bgcolor: 'rgba(255,255,255,0.15)',
+                          color: 'white',
+                          '& .MuiChip-label': { px: 1.5 }
+                        }}
+                      />
+                    </Box>
+                  </Box>
+
+                  <Divider orientation="vertical" flexItem sx={{ bgcolor: 'rgba(255,255,255,0.3)', height: 40 }} />
+
+                  <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="overline" sx={{ color: 'common.white', opacity: 0.8 }}>
+                        Available
+                      </Typography>
+                      <Typography variant="h5" sx={{ fontWeight: 700, color: 'common.white' }}>
+                        {avaliable_tasks}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="overline" sx={{ color: 'common.white', opacity: 0.8 }}>
+                        Pending
+                      </Typography>
+                      <Typography variant="h5" sx={{ fontWeight: 700, color: 'common.white' }}>
+                        {assessment_tasks}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Button>
+              </Box> */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Button
+                  variant="contained"
+                  onClick={() => navigate('/qa-dashboard/review-task')}
+                  sx={{
+                    py: 3,
+                    px: 4,
+                    borderRadius: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 3,
+                    boxShadow: 3,
+                    '&:hover': {
+                      boxShadow: 5,
+                      transform: 'scale(1.02)',
+                      transition: 'all 0.2s ease'
+                    }
+                  }}
+                >
+                  {/* Button Title & Subtitle */}
+                  <Box sx={{ textAlign: 'left', flex: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'common.white' }}>
+                      Review Tasks
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'grey.100', opacity: 0.95 }}>
+                      Submissions and Assessments
+                    </Typography>
+                  </Box>
+
+                  {/* Count Indicators */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+
+                    {/* Submission Tasks Badge */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box
+                        sx={{
+                          bgcolor: 'secondary.main',
+                          color: 'common.white',
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: 2
+                        }}
+                      >
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                          {avaliable_tasks}
+                        </Typography>
+                      </Box>
+                      <Typography variant="caption" sx={{ color: 'common.white' }}>
+                        Submissions
+                      </Typography>
+                    </Box>
+
+                    {/* Divider */}
+                    <Divider orientation="vertical" flexItem sx={{ bgcolor: 'grey.100' }} />
+
+                    {/* Assessment Tasks Badge */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box
+                        sx={{
+                          bgcolor: 'secondary.main',
+                          color: 'common.white',
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: 2
+                        }}
+                      >
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                          {assessment_tasks}
+                        </Typography>
+                      </Box>
+                      <Typography variant="caption" sx={{ color: 'common.white' }}>
+                        Assessments
+                      </Typography>
+                    </Box>
+
+                  </Box>
+                </Button>
               </Box>
+
             </>
           )}
         </Container>

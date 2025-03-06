@@ -41,14 +41,12 @@ const theme = createTheme({
     },
 });
 
-
-
 const TaskTypeToggle = ({ value, icon, label, ...props }: { value: string; icon: React.ReactNode; label: string }) => (
     <ToggleButton
         value={value}
         sx={{
-            px: 4,
-            py: 2,
+            px: { xs: 2, md: 4 },
+            py: { xs: 1, md: 2 },
             borderRadius: "12px!important",
             "&.Mui-selected": { bgcolor: alpha(theme.palette.primary.main, 0.1) },
         }}
@@ -56,11 +54,12 @@ const TaskTypeToggle = ({ value, icon, label, ...props }: { value: string; icon:
     >
         <Stack direction="row" alignItems="center" spacing={2}>
             {icon}
-            <Typography variant="h6" fontWeight={600}>
+            <Typography variant="h6" fontWeight={600} sx={{ fontSize: { xs: "0.875rem", md: "1rem" } }}>
                 {label}
             </Typography>
-            <ChevronRight sx={{ color: theme.palette.primary.main }} />
+            <ChevronRight sx={{ color: theme.palette.primary.main, fontSize: { xs: "1rem", md: "1.5rem" } }} />
         </Stack>
     </ToggleButton>
 );
-export default TaskTypeToggle;  
+
+export default TaskTypeToggle;

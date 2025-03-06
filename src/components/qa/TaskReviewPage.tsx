@@ -1,28 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Container,
-  Button,
   Box,
-  Typography,
-  Stack,
   ToggleButtonGroup,
-  ToggleButton,
-  Fade,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import { Language, ArrowDropDown, Task, Assignment, ChevronRight } from "@mui/icons-material";
-import { createTheme, ThemeProvider, alpha } from "@mui/material/styles";
+import { Task, Assignment } from "@mui/icons-material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import LanguageSelectDialog from "@/components/freelancer/LanguageSelectDialog";
-import SubmissionTaskReviewInterface from "@/components/qa/SubmissionTaskReviewInterface";
-import BulkSubmissionReview from "@/components/qa/BulkSubmissionReview";
-import { useAssessmentTasksForReview } from "@/hooks/useAssTaskForReview";
-import { LanguagePair } from "@/types/language";
-import logo from "@/assets/images/logo.png";
-import { useAssReviewedSubmit } from "@/hooks/useAssTask"
-import { useQueryClient } from '@tanstack/react-query';
 import LanguageSelector from "./helperComponents/LanguageSelector";
 import TaskReviewContent from "./helperComponents/TaskReviewContent";
 import TaskTypeToggle from "./helperComponents/TaskTypeToggle";
+import logo from "@/assets/images/logo.png";
+import { LanguagePair } from "@/types/language";
+
+const baseTheme = createTheme();
 
 // Modern theme configuration
 const theme = createTheme({
@@ -33,7 +27,15 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: "'Inter', sans-serif",
-    h5: { fontWeight: 700, letterSpacing: "-0.025em" },
+    h5: {
+      fontWeight: 700,
+      [baseTheme.breakpoints.up("md")]: {
+        fontSize: "1.2rem",
+      },
+      [baseTheme.breakpoints.up("lg")]: {
+        fontSize: "1.5rem",
+      },
+    },
   },
   components: {
     MuiButton: {
@@ -58,7 +60,6 @@ const theme = createTheme({
   },
 });
 
-
 export default function TaskReviewPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [assTaskOpen, setAssTaskOpen] = useState(false);
@@ -67,52 +68,91 @@ export default function TaskReviewPage() {
   const [taskType, setTaskType] = useState<"assessment" | "submission">("assessment");
   const navigate = useNavigate();
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const handleTaskTypeChange = (_: React.MouseEvent<HTMLElement>, newType: string) => {
     if (newType) setTaskType(newType as "assessment" | "submission");
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth={false} sx={{ minHeight: "100vh", p: 4 }}>
-        {/* Header Section */}
-        <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mb: 8 }}>
+      <Container maxWidth={false} sx={{ minHeight: "100vh", p: { xs: 2, md: 4 } }}>
+        {/* Responsive Header Section */}
+        <Box
+          display="flex"
+          flexDirection={{ xs: "column", md: "row" }}
+          alignItems={{ xs: "flex-start", md: "center" }}
+          justifyContent="space-between"
+          gap={2}
+          sx={{ mb: { xs: 4, md: 8 }, position: "relative" }}
+        >
+          {/* Logo */}
           <Box onClick={() => navigate("/qa-dashboard")} sx={{ cursor: "pointer" }}>
-            <img src={logo} alt="MyanLang logo" style={{ height: "48px" }} />
+            <img
+              src={logo}
+              alt="MyanLang logo"
+              style={{ height: isMobile ? "40px" : "48px" }}
+            />
           </Box>
 
+          {/* Task Type Toggle */}
           <ToggleButtonGroup
             value={taskType}
             exclusive
             onChange={handleTaskTypeChange}
-            sx={{ position: "absolute", left: "50%", transform: "translateX(-50%)", gap: 1 }}
+            sx={{
+              mx: "auto",
+              width: { xs: "100%", md: "auto" },
+              order: { xs: 2, md: 0 },
+              transform: { md: "translateX(-50%)" },
+              position: { md: "absolute" },
+              left: { md: "50%" },
+              "& .MuiToggleButton-root": {
+                flex: 1,
+                minWidth: 0,
+                px: { xs: 1, md: 2 },
+                py: { xs: 0.5, md: 1 },
+                fontSize: { xs: "0.75rem", md: "1rem" },
+              },
+            }}
           >
-            <TaskTypeToggle
-              value="assessment"
-              icon={<Task sx={{ color: "primary.main" }} />}
-              label="Review Assessments"
-            />
-            <TaskTypeToggle
-              value="submission"
-              icon={<Assignment sx={{ color: "primary.main" }} />}
-              label="Review Submissions"
-            />
+            <Box sx={{ width: { xs: "50%", md: "auto" } }}>
+              <TaskTypeToggle
+                value="assessment"
+                icon={<Task sx={{ color: "primary.main", fontSize: { xs: "1rem", md: "1.5rem" } }} />}
+                label="Review Assessments"
+              />
+            </Box>
+            <Box sx={{ width: { xs: "50%", md: "auto" } }}>
+              <TaskTypeToggle
+                value="submission"
+                icon={<Assignment sx={{ color: "primary.main", fontSize: { xs: "1rem", md: "1.5rem" } }} />}
+                label="Review Submissions"
+              />
+            </Box>
           </ToggleButtonGroup>
 
-          <LanguageSelector
-            selectedLanguagePair={selectedLanguagePair}
-            onOpen={() => setDialogOpen(true)}
-          />
+          {/* Language Selector */}
+          <Box sx={{ order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 } }}>
+            <LanguageSelector
+              selectedLanguagePair={selectedLanguagePair}
+              onOpen={() => setDialogOpen(true)}
+            />
+          </Box>
         </Box>
 
-        {/* Main Content Area */}
-        <Box sx={{
-          maxWidth: 1200,
-          mx: "auto",
-          bgcolor: "white",
-          borderRadius: 4,
-          boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-          p: 4,
-        }}>
+        {/* Responsive Main Content Area */}
+        <Box
+          sx={{
+            maxWidth: 1200,
+            mx: "auto",
+            bgcolor: "white",
+            borderRadius: { xs: 2, md: 4 },
+            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+            p: { xs: 2, md: 4 },
+          }}
+        >
           <TaskReviewContent
             selectedLanguagePair={selectedLanguagePair}
             taskType={taskType}
@@ -124,6 +164,7 @@ export default function TaskReviewPage() {
           />
         </Box>
 
+        {/* Language Select Dialog */}
         <LanguageSelectDialog
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}

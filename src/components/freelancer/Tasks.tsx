@@ -223,7 +223,7 @@ export default function TranslationTaskPage() {
           languagePairData &&
           !("message" in languagePairData) &&
           languagePairData.status === "complete" &&
-          (languagePairData.accuracy_rate ?? 0) > 50) &&
+          (languagePairData.accuracy_rate ?? 0) > 50) && currentTask ||
           currentTask
       ) {
         event.preventDefault();

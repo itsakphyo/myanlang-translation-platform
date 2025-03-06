@@ -20,6 +20,8 @@ class FreelancerLanguagePair(Base):
     target_language_id = Column(Integer, ForeignKey("language.language_id"), nullable=False, index=True)
     status = Column(Enum(AssSubmission, name="ass_submission_status"), nullable=False, default=AssSubmission.UNDER_REVIEW)
     accuracy_rate = Column(Float, nullable=True)
+    complete_task = Column(Integer, nullable=True, default=0)
+    rejected_task = Column(Integer, nullable=True, default=0)
     
     freelancer = relationship("Freelancer", back_populates="language_pairs")
     source_language = relationship(
