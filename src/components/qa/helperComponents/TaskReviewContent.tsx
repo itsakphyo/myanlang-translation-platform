@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Language } from "@mui/icons-material";
 import { createTheme } from "@mui/material/styles";
 import SubmissionTaskReviewInterface from "@/components/qa/SubmissionTaskReviewInterface";
 import BulkSubmissionReview from "@/components/qa/BulkSubmissionReview";
 import { useAssessmentTasksForReview } from "@/hooks/useAssTaskForReview";
 import { LanguagePair } from "@/types/language";
-import { useAssReviewedSubmit } from "@/hooks/useAssTask"
-import { useQueryClient } from '@tanstack/react-query';
+import { useAssReviewedSubmit } from "@/hooks/useAssTask";
+import { useQueryClient } from "@tanstack/react-query";
 import { useGetSubmittedTaskForReview } from "@/hooks/useGetSubmittedTaskForReview";
 import { useSubTaskdecision } from "@/hooks/useGetSubmittedTaskForReview";
-import { on } from "events";
 
 // Modern theme configuration
 const theme = createTheme({
@@ -55,6 +51,7 @@ const TaskReviewContent = ({
   assTaskOpen,
   setAssTaskOpen,
   isSubmissionTaskOpen,
+  setReviewingInProgress,
   setIsSubmissionTaskOpen,
   setSelectedLanguagePair
 }: {
@@ -63,6 +60,7 @@ const TaskReviewContent = ({
   assTaskOpen: boolean,
   setAssTaskOpen: (open: boolean) => void,
   isSubmissionTaskOpen: boolean,
+  setReviewingInProgress: (inProgress: boolean) => void,
   setIsSubmissionTaskOpen: (open: boolean) => void,
   setSelectedLanguagePair: (pair: LanguagePair | null) => void
 }) => {
@@ -92,6 +90,40 @@ const TaskReviewContent = ({
     }
   }, [data, setAssTaskOpen]);
 
+  // Update reviewingInProgress based on whether a review interface is visible.
+  useEffect(() => {
+    // If no language pair is selected, there is no review in progress.
+    if (!selectedLanguagePair) {
+      setReviewingInProgress(false);
+      return;
+    }
+
+    let inReview = false;
+    if (taskType === "submission") {
+      // Only set reviewingInProgress true if the submission interface is open,
+      // data is available, and there’s no error or loading in progress.
+      if (isSubmissionTaskOpen && submittedData && !submittedError && !submittedLoading) {
+        inReview = true;
+      }
+    } else {
+      // For assessment/bulk review, check if the data exists, the interface is open, and tasks are available.
+      if (data?.length > 0 && assTaskOpen && data[0]?.tasks) {
+        inReview = true;
+      }
+    }
+    setReviewingInProgress(inReview);
+  }, [
+    selectedLanguagePair,
+    taskType,
+    isSubmissionTaskOpen,
+    submittedData,
+    submittedError,
+    submittedLoading,
+    data,
+    assTaskOpen,
+    setReviewingInProgress
+  ]);
+
   const handleSubmit = (data: any) => {
     sentData(data, {
       onSuccess: () => {
@@ -102,9 +134,6 @@ const TaskReviewContent = ({
       },
     });
   };
-
-  // const handleSubmissionAction = () => {
-  //   console.log("Submission action completed");
 
   const handleSubmissionAction = (data: any) => {
     console.log("Submission action completed", data);
@@ -117,13 +146,13 @@ const TaskReviewContent = ({
 
   const handleMakeDecisionandShowNext = (data: any) => {
     handleSubmissionAction(data);
-  }
+  };
 
   const handleMakeDecisionandClose = (data: any) => {
     handleSubmissionAction(data);
     setIsSubmissionTaskOpen(false);
     setSelectedLanguagePair(null);
-  }
+  };
 
   if (!selectedLanguagePair) {
     return (
@@ -137,7 +166,6 @@ const TaskReviewContent = ({
   }
 
   if (taskType === "submission") {
-    
     if (!isSubmissionTaskOpen || !submittedData || submittedError) {
       return (
         <Box textAlign="center" py={10} sx={{ opacity: 0.7 }}>
@@ -175,20 +203,20 @@ const TaskReviewContent = ({
 
   return (
     <>
-      {isLoading &&
+      {isLoading && (
         <Box textAlign="center" py={10} sx={{ opacity: 0.7 }}>
           <Typography variant="h6" color="text.secondary">
             Loading bulk review data...
           </Typography>
         </Box>
-      }
-      {error &&
+      )}
+      {error && (
         <Box textAlign="center" py={10} sx={{ opacity: 0.7 }}>
           <Typography variant="h6" color="text.secondary">
             No Assessment Tasks To Review For This Language Pair
           </Typography>
         </Box>
-      }
+      )}
       {data?.length > 0 && assTaskOpen && data[0]?.tasks && (
         <BulkSubmissionReview
           data={data[0]}
@@ -204,4 +232,3 @@ const TaskReviewContent = ({
 };
 
 export default TaskReviewContent;
-

@@ -12,7 +12,7 @@ export default function Auth() {
   };
 
   return (
-    <>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* Header Section */}
       <AppBar position="static" sx={{ backgroundColor: "#1976d2" }} elevation={1}>
         <Toolbar>
@@ -39,6 +39,20 @@ export default function Auth() {
           </Box>
         </Box>
       </Container>
-    </>
+
+      <Box
+        component="footer"
+        sx={{
+          py: 2,
+          textAlign: 'center',
+          bgcolor: 'grey.200',
+          mt: 'auto',
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          © {new Date().getFullYear()} MyanLang Platform. All rights reserved.
+        </Typography>
+      </Box>
+    </Box>
   );
 }

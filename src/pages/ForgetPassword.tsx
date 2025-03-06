@@ -119,6 +119,7 @@ export default function ForgotPassword() {
             src={logo}
             alt="MyanLang logo"
             style={{ height: '40px', marginLeft: '10px' }}
+            onClick={() => navigate('/auth')}
           />
           <Typography variant="h6" component="div" sx={{ marginLeft: 2 }}>
             MyanLang Platform

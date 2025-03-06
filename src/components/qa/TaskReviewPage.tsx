@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Box,
@@ -67,6 +67,7 @@ export default function TaskReviewPage() {
   const [selectedLanguagePair, setSelectedLanguagePair] = useState<LanguagePair | null>(null);
   const [taskType, setTaskType] = useState<"assessment" | "submission">("assessment");
   const navigate = useNavigate();
+  const [reviewingInProgress, setReviewingInProgress] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -74,6 +75,23 @@ export default function TaskReviewPage() {
   const handleTaskTypeChange = (_: React.MouseEvent<HTMLElement>, newType: string) => {
     if (newType) setTaskType(newType as "assessment" | "submission");
   };
+
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (reviewingInProgress) {
+        event.preventDefault();
+        event.returnValue = "You have an ongoing review. Are you sure you want to leave?"; // Some browsers require this
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [reviewingInProgress]);
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -88,7 +106,16 @@ export default function TaskReviewPage() {
           sx={{ mb: { xs: 4, md: 8 }, position: "relative" }}
         >
           {/* Logo */}
-          <Box onClick={() => navigate("/qa-dashboard")} sx={{ cursor: "pointer" }}>
+          <Box
+            onClick={() => {
+              if (reviewingInProgress) {
+                alert("Please complete the current task before navigating away.");
+                return;
+              }
+              navigate("/qa-dashboard");
+            }}
+            sx={{ cursor: "pointer" }}
+          >
             <img
               src={logo}
               alt="MyanLang logo"
@@ -100,7 +127,13 @@ export default function TaskReviewPage() {
           <ToggleButtonGroup
             value={taskType}
             exclusive
-            onChange={handleTaskTypeChange}
+            onChange={(event, newValue) => {
+              if (reviewingInProgress) {
+                alert("Please complete the current task before switching to another task type.");
+                return;
+              }
+              handleTaskTypeChange(event, newValue);
+            }}
             sx={{
               mx: "auto",
               width: { xs: "100%", md: "auto" },
@@ -117,6 +150,7 @@ export default function TaskReviewPage() {
               },
             }}
           >
+
             <Box sx={{ width: { xs: "50%", md: "auto" } }}>
               <TaskTypeToggle
                 value="assessment"
@@ -137,9 +171,17 @@ export default function TaskReviewPage() {
           <Box sx={{ order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 } }}>
             <LanguageSelector
               selectedLanguagePair={selectedLanguagePair}
-              onOpen={() => setDialogOpen(true)}
+              onOpen={() => {
+                if (reviewingInProgress) {
+                  alert("Please complete the current task before switching to another task type.");
+                  return;
+                }
+                setDialogOpen(true);
+              }}
             />
           </Box>
+
+
         </Box>
 
         {/* Responsive Main Content Area */}
@@ -159,6 +201,7 @@ export default function TaskReviewPage() {
             assTaskOpen={assTaskOpen}
             setAssTaskOpen={setAssTaskOpen}
             isSubmissionTaskOpen={isSubmissionTaskOpen}
+            setReviewingInProgress={setReviewingInProgress}
             setIsSubmissionTaskOpen={setIsSubmissionTaskOpen}
             setSelectedLanguagePair={setSelectedLanguagePair}
           />
