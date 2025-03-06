@@ -47,6 +47,7 @@ class OpenTaskResponse(BaseModel):
     task_id: int
     instruction: str
     max_time_per_task: int
+    price: Optional[float]  # Ensure price is included
     source_text: str
     translated_text: Optional[str]
     source_language_name: str

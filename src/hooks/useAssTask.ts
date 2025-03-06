@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { AssTask } from "@/types/task"; // Adjust the import path as needed
+import { AssTask } from "@/types/task";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

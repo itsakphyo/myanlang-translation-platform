@@ -1,18 +1,26 @@
 import React from 'react';
 import { Paper, Stack, Box, Typography, Button } from '@mui/material';
 
+interface submitRequiest {
+  task_id: number;
+  qa_id: number;
+  decision: boolean;
+}
+
 interface SubmissionTaskReviewInterfaceProps {
+  taskId: number;
   originalText: string;
   sourceLanguage: string;
   submittedText: string;
   targetLanguage: string;
-  onRejectAndClose: () => void;
-  onRejectAndShowNext: () => void;
-  onApproveAndClose: () => void;
-  onApproveAndShowNext: () => void;
+  onRejectAndClose: (results: submitRequiest) => void;
+  onRejectAndShowNext: (results: submitRequiest) => void;
+  onApproveAndClose: (results: submitRequiest) => void;
+  onApproveAndShowNext: (results: submitRequiest) => void;
 }
 
 const SubmissionTaskReviewInterface: React.FC<SubmissionTaskReviewInterfaceProps> = ({
+  taskId,
   originalText,
   sourceLanguage,
   submittedText,
@@ -22,6 +30,44 @@ const SubmissionTaskReviewInterface: React.FC<SubmissionTaskReviewInterfaceProps
   onApproveAndClose,
   onApproveAndShowNext,
 }) => {
+  const qaId = Number(localStorage.getItem("userId")) || 0;
+
+  const handleRejectAndClose = () => {
+    const request: submitRequiest = {
+      task_id: taskId,
+      qa_id: qaId,
+      decision: false,
+    };
+    onRejectAndClose(request);
+  };
+
+  const handleRejectAndShowNext = () => {
+    const request: submitRequiest = {
+      task_id: taskId,
+      qa_id: qaId,
+      decision: false,
+    };
+    onRejectAndShowNext(request);
+  };
+
+  const handleApproveAndClose = () => {
+    const request: submitRequiest = {
+      task_id: taskId,
+      qa_id: qaId,
+      decision: true,
+    };
+    onApproveAndClose(request);
+  };
+
+  const handleApproveAndShowNext = () => {
+    const request: submitRequiest = {
+      task_id: taskId,
+      qa_id: qaId,
+      decision: true,
+    };
+    onApproveAndShowNext(request);
+  };
+
   return (
     <Paper sx={{ p: 4, borderRadius: 4, boxShadow: 3 }}>
       <Stack spacing={3}>
@@ -65,7 +111,7 @@ const SubmissionTaskReviewInterface: React.FC<SubmissionTaskReviewInterfaceProps
               fontSize: { xs: '0.75rem', md: '1rem' },
               px: { xs: 2, sm: 4 }
             }}
-            onClick={onRejectAndClose}
+            onClick={handleRejectAndClose}
           >
             Reject &amp; Close
           </Button>
@@ -78,7 +124,7 @@ const SubmissionTaskReviewInterface: React.FC<SubmissionTaskReviewInterfaceProps
               fontSize: { xs: '0.75rem', md: '1rem' },
               px: { xs: 2, sm: 4 }
             }}
-            onClick={onRejectAndShowNext}
+            onClick={handleRejectAndShowNext}
           >
             Reject &amp; Show Next
           </Button>
@@ -91,7 +137,7 @@ const SubmissionTaskReviewInterface: React.FC<SubmissionTaskReviewInterfaceProps
               fontSize: { xs: '0.75rem', md: '1rem' },
               px: { xs: 2, sm: 4 }
             }}
-            onClick={onApproveAndClose}
+            onClick={handleApproveAndClose}
           >
             Approve &amp; Close
           </Button>
@@ -104,7 +150,7 @@ const SubmissionTaskReviewInterface: React.FC<SubmissionTaskReviewInterfaceProps
               fontSize: { xs: '0.75rem', md: '1rem' },
               px: { xs: 2, sm: 4 }
             }}
-            onClick={onApproveAndShowNext}
+            onClick={handleApproveAndShowNext}
           >
             Approve &amp; Show Next
           </Button>

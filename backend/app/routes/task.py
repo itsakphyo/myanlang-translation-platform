@@ -5,10 +5,13 @@ from sqlalchemy.orm import Session
 from ..schemas.task import *
 from ..schemas.enums import TaskStatus as TaskStatus
 from ..schemas.enums import AssTaskStatus as AssTaskStatus
+from ..schemas.freelancer import Freelancer
 from ..schemas.assessment_attempt import AssessmentAttempt
+from ..schemas.qa_member import QAMember
 from ..schemas.job import Job
 from ..schemas.language import Language
 from sqlalchemy.sql import func
+from typing import Optional
 import pandas as pd
 import io
 from sqlalchemy.exc import SQLAlchemyError
@@ -178,7 +181,7 @@ async def get_assessment_tasks_up_to_5(source_language_id: int, target_language_
 
 
 
-@router.get("/open", response_model=OpenTaskResponse)
+@router.get("/open", response_model=Optional[OpenTaskResponse])
 def get_open_task(
     params: OpenTaskRequest = Depends(),
     db: Session = Depends(get_db)
@@ -194,10 +197,11 @@ def get_open_task(
                     Task.source_text,
                     Task.translated_text,
                     Task.max_time_per_task,
+                    Task.task_price,
                     Job.instructions.label("instruction"),
                     SourceLanguage.language_name.label("source_language_name"),
                     TargetLanguage.language_name.label("target_language_name"),
-                    Task.task_status,   # For checking the status condition
+                    Task.task_status,
                 )
                 .join(Job, Task.job_id == Job.job_id)
                 .join(SourceLanguage, Task.source_language_id == SourceLanguage.language_id)
@@ -222,7 +226,7 @@ def get_open_task(
             )
         
         if not task_data:
-            raise HTTPException(status_code=404, detail="No available task found")
+            return 
         
         task_to_update = db.query(Task).filter(Task.task_id == task_data.task_id).first()
         task_to_update.assigned_freelancer_id = params.freelancer_id
@@ -234,6 +238,7 @@ def get_open_task(
             task_id=task_data.task_id,
             instruction=task_data.instruction,
             max_time_per_task=task_data.max_time_per_task,
+            price=task_data.task_price,
             source_text=task_data.source_text,
             translated_text=task_data.translated_text,
             source_language_name=task_data.source_language_name,
@@ -322,10 +327,10 @@ def get_all_task_info(db: Session = Depends(get_db)):
     )
 
     # Query for Submission Tasks:
-    # From Task table where is_assessment is False and task_status is UNDER_REVIEW
+    # From Task table where is_assessment is False and task_status is UNDER_REVIEW and no QA assigned
     submission_total = (
         db.query(func.count(Task.task_id))
-          .filter(Task.is_assessment.is_(False), Task.task_status == TaskStatus.UNDER_REVIEW)
+          .filter(Task.is_assessment.is_(False), Task.task_status == TaskStatus.UNDER_REVIEW, Task.qa_assigned_id == None)
           .scalar()
     )
 
@@ -424,3 +429,150 @@ def get_assessment_tasks(source_language_id: int, target_language_id: int, db: S
     except SQLAlchemyError as e:
         logger.error(f"Database error: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+# @router.get("/get_submitted_tasks")
+# async def get_submitted_tasks(
+#     qa_id: int, source_language_id: int, target_language_id: int, db: Session = Depends(get_db)
+# ):
+#     try:
+#         # Check if the QA Member exists before assigning
+#         qa_member = db.query(QAMember).filter(QAMember.qa_member_id == qa_id).first()
+#         if not qa_member:
+#             raise HTTPException(status_code=400, detail="QA Member not found")
+
+#         task = db.query(Task).filter(
+#             Task.source_language_id == source_language_id,
+#             Task.target_language_id == target_language_id,
+#             Task.is_assessment.is_(False),
+#             Task.task_status == "UNDER_REVIEW",
+#             Task.qa_assigned_at.is_(None),
+#             Task.qa_assigned_id.is_(None)
+#         ).first()
+
+#         if task is None:
+#             raise HTTPException(status_code=404, detail="Task not found")
+
+#         # Assign the task to the QA member
+#         task.qa_assigned_at = datetime.now(timezone.utc)
+#         task.qa_assigned_id = qa_id
+#         db.commit()
+#         db.refresh(task)
+
+#         source_language = db.query(Language).filter(Language.language_id == source_language_id).first()
+#         target_language = db.query(Language).filter(Language.language_id == target_language_id).first()
+
+#         if not source_language or not target_language:
+#             raise HTTPException(status_code=404, detail="One or both languages not found")
+
+#         return {
+#             "task": task,
+#             "source_language": source_language.language_name,
+#             "target_language": target_language.language_name
+#         }
+
+#     except SQLAlchemyError as e:
+#         logger.error(f"Database error: {str(e)}")
+#         raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/get_submitted_tasks")
+async def get_submitted_tasks(
+    qa_id: int, source_language_id: int, target_language_id: int, db: Session = Depends(get_db)
+):
+    try:
+        # Check if the QA Member exists before assigning
+        qa_member = db.query(QAMember).filter(QAMember.qa_member_id == qa_id).first()
+        if not qa_member:
+            raise HTTPException(status_code=400, detail="QA Member not found")
+
+        task = db.query(Task).filter(
+            Task.source_language_id == source_language_id,
+            Task.target_language_id == target_language_id,
+            Task.is_assessment.is_(False),
+            Task.task_status == "UNDER_REVIEW",
+            Task.qa_assigned_at.is_(None),
+            Task.qa_assigned_id.is_(None)
+        ).first()
+
+        # If no task is available, return None (which becomes JSON null)
+        if task is None:
+            return None
+
+        # Assign the task to the QA member
+        task.qa_assigned_at = datetime.now(timezone.utc)
+        task.qa_assigned_id = qa_id
+        db.commit()
+        db.refresh(task)
+
+        source_language = db.query(Language).filter(Language.language_id == source_language_id).first()
+        target_language = db.query(Language).filter(Language.language_id == target_language_id).first()
+
+        if not source_language or not target_language:
+            raise HTTPException(status_code=404, detail="One or both languages not found")
+
+        return {
+            "task": task,
+            "source_language": source_language.language_name,
+            "target_language": target_language.language_name
+        }
+
+    except SQLAlchemyError as e:
+        logger.error(f"Database error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+
+from pydantic import BaseModel
+
+class QaReviewSubmit(BaseModel):
+    task_id: int
+    qa_id: int
+    decision: bool
+
+@router.post("/submit_qa_review")
+def submit_qa_review(
+    review_data: QaReviewSubmit,  # Receive as request body
+    db: Session = Depends(get_db)
+):
+    now = datetime.now(timezone.utc)
+    
+    task = db.query(Task).filter(
+        Task.task_id == review_data.task_id,
+        Task.qa_assigned_id == review_data.qa_id,
+        Task.task_status == "UNDER_REVIEW"
+    ).first()
+    
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found or not assigned to you")
+    
+    task.qa_reviewed_by_id = review_data.qa_id
+    task.qa_reviewed_at = now
+    submitted_fl_id = task.submitted_by_id
+
+    if review_data.decision:
+        task.task_status = TaskStatus.COMPLETE
+        freelancer = db.query(Freelancer).filter(Freelancer.freelancer_id == submitted_fl_id).first()
+        task_price = task.task_price
+        freelancer.total_earnings += task_price
+        freelancer.current_balance += task_price
+
+        # neeed more update here
+
+    else:
+        task.task_status = TaskStatus.OPEN
+        task.assigned_freelancer_id = None
+        task.assigned_at = None
+        task.submitted_by_id = None
+        task.translated_text = None
+        task.submitted_at = None
+        task.qa_assigned_id = None
+        task.qa_assigned_at = None
+        
+
+        # neeed more update here
+
+
+
+    db.commit()
+    
+    return "QA review submitted successfully"

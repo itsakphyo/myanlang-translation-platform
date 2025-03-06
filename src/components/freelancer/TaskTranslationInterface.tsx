@@ -80,7 +80,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
           <Paid color="primary" />
           <Typography variant="h6" color="primary.main">
             {/* Reward: {'200 Kyat'} */}
-            task.reward ||
+            Reward: {task.price} Kyat
           </Typography>
           <AccessTime color="primary" />
           <Typography variant="h6" color="primary.main">
@@ -100,8 +100,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
             Translation Task
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Translate the following text accurately while maintaining the original meaning.
-            Pay attention to cultural nuances and idiomatic expressions.
+            {task.instruction}
           </Typography>
         </Box>
 
