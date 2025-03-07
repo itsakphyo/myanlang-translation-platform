@@ -133,17 +133,15 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
                 }} />
                 Translation Task
               </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Please provide a high-quality translation while preserving:
+              <Typography variant="body1" color="text.secondary" mt={2}>
+                Task Instruction 
               </Typography>
               <Box component="ul" sx={{
                 pl: 2.5,
                 color: 'text.secondary',
                 '& li': { typography: 'body2', my: 0.5 }
               }}>
-                <li>Original meaning and context</li>
-                <li>Cultural references and idioms</li>
-                <li>Formal/informal tone</li>
+                <li>{currentTask.instruction}</li>
               </Box>
             </Box>
 
