@@ -8,39 +8,7 @@ import {
 import { Language, ArrowDropDown } from "@mui/icons-material";
 import { createTheme, alpha } from "@mui/material/styles";
 import { LanguagePair } from "@/types/language";
-
-const theme = createTheme({
-  palette: {
-    primary: { main: "#2563eb" },
-    secondary: { main: "#4f46e5" },
-    background: { default: "#f8fafc" },
-  },
-  typography: {
-    fontFamily: "'Inter', sans-serif",
-    h5: { fontWeight: 700, letterSpacing: "-0.025em" },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: "none",
-          borderRadius: "12px",
-          padding: "12px 24px",
-          transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-        },
-      },
-    },
-    MuiToggleButtonGroup: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#ffffff",
-          borderRadius: "14px",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-        },
-      },
-    },
-  },
-});
+import theme from "@/theme";
 
 const LanguageSelector = ({ selectedLanguagePair, onOpen }: { selectedLanguagePair: LanguagePair | null, onOpen: () => void }) => (
     <Button

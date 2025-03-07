@@ -6,40 +6,8 @@ import {
 } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import { createTheme, alpha } from "@mui/material/styles";
+import theme from "@/theme";
 
-// Modern theme configuration
-const theme = createTheme({
-    palette: {
-        primary: { main: "#2563eb" },
-        secondary: { main: "#4f46e5" },
-        background: { default: "#f8fafc" },
-    },
-    typography: {
-        fontFamily: "'Inter', sans-serif",
-        h5: { fontWeight: 700, letterSpacing: "-0.025em" },
-    },
-    components: {
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    textTransform: "none",
-                    borderRadius: "12px",
-                    padding: "12px 24px",
-                    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                },
-            },
-        },
-        MuiToggleButtonGroup: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: "#ffffff",
-                    borderRadius: "14px",
-                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                },
-            },
-        },
-    },
-});
 
 const TaskTypeToggle = ({ value, icon, label, ...props }: { value: string; icon: React.ReactNode; label: string }) => (
     <ToggleButton

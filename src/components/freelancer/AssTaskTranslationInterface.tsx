@@ -7,13 +7,13 @@ import {
   TextField,
   Button,
   Chip,
-  useTheme
 } from '@mui/material';
 import AccessTime from '@mui/icons-material/AccessTime';
 import Translate from '@mui/icons-material/Translate';
 import { AssTask } from '@/types/task';
 import {useCreateAssessmentAttempts } from '@/hooks/useCreateAssessmentAttempts';
 import { AssessmentAttempt } from "@/types/task";
+import theme from '@/theme';
 
 
 interface AssTaskTranslationInterfaceProps {
@@ -28,7 +28,6 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
   const [updatedTasks, setUpdatedTasks] = useState<AssTask[]>(tasks.map(task => ({ ...task })));
   const [translation, setTranslation] = useState('');
   const { createAssessmentAttempts } = useCreateAssessmentAttempts();
-  const theme = useTheme();
 
   // Load the current task from our updatedTasks state
   const currentTask = updatedTasks[currentTaskIndex] ?? null;

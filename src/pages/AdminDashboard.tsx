@@ -1,4 +1,3 @@
-import { createTheme } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import FlagIcon from '@mui/icons-material/Flag';
@@ -15,6 +14,7 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import logo from '@/assets/images/logo.png';
 import { useNavigate } from 'react-router-dom';
 import TaskManage from '@/components/admin/AssTaskManage';
+import theme from '@/theme';
 
 export default function AdminDashboard({ window }: { window?: () => Window }) {
   const router = useDemoRouter('/dashboard');
@@ -96,26 +96,6 @@ export default function AdminDashboard({ window }: { window?: () => Window }) {
     },
   ];
 
-  const demoTheme = createTheme({
-    zIndex: {
-      drawer: 1301,
-      modal: 1400,
-    },
-    cssVariables: {
-      colorSchemeSelector: 'data-toolpad-color-scheme',
-    },
-    colorSchemes: { light: true },
-    breakpoints: {
-      values: {
-        xs: 0,
-        sm: 600,
-        md: 600,
-        lg: 1200,
-        xl: 1536,
-      },
-    },
-  });
-
   const renderContent = () => {
     switch (currentSegment) {
       case 'payments':
@@ -149,7 +129,7 @@ export default function AdminDashboard({ window }: { window?: () => Window }) {
         title: '',
         homeUrl: '/admin-dashboard',
       }}
-      theme={demoTheme}
+      theme={theme}
       window={window ? window() : undefined}
     >
       <DashboardLayout

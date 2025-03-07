@@ -5,18 +5,15 @@ import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
 import { useNavigate } from 'react-router-dom';
-import TranslationTaskPage from '@/components/freelancer/Tasks';
-import SubtitlesIcon from '@mui/icons-material/Subtitles';
 import PaymentIcon from '@mui/icons-material/Payment';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import UserProfile from '@/components/freelancer/UserProfile';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useTheme } from '@mui/material/styles';
 import { Box, Button  } from '@mui/material';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
+import theme from '@/theme';
 
 export default function UserDashboard({ window }: { window?: () => Window }) {
-  const theme = useTheme();
   const router = useDemoRouter('/dashboard');
   const currentSegment = router.pathname.split('/').pop() || 'job-dashboard';
   const navigate = useNavigate();

@@ -4,7 +4,6 @@ import {
   CardContent,
   Typography,
   IconButton,
-  useTheme,
   useMediaQuery,
   Tooltip,
   MenuItem,
@@ -23,6 +22,7 @@ import { useState } from 'react';
 import { red } from '@mui/material/colors';
 import DeleteDialog from './DeleteJobDialog';
 import EditJobDialog from './EditJobDialog';
+import theme from '@/theme';
 
 interface JobCardProps {
   job: Job;
@@ -31,7 +31,6 @@ interface JobCardProps {
 export default function JobCard({ job }: JobCardProps) {
   const [editJobDialogOpen, setEditJobDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: jobProgress } = useJob().getJobProgress(job.job_id);
   const { downloadTasks } = useJob();

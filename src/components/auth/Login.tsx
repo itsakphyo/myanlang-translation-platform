@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Alert } from '@mui/material';
+import { 
+  Box, 
+  TextField, 
+  Button, 
+  Alert,
+  GlobalStyles
+} from '@mui/material';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
 
 export default function Login() {
   const { login } = useAuth();
@@ -14,8 +19,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
-    console.log(formData);
-    
+
     if (!formData.email.trim()) {
       setErrorMessage("Please provide an email address");
       return;
@@ -35,21 +39,17 @@ export default function Login() {
         } else if (response.user_type === "freelancer") {
           navigate('/dashboard');
         } else if (response.user_type === "qa_member") {
-          console.log(response);
           // Check the initial_password flag for qa_member
           if (response.initial_password) {
-            // If initial_password is true, navigate to the create-password page
             navigate('/create-password', { 
               state: { userId: response.user_id } 
             }); 
           } else {
-            // Otherwise, navigate to the qa-dashboard
             navigate('/qa-dashboard');
           }
         }
       } else {
         setErrorMessage("Login failed. Invalid response from server.");
-        console.error("Invalid response structure:", response);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -63,55 +63,66 @@ export default function Login() {
       } else {
         setErrorMessage("An unexpected error occurred. Please try again.");
       }
-      console.error("Login Failed:", error);
     }
   };
   
-
   return (
-    <Box sx={{ width: '100%', maxWidth: 400, margin: '0 auto' }}>
-      <Box component="form" onSubmit={handleSubmit}>
-        {errorMessage && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-            <Alert severity="error">{errorMessage}</Alert>
-          </Box>
-        )}
-        <TextField
-          fullWidth
-          label="Email"
-          type="email"
-          margin="normal"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          required
-        />
-        <TextField
-          fullWidth
-          label="Password"
-          type="password"
-          margin="normal"
-          value={formData.password}
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          required
-        />
-        <Button
-          fullWidth
-          type="submit"
-          variant="contained"
-          sx={{ mt: 2 }}
-          disabled={login.isPending} 
-        >
-          {login.isPending ? 'Logging in...' : 'Login'}
-        </Button>
-        <Button
-          color="primary"
-          sx={{ mt: 1 }}
-          onClick={() => navigate('/forgot-password')}
-          fullWidth
-        >
-          Forgot Password?
-        </Button>
+    <>
+      {/* GlobalStyles will override the autofill styling */}
+      <GlobalStyles 
+        styles={{
+          'input:-webkit-autofill': {
+            WebkitBoxShadow: '0 0 0 1000px #fff inset',
+            WebkitTextFillColor: '#000',
+            transition: 'background-color 5000s ease-in-out 0s'
+          }
+        }}
+      />
+
+      <Box sx={{ width: '100%', maxWidth: 400, margin: '0 auto' }}>
+        <Box component="form" onSubmit={handleSubmit}>
+          {errorMessage && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+              <Alert severity="error">{errorMessage}</Alert>
+            </Box>
+          )}
+          <TextField
+            fullWidth
+            label="Email"
+            type="email"
+            margin="normal"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            required
+          />
+          <TextField
+            fullWidth
+            label="Password"
+            type="password"
+            margin="normal"
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            required
+          />
+          <Button
+            fullWidth
+            type="submit"
+            variant="contained"
+            sx={{ mt: 2 }}
+            disabled={login.isPending} 
+          >
+            {login.isPending ? 'Logging in...' : 'Login'}
+          </Button>
+          <Button
+            color="primary"
+            sx={{ mt: 1 }}
+            onClick={() => navigate('/forgot-password')}
+            fullWidth
+          >
+            Forgot Password?
+          </Button>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 }

@@ -11,13 +11,13 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
-  useTheme,
   Typography,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Language } from '@/types/language';
 import { useJob } from '@/hooks/useJob';
+import theme from '@/theme';
 
 interface CreateJobProps {
   open: boolean;
@@ -26,8 +26,6 @@ interface CreateJobProps {
 
 
 export default function CreateAssJobDialog({ open, onClose }: CreateJobProps) {
-  const theme = useTheme();
-
   const [csvFile, setCsvFile] = React.useState<File | null>(null);
   const [sourceLanguage, setSourceLanguage] = React.useState<number>(0);
   const [targetLanguage, setTargetLanguage] = React.useState<number>(0);

@@ -3,7 +3,6 @@ import {
     Card,
     CardContent,
     Typography,
-    useTheme,
     useMediaQuery,
     Button,
     Stack,
@@ -12,6 +11,7 @@ import {
   import { useState } from 'react';
   import RemoveQADialog from './qaRemoveDialog';
   import ResetPasswordQADialog from './qaPasswordResetDialog';
+  import theme from '@/theme';
   
   interface QACardProps {
     member: QAMember;
@@ -20,7 +20,6 @@ import {
   export default function QACard({ member }: QACardProps) {
     const [removeQADialogOpen, setRemoveQADialogOpen] = useState(false);
     const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
-    const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
     // Typography style constants similar to JobCard

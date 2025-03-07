@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Container, Button, Box, Typography, LinearProgress } from "@mui/material";
 import { Language, ArrowDropDown, ArrowRightAlt } from "@mui/icons-material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import LanguageSelectDialog from "@/components/freelancer/LanguageSelectDialog";
 import TaskTranslationInterface from "@/components/freelancer/TaskTranslationInterface";
 import logo from '@/assets/images/logo.png';
@@ -13,33 +13,7 @@ import { useAssessmentTasks } from "@/hooks/useAssTask";
 import AssTaskTranslationInterface from "@/components/freelancer/AssTaskTranslationInterface";
 import { useTask } from "@/hooks/useTask";
 import { OpenTask } from "@/types/task";
-
-const theme = createTheme({
-  palette: {
-    primary: { main: "#1e3a8a" },
-    secondary: { main: "#db2777" },
-  },
-  typography: { fontFamily: "Inter, sans-serif" },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: "none",
-          borderRadius: "8px",
-          padding: "8px 16px",
-          transition: "all 0.3s ease",
-        },
-      },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-        },
-      },
-    },
-  },
-});
+import theme from "@/theme";
 
 export default function TranslationTaskPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -257,7 +231,7 @@ export default function TranslationTaskPage() {
           flexDirection: "column",
           minHeight: "100vh",
           gap: 2,
-          padding: 4,
+          padding: 2,
           maxWidth: "100%",
           minWidth: "100%",
         }}

@@ -8,11 +8,11 @@ import {
     DialogContent,
     DialogTitle,
     Box,
-    useTheme,
     Typography,
 } from '@mui/material';
 import { JobEdit } from '@/types/job';
 import { useJob } from '@/hooks/useJob';
+import theme from '@/theme';
 
 interface EditJobProps {
     open: boolean;
@@ -23,7 +23,6 @@ interface EditJobProps {
 
 
 export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps) {
-    const theme = useTheme();
     const [jobTitle, setJobTitle] = useState(editjob.job_title);
     const [sourceLanguage, setSourceLanguage] = useState(editjob.source_language_id);
     const [targetLanguage, setTargetLanguage] = useState(editjob.target_language_id);

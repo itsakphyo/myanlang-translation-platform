@@ -9,11 +9,11 @@ import {
   MenuItem,
   Button,
   useMediaQuery,
-  useTheme,
   Box,
 } from '@mui/material';
 import { LanguagePair } from '@/types/language';
 import { useTask } from '@/hooks/useTask';
+import theme from '@/theme';
 
 interface LanguageSelectDialogProps {
   open: boolean;
@@ -28,9 +28,6 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
 }) => {
 
   const [selectedPairIndex, setSelectedPairIndex] = useState<number>(0);
-
-  // Use MUI's useTheme and useMediaQuery to detect screen size
-  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { getAllLanguagePairs } = useTask();

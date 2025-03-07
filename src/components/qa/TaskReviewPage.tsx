@@ -4,10 +4,9 @@ import {
   Box,
   ToggleButtonGroup,
   useMediaQuery,
-  useTheme,
 } from "@mui/material";
 import { Task, Assignment } from "@mui/icons-material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import LanguageSelectDialog from "@/components/freelancer/LanguageSelectDialog";
 import LanguageSelector from "./helperComponents/LanguageSelector";
@@ -15,50 +14,7 @@ import TaskReviewContent from "./helperComponents/TaskReviewContent";
 import TaskTypeToggle from "./helperComponents/TaskTypeToggle";
 import logo from "@/assets/images/logo.png";
 import { LanguagePair } from "@/types/language";
-
-const baseTheme = createTheme();
-
-// Modern theme configuration
-const theme = createTheme({
-  palette: {
-    primary: { main: "#2563eb" },
-    secondary: { main: "#4f46e5" },
-    background: { default: "#f8fafc" },
-  },
-  typography: {
-    fontFamily: "'Inter', sans-serif",
-    h5: {
-      fontWeight: 700,
-      [baseTheme.breakpoints.up("md")]: {
-        fontSize: "1.2rem",
-      },
-      [baseTheme.breakpoints.up("lg")]: {
-        fontSize: "1.5rem",
-      },
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: "none",
-          borderRadius: "12px",
-          padding: "12px 24px",
-          transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-        },
-      },
-    },
-    MuiToggleButtonGroup: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#ffffff",
-          borderRadius: "14px",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-        },
-      },
-    },
-  },
-});
+import theme from "@/theme";
 
 export default function TaskReviewPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -68,8 +24,6 @@ export default function TaskReviewPage() {
   const [taskType, setTaskType] = useState<"assessment" | "submission">("assessment");
   const navigate = useNavigate();
   const [reviewingInProgress, setReviewingInProgress] = useState(false);
-
-  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleTaskTypeChange = (_: React.MouseEvent<HTMLElement>, newType: string) => {
@@ -95,13 +49,14 @@ export default function TaskReviewPage() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth={false} sx={{ minHeight: "100vh", p: { xs: 2, md: 4 } }}>
+      <Container maxWidth={false} sx={{ minHeight: "100vh", p: { xs: 2, md: 4 }, bgcolor: "background.default"  }}>
         {/* Responsive Header Section */}
         <Box
           display="flex"
           flexDirection={{ xs: "column", md: "row" }}
           alignItems={{ xs: "flex-start", md: "center" }}
           justifyContent="space-between"
+          bgcolor={"background.default"}
           gap={2}
           sx={{ mb: { xs: 4, md: 8 }, position: "relative" }}
         >
@@ -139,6 +94,7 @@ export default function TaskReviewPage() {
               width: { xs: "100%", md: "auto" },
               order: { xs: 2, md: 0 },
               transform: { md: "translateX(-50%)" },
+              backgroundColor: "background.default",
               position: { md: "absolute" },
               left: { md: "50%" },
               "& .MuiToggleButton-root": {
@@ -189,9 +145,7 @@ export default function TaskReviewPage() {
           sx={{
             maxWidth: 1200,
             mx: "auto",
-            bgcolor: "white",
             borderRadius: { xs: 2, md: 4 },
-            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
             p: { xs: 2, md: 4 },
           }}
         >

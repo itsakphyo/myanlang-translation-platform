@@ -4,7 +4,6 @@ import {
   CardContent,
   Typography,
   IconButton,
-  useTheme,
   useMediaQuery,
   MenuItem,
   ListItemIcon,
@@ -23,6 +22,7 @@ import { useState } from 'react';
 import { red } from '@mui/material/colors';
 import DeleteDialog from './DeleteJobDialog';
 import EditAssJobDialog from './EditAssJobDialog';
+import theme from '@/theme';
 
 interface AssTaskCardProps {
   job: AssJob;
@@ -31,7 +31,6 @@ interface AssTaskCardProps {
 export default function AssTaskCard({ job }: AssTaskCardProps) {
   const [editJobDialogOpen, setEditJobDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { downloadTasks } = useJob();
 
@@ -93,7 +92,7 @@ export default function AssTaskCard({ job }: AssTaskCardProps) {
   const headerStyle = {
     p: 2,
     width: isMobile ? '100%' : 250,
-    background: 'linear-gradient(135deg, #00ACC1 0%, #26C6DA 100%)',
+    background: theme.palette.secondary.main,
     color: theme.palette.primary.contrastText,
     display: 'flex',
     flexDirection: 'column',
