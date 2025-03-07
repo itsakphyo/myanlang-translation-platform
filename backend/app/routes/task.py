@@ -152,8 +152,7 @@ async def get_assessment_tasks_up_to_5(source_language_id: int, target_language_
         )
 
         if not tasks:
-            logger.warning("No pending assessment tasks found.")
-            return []
+            return None
 
         # Convert results to dictionaries
         task_dicts = [
@@ -400,10 +399,7 @@ def get_assessment_tasks(source_language_id: int, target_language_id: int, db: S
         )
 
         if not results:
-            raise HTTPException(
-                status_code=404,
-                detail="No assessment tasks found for the specified language pair"
-            )
+            return None
 
         # Group results by the tuple (freelancer_id, source_language_id, target_language_id)
         grouped_data = {}

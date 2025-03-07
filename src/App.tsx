@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Auth from '@/pages/Auth';
 import UserDashboard from '@/pages/UserDashboard';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import ProtectedRoute from './protectRoute/ProtectedRoute';
 import ForgotPassword from './pages/ForgetPassword';
 import CreatePassword from './pages/createQAPassword';
 import QADashboard from './pages/QADashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import TranslationTaskPage from './components/freelancer/Tasks';
 import TaskReviewPage from './components/qa/TaskReviewPage';
+import PageNotFound from './pages/PageNotFound';
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedUserTypes={["freelancer"]}>
               <UserDashboard />
             </ProtectedRoute>
           }
@@ -25,7 +26,7 @@ function App() {
         <Route
           path="/admin-dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedUserTypes={["admin"]}>
               <AdminDashboard />
             </ProtectedRoute>
           }
@@ -33,7 +34,7 @@ function App() {
         <Route
           path="/qa-dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedUserTypes={["qa_member"]}>
               <QADashboard />
             </ProtectedRoute>
           }
@@ -43,7 +44,7 @@ function App() {
         <Route
           path="/create-password"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedUserTypes={["freelancer", "qa_member"]}>
               <CreatePassword />
             </ProtectedRoute>
           }
@@ -51,7 +52,7 @@ function App() {
         <Route
           path="/explore-task"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedUserTypes={["freelancer"]}>
               <TranslationTaskPage />
             </ProtectedRoute>
           }
@@ -59,11 +60,12 @@ function App() {
         <Route
           path="/qa-dashboard/review-task"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedUserTypes={["qa_member"]}>
               <TaskReviewPage />
             </ProtectedRoute>
           }
         />
+        <Route path="/page-not-found" element={<PageNotFound />} />
       </Routes>
     </Router>
   );

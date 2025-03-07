@@ -91,7 +91,7 @@ export default function JobCard({ job }: JobCardProps) {
     const completedText = completedTasks.toString();
     const totalText = totalTasks.toString();
     const underReviewText = underReviewTasks.toString();
-    return `${completedText} done, ${totalText} total, ${underReviewText} reviewing`;
+    return `${completedText} completed, ${underReviewText} under review, ${totalText} total`;
   };
 
   const jobProgressText = jobProgress ? formatJobProgress(jobProgress.completed_tasks, jobProgress.total_tasks, jobProgress.under_review_tasks) : '0/0 ⇡ 0';
@@ -284,7 +284,7 @@ export default function JobCard({ job }: JobCardProps) {
               }} />
               <Box sx={{
                 width: `${jobProgress ? (jobProgress.under_review_tasks / jobProgress.total_tasks) * 100 : 0}%`,
-                bgcolor: '#D4C5A9',
+                bgcolor: '#ffa600',
                 height: '100%',
               }} />
             </Box>
@@ -292,8 +292,8 @@ export default function JobCard({ job }: JobCardProps) {
           <Tooltip title={jobProgressText} arrow>
             <Typography variant="body2" color="text.secondary">
               {jobProgress
-                ? `${jobProgress.completed_tasks}/${jobProgress.total_tasks} ⇡ ${jobProgress.under_review_tasks}`
-                : '0/0 ⇡ 0'
+                ? `${jobProgress.completed_tasks}/${jobProgress.total_tasks} || ⇡ ${jobProgress.under_review_tasks}`
+                : '0/0 || ⇡ 0'
               }
             </Typography>
           </Tooltip>

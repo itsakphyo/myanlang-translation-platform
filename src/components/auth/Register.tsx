@@ -279,10 +279,11 @@ export default function Register() {
           />
           <MuiTelInput
             fullWidth
-            label="Phone Number (optional)"
+            label="Phone Number"
             value={formData.phone_number}
             onChange={(value) => setFormData({ ...formData, phone_number: value })}
             margin="normal"
+            required
           />
           <TextField
             fullWidth

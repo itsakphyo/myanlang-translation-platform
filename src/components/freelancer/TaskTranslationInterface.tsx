@@ -148,7 +148,6 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
               px: { xs: 2, sm: 4 }
             }}
             onClick={() => {
-              handleSubmit();
               onClose();
             }}
           >

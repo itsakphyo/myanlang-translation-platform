@@ -19,17 +19,26 @@ export const useAssessmentTasks = (source_language_id: number, target_language_i
 };
 
 export const useAssReviewedSubmit = () => {
-
-  const sentData = useMutation({
+  const mutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await axios.post(`${API_URL}/assessment/update_ass_reviewed_data`, data, {
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await axios.post(
+        `${API_URL}/assessment/update_ass_reviewed_data`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
       return response.data;
     },
   });
 
-  return sentData;
+  return {
+    mutate: mutation.mutate,
+    isLoading: mutation.isPending, // Loading state for the mutation
+    isError: mutation.isError, // Error state for the mutation
+    error: mutation.error, // Error details
+    isSuccess: mutation.isSuccess, // Success state for the mutation
+  };
 };
