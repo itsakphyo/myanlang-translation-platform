@@ -506,6 +506,12 @@ def submit_qa_review(
             FreelancerLanguagePair.source_language_id == source_language_id,
             FreelancerLanguagePair.target_language_id == target_language_id
         ).first()
+
+    review_qa = db.query(QAMember).filter(QAMember.qa_member_id == review_data.qa_id).first()
+
+    previoue_complete_of_qa = review_qa.total_tasks_reviewed or 0
+    previous_reject_of_qa = review_qa.total_tasks_rejected or 0
+    review_qa.total_tasks_reviewed = previoue_complete_of_qa + 1
     
     # For an approved task:
     if review_data.decision:
@@ -535,6 +541,8 @@ def submit_qa_review(
         task.submitted_at = None
         task.qa_assigned_id = None
         task.qa_assigned_at = None
+
+        review_qa.total_tasks_rejected = previous_reject_of_qa + 1
 
         # For a rejected task, complete_task remains unchanged; only update rejected count
         previous_complete_task = freelancer_language_pair.complete_task or 0

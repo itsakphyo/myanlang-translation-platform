@@ -17,6 +17,7 @@ interface ReviewData {
 interface CheckSubmitRequest {
   data: ReviewData[];
   fl_id: number;
+  qa_id: number | null;
   source_lang_id: number;
   target_lang_id: number;
 }
@@ -187,6 +188,8 @@ const BulkSubmissionReview: React.FC<BulkSubmissionReviewProps> = ({
     setReviews(newReviews);
   };
 
+  const qa_id = localStorage.getItem('userId');
+
   const handleSubmitAllAndClose = () => {
     const payload: CheckSubmitRequest = {
       data: data.tasks.map((task, index) => ({
@@ -196,6 +199,7 @@ const BulkSubmissionReview: React.FC<BulkSubmissionReviewProps> = ({
         status: reviews[index] as 'approved' | 'rejected',
       })),
       fl_id: data.userId,
+      qa_id: qa_id ? parseInt(qa_id, 10) : null,
       source_lang_id: data.sourceLanguageId,
       target_lang_id: data.targetLanguageId,
     };
@@ -211,6 +215,7 @@ const BulkSubmissionReview: React.FC<BulkSubmissionReviewProps> = ({
         status: reviews[index] as 'approved' | 'rejected',
       })),
       fl_id: data.userId,
+      qa_id: qa_id ? parseInt(qa_id, 10) : null,
       source_lang_id: data.sourceLanguageId,
       target_lang_id: data.targetLanguageId,
     };

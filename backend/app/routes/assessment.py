@@ -7,6 +7,7 @@ from ..schemas.freelancer_language_pair import FreelancerLanguagePair
 from ..schemas.task import Task  
 from typing import Any
 from ..schemas.enums import AssSubmission, AssTaskStatus
+from ..schemas.qa_member import QAMember
 
 from pydantic import BaseModel
 from typing import List
@@ -20,6 +21,7 @@ class ReviewData(BaseModel):
 class CheckSubmitRequest(BaseModel):
     data: List[ReviewData]
     fl_id: int
+    qa_id: int
     source_lang_id: int
     target_lang_id: int
 
@@ -83,6 +85,14 @@ async def create_assessment_attempts(
     return {"message": f"{len(attempts)} assessment attempt(s) created successfully"}
 
 
+    # qa_member_id = Column(Integer, primary_key=True, autoincrement=True)
+    # full_name = Column(String, nullable=False)
+    # email = Column(String, nullable=False, unique=True)
+    # initial_password = Column(Boolean, nullable=False, default=True)
+    # password_hash = Column(String, nullable=False)
+    # total_tasks_reviewed = Column(Integer, nullable=False, default=0)
+    # total_tasks_rejected = Column(Integer, nullable=False, default=0)
+
 @router.post("/update_ass_reviewed_data")
 async def update_ass_reviewed_data(reviews: CheckSubmitRequest, db: Session = Depends(get_db)):
     # Calculate accuracy (percentage-based)
@@ -94,8 +104,16 @@ async def update_ass_reviewed_data(reviews: CheckSubmitRequest, db: Session = De
     # accuracy = (approved_reviews / total_reviews) * 100  
 
     fl_id = reviews.fl_id
+    qa_id = reviews.qa_id
     source_lang_id = reviews.source_lang_id
     target_lang_id = reviews.target_lang_id
+
+    review_qa = db.query(QAMember).filter(QAMember.qa_member_id == qa_id).first()
+
+    previoue_complete_of_qa = review_qa.total_tasks_reviewed or 0
+    previous_reject_of_qa = review_qa.total_tasks_rejected or 0
+    review_qa.total_tasks_reviewed = previoue_complete_of_qa + total_reviews
+    review_qa.total_tasks_rejected = previous_reject_of_qa + (total_reviews - approved_reviews)
 
     # Update assessment attempts (Set all related attempts to COMPLETE)
     task_ids = [review.taskid for review in reviews.data]

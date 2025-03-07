@@ -89,17 +89,6 @@ const TaskReviewContent = ({
     setReviewingInProgress
   ]);
 
-  const handleSubmit = (data: any) => {
-    sentData(data, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['assessmentTasks', selectedLanguagePair?.source_id, selectedLanguagePair?.target_id] });
-        setAssTaskOpen(false);
-        setSelectedLanguagePair(null);
-        queryClient.setQueryData(['assessmentTasks', selectedLanguagePair?.source_id, selectedLanguagePair?.target_id], []);
-      },
-    });
-  };
-
   const handleSubmissionAction = (data: any) => {
     console.log("Submission action completed", data);
     sentDecision(data, {
