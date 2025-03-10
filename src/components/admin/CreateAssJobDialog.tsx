@@ -101,7 +101,6 @@ export default function CreateAssJobDialog({ open, onClose }: CreateJobProps) {
 
     createAssessmentJob.mutate(jobData, {
       onSuccess: (data) => {
-        console.log("Job created:", data);
         onClose();
       },
       onError: (error: any) => {

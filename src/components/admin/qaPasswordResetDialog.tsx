@@ -28,7 +28,6 @@ export default function ResetPasswordQADialog({ open, onClose, qa_member }: Dele
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(data);
         resetQAPassword.mutate(data);
         onClose();
     }

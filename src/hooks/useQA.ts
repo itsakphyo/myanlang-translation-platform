@@ -49,7 +49,6 @@ export const useQA = () => {
             return response.data;
         },
         onSuccess: (data) => {
-            console.log('Password reset successfully:', data);
             // Optionally show a success message (e.g., toast notification)
         },
         onError: (error) => {
@@ -67,7 +66,6 @@ export const useQA = () => {
             return response.data;
         },
         onSuccess: (data) => {
-            console.log('Password reset successfully:', data);
             navigate('/qa-dashboard'); 
         },
         onError: (error) => {

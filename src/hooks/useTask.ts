@@ -37,13 +37,11 @@ export const useTask = () => {
   };
 
   const submitTask = async (taskId: number, freelancerId: number, translation: string) => {
-    console.log('submitTask', taskId, freelancerId, translation);
     const response = await axios.post(`${API_URL}/task/submit`, {
       task_id: taskId,
       freelancer_id: freelancerId,
       translated_text: translation,
     });
-    console.log('submitTask response', response.data);
     return response.data;
   };
 

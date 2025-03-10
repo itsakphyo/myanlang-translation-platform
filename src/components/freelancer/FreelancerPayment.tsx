@@ -9,8 +9,11 @@ import {
   CircularProgress,
   Button,
   Divider,
+  Link,
   useTheme,
+  useMediaQuery,
 } from '@mui/material';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { Refresh, AccountBalanceWallet, Payment, Schedule, CheckCircleOutline } from '@mui/icons-material';
 import { getWithdrawalsByFreelancer } from '@/hooks/useWithdrawal';
 import { format } from 'date-fns';
@@ -33,6 +36,7 @@ interface Withdrawal {
   account_holder_name: string | null;
   bank_name: string | null;
   account_number: string | null;
+  proof_of_payment: string | null;
 }
 
 const FreelancerPayment: React.FC = () => {
@@ -42,6 +46,7 @@ const FreelancerPayment: React.FC = () => {
   const [showPaymentDialog, setShowPaymentDialog] = useState<boolean>(false);
   const freelancerId = localStorage.getItem("userId");
   const { getCurrentBalance } = freelancerService;
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [currentBalance, setCurrentBalance] = useState<number>(0);
 
@@ -55,7 +60,13 @@ const FreelancerPayment: React.FC = () => {
         // Fetch withdrawals
         setLoading(true);
         const withdrawalData = await getWithdrawalsByFreelancer(parseInt(freelancerId));
-        setWithdrawals(withdrawalData);
+
+        // Sort withdrawals by requested_at in descending order
+        const sortedWithdrawals = withdrawalData.sort((a: Withdrawal, b: Withdrawal) => {
+          return new Date(b.requested_at).getTime() - new Date(a.requested_at).getTime();
+        });
+
+        setWithdrawals(sortedWithdrawals);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -70,9 +81,9 @@ const FreelancerPayment: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'completed':
+      case 'processed':
         return 'success';
-      case 'pending':
+      case 'under_processing':
         return 'warning';
       case 'failed':
         return 'error';
@@ -82,30 +93,51 @@ const FreelancerPayment: React.FC = () => {
   };
 
   const renderPaymentDetails = (withdrawal: Withdrawal) => {
-    const methodDetails: { [key: string]: { label: string; value: string | null } } = {
-      Paypal: { label: 'PayPal Link', value: withdrawal.paypal_link },
-      Payoneer: { label: 'Payoneer Email', value: withdrawal.payoneer_email },
-      Wavepay: { label: 'WavePay Phone', value: withdrawal.wavepay_phone },
-      Kpay: { label: 'KPay Phone', value: withdrawal.kpay_phone },
-      Bank: {
-        label: 'Bank Account',
-        value: `${withdrawal.bank_name} - ${withdrawal.account_number} (${withdrawal.account_holder_name})`,
-      },
-    };
+    const fields = [
+      { label: 'PayPal Link', value: withdrawal.paypal_link },
+      { label: 'Payoneer Email', value: withdrawal.payoneer_email },
+      { label: 'WavePay Phone', value: withdrawal.wavepay_phone },
+      { label: 'KPay Phone', value: withdrawal.kpay_phone },
+      { label: 'Account Holder Name', value: withdrawal.account_holder_name },
+      { label: 'Bank Name', value: withdrawal.bank_name },
+      { label: 'Account Number', value: withdrawal.account_number },
+      { label: 'Proof of Payment', value: withdrawal.proof_of_payment },
+    ];
 
-    const details = methodDetails[withdrawal.payment_method];
-    return details?.value ? (
-      <Grid container spacing={1} alignItems="center">
-        <Grid item>
-          <Payment fontSize="small" color="action" />
-        </Grid>
-        <Grid item>
-          <Typography variant="body2" color="text.secondary">
-            {details.label}: <strong>{details.value}</strong>
-          </Typography>
-        </Grid>
-      </Grid>
-    ) : null;
+    // Only render fields with a non-null value
+    const availableFields = fields.filter(field => field.value);
+    if (!availableFields.length) return null;
+
+    return (
+      <Box sx={{ mt: 2 }}>
+        {availableFields.map((field, index) => (
+          <Grid container spacing={1} key={index}>
+            <Grid item>
+              <Payment fontSize="small" color="action" />
+            </Grid>
+            <Grid item>
+              {field.label === 'Proof of Payment' ? (
+                <Link
+                  href={field.value!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  fontSize="small"
+                  underline="hover"
+                >
+                  See Proof of Payment
+                </Link>
+              ) : (
+                <>
+                  <Typography variant="body2" color="text.secondary" >
+                    {field.label}: <strong>{field.value}</strong>
+                  </Typography>
+                </>
+              )}
+            </Grid>
+          </Grid>
+        ))}
+      </Box>
+    );
   };
 
   if (!freelancerId) {
@@ -126,15 +158,44 @@ const FreelancerPayment: React.FC = () => {
         fetchWithdrawals={fetchWithdrawals} // Pass fetchWithdrawals as a prop
       />
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3, gap: 2 }}>
-        <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isSmallScreen ? "column" : "row",
+          justifyContent: "space-between",
+          alignItems: isSmallScreen ? "flex-start" : "center",
+          mb: 3,
+          gap: 2,
+        }}
+      >
+        <Typography variant="h5" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <AccountBalanceWallet /> Withdrawal History
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button variant="contained" startIcon={<Refresh />} onClick={fetchWithdrawals} disabled={loading}>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: isSmallScreen ? "column" : "row",
+            width: isSmallScreen ? "100%" : "auto",
+            gap: 2,
+          }}
+        >
+          <Button
+            variant="contained"
+            startIcon={<Refresh />}
+            onClick={fetchWithdrawals}
+            disabled={loading}
+            fullWidth={isSmallScreen}
+            color='primary'
+          >
             Refresh
           </Button>
-          <Button variant="contained" color="primary" onClick={() => setShowPaymentDialog(true)}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setShowPaymentDialog(true)}
+            fullWidth={isSmallScreen}
+          >
             Request New Payment
           </Button>
         </Box>
@@ -179,12 +240,12 @@ const FreelancerPayment: React.FC = () => {
                       />
                     </Box>
                     <Box sx={{ mt: { xs: 2, sm: 0 } }}>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                         <Schedule fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
                         Requested: {format(new Date(withdrawal.requested_at), 'MMM dd, yyyy HH:mm')}
                       </Typography>
                       {withdrawal.processed_at && (
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                           <CheckCircleOutline fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
                           Processed: {format(new Date(withdrawal.processed_at), 'MMM dd, yyyy HH:mm')}
                         </Typography>
@@ -202,15 +263,10 @@ const FreelancerPayment: React.FC = () => {
                   >
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
                       <Payment fontSize="small" sx={{ mr: 1 }} />
-                      Method: <strong>{withdrawal.payment_method}</strong>
+                      Method: <strong style={{ marginLeft: '5px' }}>{withdrawal.payment_method}</strong>
                     </Typography>
-                    {renderPaymentDetails(withdrawal)}
-                    {withdrawal.admin_id && (
-                      <Typography variant="body2" color="text.secondary">
-                        Processed by Admin ID: {withdrawal.admin_id}
-                      </Typography>
-                    )}
                   </Box>
+                  {renderPaymentDetails(withdrawal)}
                 </CardContent>
               </Card>
             </Grid>

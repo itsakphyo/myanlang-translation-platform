@@ -22,7 +22,6 @@ import { useCurrentUser } from '@/hooks/useAuth';
 
 const UserProfile = () => {
   const { data: user } = useCurrentUser();
-  console.log(user);
 
   // Show a loading state until the user data is available
   if (!user) {

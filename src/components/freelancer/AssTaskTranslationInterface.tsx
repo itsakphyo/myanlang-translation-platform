@@ -80,9 +80,7 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
       task_id: task.task_id,
       submission_text: task.translated_text,
     }));
-  
-    console.log('Assessment Attempts:', assessmentAttempts);
-  
+    
     // Ensure createAssessmentAttempts.mutate expects the correct type
     createAssessmentAttempts.mutate(assessmentAttempts);
   

@@ -167,3 +167,34 @@ def get_withdrawals_by_freelancer(freelancer_id: int, db: Session = Depends(get_
 def get_current_balance(freelancer_id: int, db: Session = Depends(get_db)):
     freelancer = db.query(Freelancer).filter(Freelancer.freelancer_id == freelancer_id).first()
     return {"current_balance": freelancer.current_balance}
+
+
+
+class UpdateWithdrawalRequestBody(BaseModel):
+    withdrawal_id: int
+    admin_id: int
+    proof_of_payment: str
+
+
+@router.post("/update_withdrawal/")
+def update_withdrawal(request_body: UpdateWithdrawalRequestBody, db: Session = Depends(get_db)):
+    withdrawal_id = request_body.withdrawal_id
+    admin_id = request_body.admin_id
+    proof_of_payment = request_body.proof_of_payment
+
+    withdrawal = db.query(Withdrawal).filter(Withdrawal.withdrawal_id == withdrawal_id).first()
+    if withdrawal is None:
+        raise HTTPException(status_code=404, detail="Withdrawal not found")
+
+    withdrawal.proof_of_payment = proof_of_payment
+    withdrawal.withdrawal_status = WithdrawalStatus.PROCESSED
+    withdrawal.processed_at = datetime.now()
+    withdrawal.admin_id = admin_id
+
+    freelancer = db.query(Freelancer).filter(Freelancer.freelancer_id == withdrawal.freelancer_id).first()
+    freelancer.total_withdrawn += withdrawal.amount
+    freelancer.pending_withdrawal -= withdrawal.amount
+
+    db.commit()
+    db.refresh(withdrawal)
+    return withdrawal

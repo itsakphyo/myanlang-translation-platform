@@ -90,7 +90,6 @@ const TaskReviewContent = ({
   ]);
 
   const handleSubmissionAction = (data: any) => {
-    console.log("Submission action completed", data);
     sentDecision(data, {
       onSuccess: () => {
         refetchSubmittedData();

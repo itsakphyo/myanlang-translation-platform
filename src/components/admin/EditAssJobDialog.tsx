@@ -84,7 +84,6 @@ export default function EditAssJobDialog({ open, onClose, job_id, editjob }: Edi
             { job_id: jobData.job_id, data: jobData },
             {
                 onSuccess: (data) => {
-                    console.log("Job updated:", data);
                     onClose();
                 },
                 onError: (error: any) => {

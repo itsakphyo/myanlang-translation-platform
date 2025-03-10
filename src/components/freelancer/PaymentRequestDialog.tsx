@@ -101,7 +101,6 @@ const PaymentRequestDialog = ({
         validationSchema: validationSchema(currentBalance),
         onSubmit: async (values: PaymentFormValues) => {
             setSubmitting(true);
-            console.log('Submitting:', values);
             try {
                 // Convert freelancer_id to a number if required by the API.
                 const payload = {

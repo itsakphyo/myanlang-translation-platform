@@ -20,7 +20,6 @@ export default function RemoveQADialog({ open, onClose, qa_member }: DeleteDialo
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(qa_member);
         removeQAMember.mutate(qa_member.qa_member_id);
         onClose();
     };

@@ -18,7 +18,6 @@ const CloudinaryUpload: React.FC<CloudinaryUploadProps> = ({ onUploadSuccess }) 
       },
       (error: any, result: any) => {
         if (!error && result && result.event === 'success') {
-          console.log('Upload successful! Here is the file info: ', result.info);
           // Pass the secure URL back to the parent component
           onUploadSuccess(result.info.secure_url);
         }

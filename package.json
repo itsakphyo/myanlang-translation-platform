@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start:frontend": "vite"
+    "start:frontend": "vite",
+    "start:backend": "cd backend && .\\venv\\Scripts\\activate && uvicorn app.main:app"
   },
   "dependencies": {
     "@cloudinary/react": "1.14.1",

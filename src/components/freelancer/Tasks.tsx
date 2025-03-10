@@ -74,7 +74,6 @@ export default function TranslationTaskPage() {
         sourceLanguageId: selectedLanguagePair.source_id,
         targetLanguageId: selectedLanguagePair.target_id,
       };
-      console.log("Setting queryParams:", newQueryParams);
       setQueryParams(newQueryParams);
     }
   }, [selectedLanguagePair, user]);
@@ -86,7 +85,6 @@ export default function TranslationTaskPage() {
       queryParams.sourceLanguageId !== 0 &&
       queryParams.targetLanguageId !== 0
     ) {
-      console.log("Refetching tasks with queryParams:", queryParams);
       refetch();
     }
   }, [queryParams, refetch]);
@@ -119,17 +117,7 @@ export default function TranslationTaskPage() {
   );
 
   const handleGetAsstask = useCallback(() => {
-    console.log("Tasks:", tasks);
-    console.log("Loading:", tasksLoading);
   }, [tasks, tasksLoading]);
-
-  useEffect(() => {
-    if (languagePairParams) {
-      console.log("Language Pair Data:", languagePairData);
-      console.log("Loading:", languagePairLoading);
-      console.log("Error:", languagePairError);
-    }
-  }, [languagePairData, languagePairLoading, languagePairError, languagePairParams]);
 
   const handleFreelancerLanguagePairStatus = useCallback(
     async (freelancerId: number, sourceLanguageId: number, targetLanguageId: number) => {
@@ -212,15 +200,9 @@ export default function TranslationTaskPage() {
 
   // When the user clicks "Next", clear the displayed task immediately then update the query parameters.
   const handleShowNext = useCallback(() => {
-    console.log("Loading the next translation task.");
     setCurrentTask(null);
     handleGetOpenTask();
   }, [handleGetOpenTask]);
-
-  useEffect(() => {
-    console.log("Task Data:", task);
-    console.log("Language Pair Data:", languagePairData);
-  }, [task, languagePairData]);
 
   return (
     <ThemeProvider theme={theme}>

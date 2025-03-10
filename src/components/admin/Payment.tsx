@@ -29,6 +29,7 @@ import {
     Grid,
     InputAdornment,
     IconButton,
+    Link,
 } from "@mui/material"
 import {
     KeyboardArrowDown,
@@ -43,7 +44,7 @@ import {
 } from "@mui/icons-material"
 import { useWithdrawals } from "@/hooks/useWithdrawal"
 import CloudinaryUpload from "./CloudinaryUpload"
-import { set } from "date-fns"
+import { useUpdateWithdrawal } from "@/hooks/useUpdateWithdrawal"
 
 // Define the type for withdrawal data
 interface WithdrawalRequest {
@@ -62,28 +63,13 @@ interface WithdrawalRequest {
     wavepay_phone: string | null
     account_holder_name: string | null
     account_number: string | null
-}
-
-// Mock API function to update withdrawal status
-const updateWithdrawalStatus = async (
-    withdrawalId: number,
-    status: string,
-    adminId = 1, // Assuming admin ID is 1 for demo
-    proofOfPayment?: string,
-): Promise<boolean> => {
-    // In a real application, this would be an API call
-    console.log(`Updating withdrawal ${withdrawalId} to ${status} by admin ${adminId}`)
-
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Return success
-    return true
+    proof_of_payment: string | null
 }
 
 export default function Payment() {
     // Sample data - in a real app, this would come from an API
     const { withdrawalRequests, fetchWithdrawals, loading, error } = useWithdrawals();
+    const { updateWithdrawal, isLoading: updateLoading, error: UpdateError } = useUpdateWithdrawal();
 
     useEffect(() => {
         fetchWithdrawals();
@@ -167,37 +153,40 @@ export default function Payment() {
     const [dialogErrorMessage, setDialogErrorMessage] = useState<string | null>(null)
 
     const handleProcessPayment = async (status: "completed" | "rejected") => {
-        if (status === "rejected") return
-        if (!selectedRequest) return
+        if (status === "rejected") {
+            setSelectedRequest(null);
+            fetchWithdrawals();
+            return;
+        }
 
+        if (!selectedRequest) return;
+    
         if (!proofOfPayment && status === "completed") {
-            setDialogErrorMessage("Please upload proof of payment")
-            return
+          setDialogErrorMessage("Please upload proof of payment");
+          return;
         }
-
-        setIsProcessing(true)
-
+    
+        setIsProcessing(true);
+    
         try {
-
-            console.log("Processing payment", status)
-            console.log("Selected request", selectedRequest)
-            console.log("Proof of payment", proofOfPayment)
-            console.log("Updated ID", selectedRequest?.withdrawal_id)
-            console.log("Admin ID", localStorage.getItem("userId"))
-            console.log("decision", status)
-
-
-            setSelectedRequest(null)
-            setProofOfPayment("")
-
+          const adminId = Number(localStorage.getItem("userId"));
+    
+          await updateWithdrawal({
+            withdrawal_id: selectedRequest.withdrawal_id,
+            admin_id: adminId,
+            proof_of_payment: proofOfPayment,
+          });
+    
+          setSelectedRequest(null);
+          setProofOfPayment("");
         } catch (error) {
-            console.error("Error processing payment:", error)
+          console.error("Error processing payment:", error);
         } finally {
-            setDialogErrorMessage(null)
-            setIsProcessing(false)
+          setDialogErrorMessage(null);
+          setIsProcessing(false);
+          fetchWithdrawals();
         }
-
-    }
+      };
 
     // Format date for display
     const formatDate = (dateString: string) => {
@@ -207,10 +196,8 @@ export default function Payment() {
     // Get status chip
     const getStatusChip = (status: string) => {
         switch (status) {
-            case "completed":
-                return <Chip label="Completed" color="success" />
-            case "rejected":
-                return <Chip label="Rejected" color="error" />
+            case "processed":
+                return <Chip label="Complete" color="success" />
             case "under_processing":
                 return <Chip label="Processing" color="warning" />
             default:
@@ -273,8 +260,7 @@ export default function Payment() {
                             >
                                 <MenuItem value="all">All Statuses</MenuItem>
                                 <MenuItem value="under_processing">Processing</MenuItem>
-                                <MenuItem value="completed">Completed</MenuItem>
-                                <MenuItem value="rejected">Rejected</MenuItem>
+                                <MenuItem value="processed">Completed</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -588,6 +574,25 @@ export default function Payment() {
                                         </Grid>
                                         <Grid item xs={6}>
                                             <CloudinaryUpload onUploadSuccess={handleUploadSuccess} />
+                                        </Grid>
+                                    </>
+                                )}
+
+                                {selectedRequest.proof_of_payment && (
+                                    <>
+                                        <Grid item xs={6}>
+                                            <Typography variant="body2" fontWeight="medium">
+                                                Proof of Payment:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Link
+                                                href={selectedRequest.proof_of_payment}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                See Proof of Payment
+                                            </Link>
                                         </Grid>
                                     </>
                                 )}

@@ -46,7 +46,6 @@ async def create_job(
     db.refresh(new_job)
 
     for _, row in df.iterrows():
-        print(row.iloc[0])
         task = Task(
             job_id=new_job.job_id,
             source_language_id=source_language_id,
@@ -167,7 +166,6 @@ async def create_assessment_job(
     db.refresh(new_job)
 
     for _, row in df.iterrows():
-        print(row.iloc[0])
         task = Task(
             job_id=new_job.job_id,
             source_language_id=source_language_id,

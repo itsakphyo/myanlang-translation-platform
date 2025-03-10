@@ -47,6 +47,7 @@ export interface WithdrawalRequest {
     wavepay_phone: string | null;
     account_holder_name: string | null;
     account_number: string | null;
+    proof_of_payment: string | null
   }
   
   export const useWithdrawals = () => {

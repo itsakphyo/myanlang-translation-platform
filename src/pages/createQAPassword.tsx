@@ -13,7 +13,6 @@ import { useQA } from '@/hooks/useQA';
 export default function CreatePassword() {
     const location = useLocation();
     const user_id = location.state?.userId;
-    console.log(user_id);
     const { createQApassword } = useQA();
 
     const [formData, setFormData] = useState({

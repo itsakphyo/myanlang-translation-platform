@@ -109,7 +109,6 @@ export default function CreateJob({ open, onClose }: CreateJobProps) {
 
     createJob.mutate(jobData, {
       onSuccess: (data) => {
-        console.log("Job created:", data);
         onClose();
       },
       onError: (error: any) => {

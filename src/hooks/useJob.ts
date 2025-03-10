@@ -33,7 +33,6 @@ export const useJob = () => {
         queryKey: ["jobs"],
         queryFn: async () => {
             const response = await axios.get(`${API_URL}/job/get_all_jobs`);
-            console.log(response.data);
             return response.data;
         },
     });
@@ -42,7 +41,6 @@ export const useJob = () => {
         queryKey: ["assjobs"], // Ensure consistent casing
             queryFn: async () => {
             const response = await axios.get(`${API_URL}/job/get_all_ass_jobs`);
-            console.log(response.data);
             return response.data;
         },
     });

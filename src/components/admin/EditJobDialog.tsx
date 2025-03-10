@@ -89,7 +89,6 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
             { job_id: jobData.job_id, data: jobData },  // Ensure correct structure
             {
                 onSuccess: (data) => {
-                    console.log("Job updated:", data);
                     onClose();
                 },
                 onError: (error: any) => {

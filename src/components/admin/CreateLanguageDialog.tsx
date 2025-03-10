@@ -23,8 +23,7 @@ export default function CreateLanguageDialog({ open, onClose }: CreateLanguageDi
         e.preventDefault();
         createLanguage.mutate(language, {
             onSuccess: () => {
-                console.log("Language Created");
-                onClose(); // Optionally close the dialog after success.
+                onClose();
             },
         });
     };
