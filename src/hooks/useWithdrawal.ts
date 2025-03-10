@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useState } from 'react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -30,6 +31,47 @@ export const freelancerService = {
     }
 };
 
+export interface WithdrawalRequest {
+    freelancer_id: number;
+    withdrawal_id: number;
+    amount: number;
+    requested_at: string;
+    processed_at: string | null;
+    payoneer_email: string | null;
+    kpay_phone: string | null;
+    bank_name: string | null;
+    admin_id: number | null;
+    payment_method: string;
+    withdrawal_status: string;
+    paypal_link: string | null;
+    wavepay_phone: string | null;
+    account_holder_name: string | null;
+    account_number: string | null;
+  }
+  
+  export const useWithdrawals = () => {
+    const [withdrawalRequests, setWithdrawalRequests] = useState<WithdrawalRequest[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+  
+    // Function to fetch withdrawals
+    const fetchWithdrawals = async () => {
+      setLoading(true);
+      setError(null);
+  
+      try {
+        const response = await axios.get(`${API_BASE_URL}/payment/get_all_withdrawals/`);
+        setWithdrawalRequests(response.data);
+      } catch (err) {
+        setError('Error fetching withdrawal requests.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    return { withdrawalRequests, fetchWithdrawals, loading, error };
+  };
 
 export interface PaymentRequestBody {
     freelancer_id: number;

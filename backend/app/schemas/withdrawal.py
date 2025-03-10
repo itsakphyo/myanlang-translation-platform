@@ -22,6 +22,7 @@ class Withdrawal(Base):
     account_holder_name = Column(String, nullable=True)
     bank_name = Column(String, nullable=True)
     account_number = Column(String, nullable=True)
+    proof_of_payment = Column(String, nullable=True)
 
     freelancer = relationship("Freelancer", back_populates="withdrawals")
     admin = relationship("Admin", back_populates="withdrawals")
