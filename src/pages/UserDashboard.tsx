@@ -11,7 +11,7 @@ import UserProfile from '@/components/freelancer/UserProfile';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Box, Button  } from '@mui/material';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
-import theme from '@/theme';
+import FreelancerPayment from '@/components/freelancer/FreelancerPayment';
 
 export default function UserDashboard({ window }: { window?: () => Window }) {
   const router = useDemoRouter('/dashboard');
@@ -101,7 +101,7 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
   const renderContent = () => {
     switch (currentSegment) {
       case 'request-payment':
-        return <div>Withdrawal Payment</div>;
+        return <FreelancerPayment />;
       case 'report-issues':
         return <div>Report Issues</div>;
       case 'other':

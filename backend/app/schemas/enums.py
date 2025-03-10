@@ -26,6 +26,7 @@ class PaymentMethod(Enum):
     PAYONEER = "Payoneer"
     KPAY = "Kpay"
     WAVEPAY = "Wavepay"
+    BANK = "Bank" 
 
 class WithdrawalStatus(Enum):
     UNDER_PROCESSING = "under_processing"
