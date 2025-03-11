@@ -23,7 +23,7 @@ interface TaskTranslationInterfaceProps {
 const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   task,
   onClose,
-  onShowNext
+  onShowNext,
 }) => {
   const [translation, setTranslation] = useState(task?.translated_text || '');
   const totalTime = task?.max_time_per_task ? task.max_time_per_task * 60 : 900;

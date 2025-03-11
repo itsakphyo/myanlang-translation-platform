@@ -80,6 +80,8 @@ export default function JobCard({ job }: JobCardProps) {
 
   const handleEditClose = () => {
     setEditJobDialogOpen(false)
+    console.log("Edit Dialog completedPercentage", completedPercentage)
+    console.log("Edit Dialog underReviewPercentage", underReviewPercentage)
   }
 
   const completedPercentage = jobProgress ? (jobProgress.completed_tasks / jobProgress.total_tasks) * 100 : 0
@@ -101,6 +103,7 @@ export default function JobCard({ job }: JobCardProps) {
 
   const truncateText = (text: string, maxLength = 100) =>
     text.length > maxLength ? text.substring(0, maxLength) + "…" : text
+
 
   const formatJobProgress = (completedTasks: number, totalTasks: number, underReviewTasks: number) => {
     const completedText = completedTasks.toString()
@@ -233,18 +236,32 @@ export default function JobCard({ job }: JobCardProps) {
                             </Typography>
                           </Tooltip>
                         </Box>
-                        <LinearProgress
-                          variant="determinate"
-                          value={completedPercentage + underReviewPercentage}
-                          sx={{
-                            height: 6,
-                            borderRadius: 3,
-                            backgroundColor: theme.palette.grey[200],
-                            "& .MuiLinearProgress-bar": {
-                              background: `linear-gradient(90deg, ${theme.palette.success.main} ${completedPercentage}%, ${theme.palette.warning.main} ${completedPercentage}%)`,
-                            },
-                          }}
-                        />
+
+                        {/* Progress Bar */}
+                        <Box sx={{ position: "relative", width: "100%", height: 6, borderRadius: 3, overflow: "hidden", backgroundColor: "#e0e0e0" }}>
+                          {/* Completed Progress (Green) */}
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              left: 0,
+                              top: 0,
+                              width: `${completedPercentage}%`,
+                              height: "100%",
+                              backgroundColor: theme.palette.success.main,
+                            }}
+                          />
+                          {/* Under Review Progress (Yellow) */}
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              left: `${completedPercentage}%`,
+                              top: 0,
+                              width: `${underReviewPercentage}%`,
+                              height: "100%",
+                              backgroundColor: theme.palette.warning.main,
+                            }}
+                          />
+                        </Box>
                       </Box>
                     </Grid>
                   </Grid>

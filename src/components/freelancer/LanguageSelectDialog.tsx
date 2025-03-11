@@ -47,10 +47,10 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
       // Remove fullScreen to keep the dialog responsive on mobile
       sx={{
         '& .MuiDialog-paper': {
-          width: isMobile ? '90%' : '500px',      // 90% width on mobile, auto on larger screens
-          maxWidth: isMobile ? '90%' : '500px',    // 90% max width on mobile, 500px on larger screens
-          margin: '16px auto',                    // Centered with margin on all screens
-          borderRadius: '8px',                     // Consistent border radius
+          width: isMobile ? '90%' : '500px',   
+          maxWidth: isMobile ? '90%' : '500px',
+          margin: '16px auto',
+          borderRadius: '8px',
         },
       }}
     >

@@ -383,7 +383,10 @@ export default function TranslationTaskPage() {
               ) : currentTask ? (
                 <TaskTranslationInterface
                   task={currentTask}
-                  onClose={() => setSelectedLanguagePair(null)}
+                  onClose={() => {
+                    setSelectedLanguagePair(null);
+                    setCurrentTask(null);
+                  }}
                   onShowNext={handleShowNext}
                 />
               ) : (

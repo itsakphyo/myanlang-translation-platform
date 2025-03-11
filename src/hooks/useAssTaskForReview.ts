@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const useAssessmentTasksForReview = (sourceLanguageId: number, targetLanguageId: number) => {
+export const useAssessmentTasksForReview = (sourceLanguageId: number, targetLanguageId: number, enabled: boolean) => {
   return useQuery({
     queryKey: ['assessmentTasks', sourceLanguageId, targetLanguageId],
     queryFn: async () => {
@@ -15,7 +15,7 @@ export const useAssessmentTasksForReview = (sourceLanguageId: number, targetLang
       });
       return response.data;
     },
-    enabled: !!sourceLanguageId && !!targetLanguageId,
+    enabled: enabled, 
     retry: false,
   });
 };

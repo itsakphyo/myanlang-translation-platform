@@ -99,13 +99,6 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
         );
     };
 
-    // if (isLoading) {
-    //     return <Typography>Loading languages...</Typography>;
-    // }
-    // if (error) {
-    //     return <Typography color="error">Error fetching languages: {error.message}</Typography>;
-    // }
-
     return (
         <Dialog
             open={open}
@@ -116,7 +109,6 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
                 paper: {
                     sx: {
                         borderRadius: 3,
-                        overflow: 'hidden',
                     },
                 },
             }}

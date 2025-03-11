@@ -8,13 +8,14 @@ import {
 import { Task, Assignment } from "@mui/icons-material";
 import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import LanguageSelectDialog from "@/components/freelancer/LanguageSelectDialog";
 import LanguageSelector from "./helperComponents/LanguageSelector";
 import TaskReviewContent from "./helperComponents/TaskReviewContent";
 import TaskTypeToggle from "./helperComponents/TaskTypeToggle";
 import logo from "@/assets/images/logo.png";
 import { LanguagePair } from "@/types/language";
+import { useTaskInfo } from "@/hooks/useTaskInfo";
 import theme from "@/theme";
+import LanguageSelectDialogWithNums from "./LanguageSelectDialogWithNums";
 
 export default function TaskReviewPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -25,6 +26,8 @@ export default function TaskReviewPage() {
   const navigate = useNavigate();
   const [reviewingInProgress, setReviewingInProgress] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  
+  const { data: countData, isLoading: countLoaidng, error: countError , refetch } = useTaskInfo();
 
   const handleTaskTypeChange = (_: React.MouseEvent<HTMLElement>, newType: string) => {
     if (newType) setTaskType(newType as "assessment" | "submission");
@@ -45,6 +48,15 @@ export default function TaskReviewPage() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [reviewingInProgress]);
+
+  const handleOpenDialog = () => {
+    if (reviewingInProgress) {
+      alert("Please complete the current task before switching to another task type.");
+      return;
+    }
+    refetch(); // Refetch countData when opening the dialog
+    setDialogOpen(true);
+  };
 
 
   return (
@@ -127,13 +139,7 @@ export default function TaskReviewPage() {
           <Box sx={{ order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 } }}>
             <LanguageSelector
               selectedLanguagePair={selectedLanguagePair}
-              onOpen={() => {
-                if (reviewingInProgress) {
-                  alert("Please complete the current task before switching to another task type.");
-                  return;
-                }
-                setDialogOpen(true);
-              }}
+              onOpen={handleOpenDialog}
             />
           </Box>
 
@@ -162,9 +168,10 @@ export default function TaskReviewPage() {
         </Box>
 
         {/* Language Select Dialog */}
-        <LanguageSelectDialog
+        <LanguageSelectDialogWithNums
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
+          countsData={countData}
           onConfirm={(pair: LanguagePair) => {
             setSelectedLanguagePair(pair);
             setIsSubmissionTaskOpen(true);

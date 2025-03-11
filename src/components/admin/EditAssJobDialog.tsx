@@ -104,7 +104,6 @@ export default function EditAssJobDialog({ open, onClose, job_id, editjob }: Edi
                 paper: {
                     sx: {
                         borderRadius: 3,
-                        overflow: 'hidden',
                     },
                 },
             }}

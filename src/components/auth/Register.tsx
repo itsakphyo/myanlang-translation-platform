@@ -121,7 +121,7 @@ export default function Register() {
         phone_number: formData.phone_number,
         password: formData.password,
       });
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('Registration failed:', error);
     }

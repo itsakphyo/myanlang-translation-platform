@@ -34,15 +34,19 @@ const TaskReviewContent = ({
   const { mutate: sentDecision } = useSubTaskdecision();
   const userId = Number(localStorage.getItem("userId")) || 0;
 
+  // Call the hook only when taskType is "assessment"
   const { data, error, isLoading } = useAssessmentTasksForReview(
     selectedLanguagePair?.source_id ?? 0,
-    selectedLanguagePair?.target_id ?? 0
+    selectedLanguagePair?.target_id ?? 0,
+    taskType === "assessment"
   );
 
+  // Call the hook only when taskType is "submission"
   const { data: submittedData, error: submittedError, isLoading: submittedLoading, refetch: refetchSubmittedData } = useGetSubmittedTaskForReview(
     selectedLanguagePair?.source_id ?? 0,
     selectedLanguagePair?.target_id ?? 0,
-    userId
+    userId,
+    taskType === "submission"
   );
 
   useEffect(() => {
@@ -212,4 +216,3 @@ const TaskReviewContent = ({
 };
 
 export default TaskReviewContent;
-
