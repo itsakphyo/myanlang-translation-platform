@@ -7,12 +7,16 @@ import {
   LinearProgress,
   TextField,
   Button,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import Paid from '@mui/icons-material/Paid';
 import AccessTime from '@mui/icons-material/AccessTime';
 import Translate from '@mui/icons-material/Translate';
+import ReportIcon from '@mui/icons-material/Report';
 import { OpenTask } from "@/types/task";
 import { useTask } from '@/hooks/useTask';
+import { useDialog } from '@/contexts/DialogContext';
 
 interface TaskTranslationInterfaceProps {
   task: OpenTask | null;
@@ -28,6 +32,11 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   const [translation, setTranslation] = useState(task?.translated_text || '');
   const totalTime = task?.max_time_per_task ? task.max_time_per_task * 60 : 900;
   const [remainingTime, setRemainingTime] = useState(totalTime);
+  const { openDialog } = useDialog();
+
+  const handleReportIssue = (taskId: number) => {
+    openDialog('issue-report', { taskId });
+  };
 
   useEffect(() => {
     if (task) {
@@ -57,8 +66,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   const handleSubmit = () => {
     if (task) {
       submitTask(task.task_id, userId, translation);
-    }
-    else {
+    } else {
       console.error('Task data is not available.');
     }
   };
@@ -76,24 +84,36 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   return (
     <Paper sx={{ p: 4, borderRadius: 4, boxShadow: 3 }}>
       <Stack spacing={3}>
+        {/* Top Section with Reward, Timer, and Report Issue Button */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           <Paid color="primary" />
           <Typography variant="h6" color="primary.main">
-            {/* Reward: {'200 Kyat'} */}
             Reward: {task.price} Kyat
           </Typography>
           <AccessTime color="primary" />
           <Typography variant="h6" color="primary.main">
             Time Left: {minutes}:{seconds.toString().padStart(2, "0")}
           </Typography>
+
+          {/* Report Issue Button as a Small Icon */}
+          <Tooltip title="Report Issue">
+            <IconButton
+              onClick={() => handleReportIssue(task?.task_id)}
+              sx={{ ml: 'auto', color: 'error.main' }}
+            >
+              <ReportIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
 
+        {/* Progress Bar */}
         <LinearProgress
           variant="determinate"
           value={(remainingTime / totalTime) * 100}
           sx={{ height: 2, borderRadius: 2 }}
         />
 
+        {/* Translation Task Section */}
         <Box>
           <Typography variant="h6" gutterBottom fontWeight="bold">
             <Translate sx={{ mr: 1 }} />
@@ -104,6 +124,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
           </Typography>
         </Box>
 
+        {/* Original Text Section */}
         <Box>
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
             Original Text ({task.source_language_name})
@@ -113,6 +134,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
           </Paper>
         </Box>
 
+        {/* Translation Input Section */}
         <Box>
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
             Your Translation ({task.target_language_name})
@@ -128,6 +150,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
           />
         </Box>
 
+        {/* Action Buttons Section */}
         <Box
           sx={{
             display: 'flex',
@@ -135,7 +158,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
             flexDirection: { xs: 'column', sm: 'row' },
             gap: 2,
             justifyContent: 'flex-end',
-            mt: 2
+            mt: 2,
           }}
         >
           <Button
@@ -145,7 +168,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
             sx={{
               textTransform: 'none',
               fontSize: { xs: '0.75rem', md: '1rem' },
-              px: { xs: 2, sm: 4 }
+              px: { xs: 2, sm: 4 },
             }}
             onClick={() => {
               onClose();
@@ -161,7 +184,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
             sx={{
               textTransform: 'none',
               fontSize: { xs: '0.75rem', md: '1rem' },
-              px: { xs: 2, sm: 4 }
+              px: { xs: 2, sm: 4 },
             }}
             onClick={() => {
               handleSubmit();
@@ -178,7 +201,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
             sx={{
               textTransform: 'none',
               fontSize: { xs: '0.75rem', md: '1rem' },
-              px: { xs: 2, sm: 4 }
+              px: { xs: 2, sm: 4 },
             }}
             onClick={() => {
               handleSubmit();

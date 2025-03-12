@@ -11,6 +11,7 @@ from .routes.qa_member import router as qa_member_router
 from .routes.freelancer import router as freelancer_router
 from .routes.assessment import router as assessment_router
 from .routes.payment import router as payment_router
+from .routes.reports import router as reports_router
 
 app = FastAPI()
 
@@ -36,6 +37,7 @@ app.include_router(qa_member_router, tags=["qa_member"], prefix="/qa_member")
 app.include_router(freelancer_router, tags=["freelancer"], prefix="/freelancer")
 app.include_router(assessment_router, tags=["assessment"], prefix="/assessment")
 app.include_router(payment_router, tags=["payment"], prefix="/payment")
+app.include_router(reports_router, tags=["reports"], prefix="/reports")
 
 # if __name__ == "__main__":
 #     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

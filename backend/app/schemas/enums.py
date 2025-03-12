@@ -17,6 +17,13 @@ class IssueType(Enum):
     ACCURACY_APPEAL = "accuracy_appeal"
     OTHER = "other"
 
+class Issues(Enum):
+    WRONG_SOURCE_LANGUAGE = "wrong_source_language"
+    NOT_ENOUGH_TIME = "not_enough_time"
+    PAYMENT_DELAY = "payment_delay"
+    ACCURACY_APPEAL = "accuracy_appeal"
+    OTHER = "other"
+
 class ReportStatus(Enum):
     UNDER_REVIEW = "under_review"
     PROCEED = "proceed"

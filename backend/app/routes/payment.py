@@ -40,18 +40,6 @@ def request_new_payment(request_body: PaymentRequestBody, db: Session = Depends(
     if payment_method.lower() not in VALID_PAYMENT_METHODS:
         raise HTTPException(status_code=400, detail="Invalid payment method")
 
-    # freelancer_id = Column(Integer, primary_key=True, autoincrement=True)
-    # email = Column(String, unique=True, nullable=False)
-    # full_name = Column(String, nullable=False)
-    # age = Column(Integer)
-    # phone_number = Column(String)
-    # password_hash = Column(String, nullable=False)
-    # total_earnings = Column(Float, default=0.0)
-    # total_withdrawn = Column(Float, default=0.0)
-    # current_balance = Column(Float, default=0.0)
-    # pending_withdrawal = Column(Float, default=0.0)
-
-
     if payment_method.lower() == "paypal":
         if request_body.paypal_link is None:
             raise HTTPException(status_code=400, detail="PayPal email is not set")

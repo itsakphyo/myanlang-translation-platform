@@ -13,12 +13,12 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { Refresh, AccountBalanceWallet, Payment, Schedule, CheckCircleOutline } from '@mui/icons-material';
+import { Refresh, AccountBalanceWallet, Payment, Schedule, CheckCircleOutline, ReportProblem } from '@mui/icons-material';
 import { getWithdrawalsByFreelancer } from '@/hooks/useWithdrawal';
 import { format } from 'date-fns';
 import PaymentRequestDialog from './PaymentRequestDialog';
 import { freelancerService } from '@/hooks/useWithdrawal';
+import { useDialog } from '@/contexts/DialogContext';
 
 interface Withdrawal {
   freelancer_id: number;
@@ -49,6 +49,11 @@ const FreelancerPayment: React.FC = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [currentBalance, setCurrentBalance] = useState<number>(0);
+  const { openDialog } = useDialog();
+
+  const handleReportIssue = (withdrawalId: number) => {
+    openDialog('payment-issue', { withdrawalId });
+  };
 
   const fetchWithdrawals = async () => {
     if (freelancerId) {
@@ -267,6 +272,18 @@ const FreelancerPayment: React.FC = () => {
                     </Typography>
                   </Box>
                   {renderPaymentDetails(withdrawal)}
+                  {withdrawal.withdrawal_status.toLowerCase() === 'under_processing' && (
+                    <Box sx={{ mt: 2, textAlign: 'right' }}>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        startIcon={<ReportProblem />}
+                        onClick={() => handleReportIssue(withdrawal.withdrawal_id)}
+                      >
+                        Report Payment Delay
+                      </Button>
+                    </Box>
+                  )}
                 </CardContent>
               </Card>
             </Grid>

@@ -14,6 +14,8 @@ import AssTaskTranslationInterface from "@/components/freelancer/AssTaskTranslat
 import { useTask } from "@/hooks/useTask";
 import { OpenTask } from "@/types/task";
 import theme from "@/theme";
+import { useDialog } from '@/contexts/DialogContext';
+
 
 export default function TranslationTaskPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -21,6 +23,12 @@ export default function TranslationTaskPage() {
   const [takingAssessment, setTakingAssessment] = useState(false);
   const { data: user } = useCurrentUser();
   const navigate = useNavigate();
+  const { openDialog } = useDialog();
+
+  const handleRequestAppeal= (souce_language_id: number, target_language_id: number) => {
+    openDialog('appeal-request', { souce_language_id, target_language_id });
+  };
+
 
   // Query parameters for the open task query.
   const [queryParams, setQueryParams] = useState<{
@@ -186,7 +194,7 @@ export default function TranslationTaskPage() {
           !("message" in languagePairData) &&
           languagePairData.status === "complete" &&
           (languagePairData.accuracy_rate ?? 0) > 50) && currentTask ||
-          currentTask
+        currentTask
       ) {
         event.preventDefault();
         event.returnValue = "";
@@ -343,7 +351,7 @@ export default function TranslationTaskPage() {
                 variant="contained"
                 color="secondary"
                 sx={{ mt: 2 }}
-                onClick={() => (window.location.href = "/appeal")}
+                onClick={() => handleRequestAppeal(selectedLanguagePair.source_id, selectedLanguagePair.target_id)}
               >
                 Submit Appeal Request
               </Button>
