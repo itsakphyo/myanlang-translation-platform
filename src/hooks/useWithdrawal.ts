@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { PaymentRequestBody , BalanceResponse, WithdrawalRequest} from '@/types/withdrawal';
+import { PaymentRequestBody, BalanceResponse, WithdrawalRequest } from '@/types/withdrawal';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -13,7 +13,6 @@ export const getWithdrawalsByFreelancer = async (freelancerId: number) => {
         throw error;
     }
 };
-
 
 export const freelancerService = {
     getCurrentBalance: async (freelancerId: number): Promise<BalanceResponse> => {
@@ -34,7 +33,6 @@ export const useWithdrawals = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Function to fetch withdrawals
     const fetchWithdrawals = async () => {
         setLoading(true);
         setError(null);
@@ -58,7 +56,6 @@ export const requestNewPayment = async (paymentData: PaymentRequestBody) => {
         const response = await axios.post(`${API_BASE_URL}/payment/request_new_payment`, paymentData);
         return response.data;
     } catch (error: any) {
-        // If the backend returns a specific error, we can extract it here.
         throw new Error(error.response?.data?.detail || 'An error occurred');
     }
 };

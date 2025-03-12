@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -44,7 +46,6 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
     <Dialog
       open={open}
       onClose={onClose}
-      // Remove fullScreen to keep the dialog responsive on mobile
       sx={{
         '& .MuiDialog-paper': {
           width: isMobile ? '90%' : '500px',   

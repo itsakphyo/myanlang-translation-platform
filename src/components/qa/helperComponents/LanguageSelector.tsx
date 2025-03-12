@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
 import {
   Button,
   Typography,
@@ -6,7 +7,7 @@ import {
   Fade,
 } from "@mui/material";
 import { Language, ArrowDropDown } from "@mui/icons-material";
-import { createTheme, alpha } from "@mui/material/styles";
+import { alpha } from "@mui/material/styles";
 import { LanguagePair } from "@/types/language";
 import theme from "@/theme";
 

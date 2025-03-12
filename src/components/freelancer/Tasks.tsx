@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Container, Button, Box, Typography, LinearProgress } from "@mui/material";
 import { Language, ArrowDropDown, ArrowRightAlt } from "@mui/icons-material";
@@ -25,7 +27,7 @@ export default function TranslationTaskPage() {
   const navigate = useNavigate();
   const { openDialog } = useDialog();
 
-  const handleRequestAppeal= (souce_language_id: number, target_language_id: number) => {
+  const handleRequestAppeal = (souce_language_id: number, target_language_id: number) => {
     openDialog('appeal-request', { souce_language_id, target_language_id });
   };
 
@@ -108,9 +110,7 @@ export default function TranslationTaskPage() {
 
   const {
     data: languagePairData,
-    isLoading: languagePairLoading,
-    error: languagePairError,
-    refetch: refetchLanguagePair
+    isLoading: languagePairLoading
   } = useFreelancerLanguagePair(
     languagePairParams ? languagePairParams.freelancerId : 0,
     languagePairParams ? languagePairParams.sourceLanguageId : 0,
@@ -183,7 +183,6 @@ export default function TranslationTaskPage() {
     languagePairData?.status === "complete" &&
     (languagePairData.accuracy_rate ?? 0) < 50;
 
-  // Prevent accidental navigation if there are unsaved changes.
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (
@@ -206,7 +205,6 @@ export default function TranslationTaskPage() {
       window.removeEventListener("beforeunload", handleBeforeUnload, { capture: true });
   }, [selectedLanguagePair, takingAssessment, languagePairData, languagePairLoading, task]);
 
-  // When the user clicks "Next", clear the displayed task immediately then update the query parameters.
   const handleShowNext = useCallback(() => {
     setCurrentTask(null);
     handleGetOpenTask();

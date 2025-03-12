@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect } from "react"
 import {
@@ -38,38 +38,18 @@ import {
     Search,
     Refresh,
     CheckCircle,
-    Cancel,
     AccessTime,
     Visibility,
 } from "@mui/icons-material"
 import { useWithdrawals } from "@/hooks/useWithdrawal"
 import CloudinaryUpload from "./CloudinaryUpload"
 import { useUpdateWithdrawal } from "@/hooks/useUpdateWithdrawal"
-
-// Define the type for withdrawal data
-interface WithdrawalRequest {
-    freelancer_id: number
-    withdrawal_id: number
-    amount: number
-    requested_at: string
-    processed_at: string | null
-    payoneer_email: string | null
-    kpay_phone: string | null
-    bank_name: string | null
-    admin_id: number | null
-    payment_method: string
-    withdrawal_status: string
-    paypal_link: string | null
-    wavepay_phone: string | null
-    account_holder_name: string | null
-    account_number: string | null
-    proof_of_payment: string | null
-}
+import { WithdrawalRequest } from "@/types/withdrawal";
 
 export default function Payment() {
     // Sample data - in a real app, this would come from an API
-    const { withdrawalRequests, fetchWithdrawals, loading, error } = useWithdrawals();
-    const { updateWithdrawal, isLoading: updateLoading, error: UpdateError } = useUpdateWithdrawal();
+    const { withdrawalRequests, fetchWithdrawals } = useWithdrawals();
+    const { updateWithdrawal } = useUpdateWithdrawal();
 
     useEffect(() => {
         fetchWithdrawals();

@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import { Language } from "@mui/icons-material";
 import SubmissionTaskReviewInterface from "@/components/qa/SubmissionTaskReviewInterface";

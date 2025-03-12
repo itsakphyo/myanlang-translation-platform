@@ -1,4 +1,6 @@
-import { Backdrop, Box, SpeedDial, SpeedDialAction, SpeedDialIcon, Modal, Typography } from "@mui/material";
+"use client";
+
+import { Backdrop, Box, SpeedDial, SpeedDialAction, SpeedDialIcon, Typography } from "@mui/material";
 import Grid2 from '@mui/material/Grid2';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from "react";

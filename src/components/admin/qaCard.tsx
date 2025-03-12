@@ -39,7 +39,7 @@ export default function QACard({ member }: QACardProps) {
         100
       : 0;
 
-  // Dialog handlers - keeping the same logic
+  // Dialog handlers
   const handleRemoveQADialogOpen = () => {
     setRemoveQADialogOpen(true);
   };

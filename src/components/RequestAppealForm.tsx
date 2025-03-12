@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
@@ -81,7 +83,7 @@ const RequestAppealForm: React.FC<RequestAppealFormProps> = ({ souce_language_id
     return (
       <div onClick={(e) => {
         e.stopPropagation();
-        setIsUploading(true); // Moved inside click handler
+        setIsUploading(true);
       }}>
         <CloudinaryUpload 
           onUploadSuccess={handleUploadSuccess} 

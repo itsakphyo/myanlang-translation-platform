@@ -1,6 +1,5 @@
 import axios from "axios";
-import { useQuery, UseQueryOptions, UseQueryResult, useMutation } from "@tanstack/react-query";
-import { LanguagePair } from "@/types/language";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { SubmittedTaskForReview } from "@/types/task";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -22,7 +21,6 @@ export const useGetSubmittedTaskForReview = (
     enabled: enabled,
   });
 
-  // Return the refetch and remove functions along with existing data, error, and loading states
   return {
     ...queryResult,
     refetch: queryResult.refetch,

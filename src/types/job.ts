@@ -25,7 +25,7 @@ export interface Job {
   notes: string;
 }
 
-export interface JobEdit{
+export interface JobEdit {
   job_id: number;
   job_title: string;
   source_language_id: number;

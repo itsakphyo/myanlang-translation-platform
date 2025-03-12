@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QAMemberCreate, QAMemberUpdate } from "@/types/qaMember";
 import { useNavigate } from 'react-router-dom';
 
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const useQA = () => {
@@ -41,7 +40,6 @@ export const useQA = () => {
 
     const resetQAPassword = useMutation({
         mutationFn: async (data: QAMemberUpdate) => {
-            // Use PUT to match your backend endpoint.
             const response = await axios.put(
                 `${API_URL}/qa_member/password_reset/${data.qa_member_id}`,
                 data
@@ -49,11 +47,10 @@ export const useQA = () => {
             return response.data;
         },
         onSuccess: (data) => {
-            // Optionally show a success message (e.g., toast notification)
+            console.log('Password reset:', data);
         },
         onError: (error) => {
             console.error('Error resetting password:', error);
-            // Optionally show an error message to the user
         }
     });
 
@@ -67,6 +64,7 @@ export const useQA = () => {
         },
         onSuccess: (data) => {
             navigate('/qa-dashboard'); 
+            console.log('Password reset:', data);
         },
         onError: (error) => {
             console.error('Error resetting password:', error);

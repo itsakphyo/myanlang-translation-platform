@@ -1,3 +1,4 @@
+"use client";
 
 import { Container, Typography, Box } from '@mui/material';
 import { useLocation } from 'react-router-dom';

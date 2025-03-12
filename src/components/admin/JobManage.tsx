@@ -1,3 +1,5 @@
+"use client";
+
 import { Backdrop, Box, SpeedDial, SpeedDialAction, SpeedDialIcon, Modal } from "@mui/material";
 import Grid2 from '@mui/material/Grid2';
 import AddIcon from '@mui/icons-material/Add';
@@ -42,7 +44,6 @@ export default function JobDashboard() {
         textAlign: 'center',
         position: 'relative',
         minHeight: '100vh',
-        // zIndex: 1300,
         width: '100%',
       }}
     >

@@ -38,7 +38,7 @@ export const useJob = () => {
     });
 
     const getAllAssJobs = useQuery({
-        queryKey: ["assjobs"], // Ensure consistent casing
+        queryKey: ["assjobs"],
             queryFn: async () => {
             const response = await axios.get(`${API_URL}/job/get_all_ass_jobs`);
             return response.data;

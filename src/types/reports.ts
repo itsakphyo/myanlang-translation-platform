@@ -1,5 +1,6 @@
-import type { ReactElement } from "react"
+"use client";
 
+import type { ReactElement } from "react"
 
 export interface Report {
     report_id: number
@@ -49,8 +50,6 @@ export interface Report {
         target_language_name: string
     }
 }
-
-
 
 export interface IssueTypeConfig {
     icon: ReactElement

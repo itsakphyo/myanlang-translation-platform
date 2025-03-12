@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -142,7 +144,7 @@ const FreelancerPayment: React.FC = () => {
         onClose={() => setShowPaymentDialog(false)}
         currentBalance={currentBalance}
         freelancerId={parseInt(freelancerId)}
-        fetchWithdrawals={fetchWithdrawals} // Pass fetchWithdrawals as a prop
+        fetchWithdrawals={fetchWithdrawals}
       />
 
       <Box

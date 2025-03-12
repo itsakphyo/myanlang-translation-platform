@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Paper, Stack, Box, Typography, Button } from '@mui/material';
 import { submitRequiest } from '@/types/submitRequiest';

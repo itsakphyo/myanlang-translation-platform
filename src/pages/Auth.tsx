@@ -1,4 +1,6 @@
-import { useState } from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import { AppBar, Box, Container, Tab, Tabs, Toolbar, Typography } from '@mui/material';
 import Login from '../components/auth/Login';
 import Register from '../components/auth/Register';

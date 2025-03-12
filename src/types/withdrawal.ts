@@ -40,7 +40,6 @@ export interface BalanceResponse {
   current_balance: number;
 }
 
-
 export interface PaymentRequestBody {
   freelancer_id: number;
   payment_method: string;

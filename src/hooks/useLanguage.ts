@@ -15,10 +15,8 @@ export const useLanguage = () => {
     }
   });
 
-  // In your useLanguage hook, update mutationFn:
   const createLanguage = useMutation({
     mutationFn: async (data: string) => {
-      // Send as an object:
       const response = await axios.post(`${API_URL}/all_languages/create_language`, {
         language_name: data,
       });

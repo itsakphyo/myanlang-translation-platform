@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -27,7 +29,7 @@ export default function TaskReviewPage() {
   const [reviewingInProgress, setReviewingInProgress] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   
-  const { data: countData, isLoading: countLoaidng, error: countError , refetch } = useTaskInfo();
+  const { data: countData, refetch } = useTaskInfo();
 
   const handleTaskTypeChange = (_: React.MouseEvent<HTMLElement>, newType: string) => {
     if (newType) setTaskType(newType as "assessment" | "submission");
@@ -38,7 +40,7 @@ export default function TaskReviewPage() {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (reviewingInProgress) {
         event.preventDefault();
-        event.returnValue = "You have an ongoing review. Are you sure you want to leave?"; // Some browsers require this
+        event.returnValue = "You have an ongoing review. Are you sure you want to leave?";
       }
     };
 
@@ -54,7 +56,7 @@ export default function TaskReviewPage() {
       alert("Please complete the current task before switching to another task type.");
       return;
     }
-    refetch(); // Refetch countData when opening the dialog
+    refetch();
     setDialogOpen(true);
   };
 

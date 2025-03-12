@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import {
     Dialog,
@@ -46,16 +48,6 @@ const LanguageSelectDialogWithNums: React.FC<LanguageSelectDialogProps> = ({
         }
     }, [language_pairs]);
 
-    // Helper function to retrieve count by language pair and type.
-    // const getCountForPair = (pair: LanguagePair, type: 'task' | 'assessmenttask'): number => {
-    //     if (!countsData) return 0;
-    //     const countEntry = countsData[type].task_by_language_pair.find(
-    //         (item: { sourcelanguage_id: number; targetlanguage_id: number; count: number }) =>
-    //             item.sourcelanguage_id === pair.source_id && item.targetlanguage_id === pair.target_id
-    //     );
-    //     console.log("count data", countsData)
-    //     return countEntry ? countEntry.count : 0;
-    // };
     const getCountForPair = (pair: LanguagePair, type: 'task' | 'assessmenttask'): number => {
         if (!countsData) return 0;
     
@@ -107,7 +99,6 @@ const LanguageSelectDialogWithNums: React.FC<LanguageSelectDialogProps> = ({
                             value={selectedPairIndex}
                             onChange={(e) => setSelectedPairIndex(Number(e.target.value))}
                             sx={{
-                                // Use a modern border and padding
                                 borderRadius: 1,
                                 backgroundColor: 'background.paper',
                                 '.MuiSelect-select': {

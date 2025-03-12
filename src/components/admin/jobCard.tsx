@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import type React from "react"
 
@@ -7,7 +7,6 @@ import {
   Card,
   Typography,
   IconButton,
-  useMediaQuery,
   Tooltip,
   MenuItem,
   ListItemIcon,
@@ -17,7 +16,6 @@ import {
   Paper,
   Divider,
   Avatar,
-  LinearProgress,
 } from "@mui/material"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import DownloadIcon from "@mui/icons-material/Download"
@@ -28,7 +26,6 @@ import WorkIcon from "@mui/icons-material/Work"
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday"
 import TranslateIcon from "@mui/icons-material/Translate"
 import TimerIcon from "@mui/icons-material/Timer"
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney"
 import DescriptionIcon from "@mui/icons-material/Description"
 import NoteIcon from "@mui/icons-material/Note"
 import type { Job, JobEdit } from "../../types/job"
@@ -46,7 +43,6 @@ interface JobCardProps {
 export default function JobCard({ job }: JobCardProps) {
   const [editJobDialogOpen, setEditJobDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
   const { data: jobProgress } = useJob().getJobProgress(job.job_id)
   const { downloadTasks } = useJob()
 

@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import React from "react";
 import {
     Typography,
     Stack,
     ToggleButton,
 } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
-import { createTheme, alpha } from "@mui/material/styles";
+import {alpha } from "@mui/material/styles";
 import theme from "@/theme";
 
 

@@ -54,152 +54,6 @@ import { Report, IssueTypeConfig, StatusColors, SnackbarState, Stats} from "@/ty
 import theme from "@/theme"
 import { fetchReports } from "@/hooks/reportIssue"
 
-// Sample data
-const initialReports: Report[] = [
-    {
-        report_id: 22,
-        report_status: "under_review",
-        withdrawalId: null,
-        taskId: null,
-        source_language_id: 5,
-        admin_id: null,
-        freelancer_id: 8,
-        issue_type: "accuracy_appeal",
-        reported_at: "2025-03-12T18:15:01.226767",
-        resolved_at: null,
-        description:
-            "I am sorry for my accuracy. Now, I have completed the language test from Duolingo. See the attached file for a certificate. Can you please reset my accuracy?",
-        documentationUrl: "https://res.cloudinary.com/dnxizfrxa/image/upload/v1741778069/fyatggwq7x4dlauulzz1.jpg",
-        target_language_id: 6,
-        language_pair: {
-            language_pair_id: 84,
-            source_language_id: 5,
-            target_language_id: 6,
-            source_language_name: "Kachin",
-            target_language_name: "Thai",
-            complete_task: 10,
-            rejected_task: 7,
-            accuracy_rate: 30,
-        },
-    },
-    {
-        report_id: 23,
-        report_status: "under_review",
-        withdrawalId: null,
-        taskId: 809,
-        source_language_id: null,
-        admin_id: null,
-        freelancer_id: 8,
-        issue_type: "not_enough_time",
-        reported_at: "2025-03-12T18:15:22.014990",
-        resolved_at: null,
-        description: null,
-        documentationUrl: null,
-        target_language_id: null,
-        task: {
-            job_status: "in_progress",
-            task_price: 100,
-            qa_assigned_at: "2025-03-12T18:40:42.562140",
-            source_language_id: 8,
-            qa_reviewed_at: "2025-03-12T18:40:45.768233",
-            source_text: "sen 3",
-            target_language_id: 7,
-            task_id: 809,
-            job_id: 92,
-            is_assessment: false,
-            max_time_per_task: 10,
-            submitted_by_id: 8,
-            assigned_at: "2025-03-12T18:15:17.301579",
-            task_status: "complete",
-            qa_assigned_id: 26,
-            submitted_at: "2025-03-12T18:15:25.118294",
-            translated_text: "asdf",
-            assigned_freelancer_id: 8,
-            qa_reviewed_by_id: 26,
-            source_language_name: "Cambodia",
-            target_language_name: "Laos"
-        },
-    },
-    {
-        report_id: 24,
-        report_status: "under_review",
-        withdrawalId: null,
-        taskId: 810,
-        source_language_id: null,
-        admin_id: null,
-        freelancer_id: 8,
-        issue_type: "wrong_source_language",
-        reported_at: "2025-03-12T18:15:28.027022",
-        resolved_at: null,
-        description: null,
-        documentationUrl: null,
-        target_language_id: null,
-        task: {
-            job_status: "in_progress",
-            task_price: 100,
-            qa_assigned_at: "2025-03-12T18:40:45.786570",
-            source_language_id: 8,
-            qa_reviewed_at: "2025-03-12T18:40:46.669888",
-            source_text: "sen 4",
-            target_language_id: 7,
-            task_id: 810,
-            job_id: 92,
-            is_assessment: false,
-            max_time_per_task: 10,
-            submitted_by_id: 8,
-            assigned_at: "2025-03-12T18:15:25.124294",
-            task_status: "complete",
-            qa_assigned_id: 26,
-            submitted_at: "2025-03-12T18:15:29.860401",
-            translated_text: "asdf",
-            assigned_freelancer_id: 8,
-            qa_reviewed_by_id: 26,
-            source_language_name: "Cambodia",
-            target_language_name: "Laos"
-        },
-    },
-    {
-        report_id: 25,
-        report_status: "under_review",
-        withdrawalId: 18,
-        taskId: null,
-        source_language_id: null,
-        admin_id: null,
-        freelancer_id: 8,
-        issue_type: "payment_delay",
-        reported_at: "2025-03-12T18:16:30.488604",
-        resolved_at: null,
-        description: "I have requested this payment since 4 days ago and still have not received it.",
-        documentationUrl: null,
-        target_language_id: null,
-    },
-    {
-        report_id: 26,
-        report_status: "under_review",
-        withdrawalId: null,
-        taskId: null,
-        source_language_id: 5,
-        admin_id: null,
-        freelancer_id: 8,
-        issue_type: "accuracy_appeal",
-        reported_at: "2025-03-12T21:14:14.026200",
-        resolved_at: null,
-        description: "I this is second appeal message",
-        documentationUrl: "https://res.cloudinary.com/dnxizfrxa/image/upload/v1741788846/mvornqfgw1qxqpfjxvr5.pdf",
-        target_language_id: 6,
-        language_pair: {
-            language_pair_id: 84,
-            source_language_id: 5,
-            target_language_id: 6,
-            source_language_name: "Kachin",
-            target_language_name: "Thai",
-            complete_task: 10,
-            rejected_task: 7,
-            accuracy_rate: 30,
-        },
-    },
-]
-
 // Map issue types to icons and colors
 const issueTypeConfig: Record<string, IssueTypeConfig> = {
     accuracy_appeal: { icon: <LanguageIcon />, color: "info", label: "Accuracy Appeal" },
@@ -250,7 +104,6 @@ export default function AdminDashboard(): ReactElement {
     const [imageDialogOpen, setImageDialogOpen] = useState<boolean>(false)
     const [currentImage, setCurrentImage] = useState<string>("")
     const [reports, setReports] = useState<Report[]>([]);
-    const [error, setError] = useState<string | null>(null);
   
     const loadReports = async () => {
       try {
@@ -258,7 +111,7 @@ export default function AdminDashboard(): ReactElement {
         const data = await fetchReports();
         setReports(data);
       } catch (err) {
-        setError('Failed to load reports');
+        console.error(err);
       } finally {
         setLoading(false);
       }

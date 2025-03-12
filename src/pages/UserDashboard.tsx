@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { createTheme } from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -9,7 +11,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import UserProfile from '@/components/freelancer/UserProfile';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Box, Button  } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import FreelancerPayment from '@/components/freelancer/FreelancerPayment';
 

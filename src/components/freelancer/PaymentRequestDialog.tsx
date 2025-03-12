@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import {
     Dialog,
@@ -90,19 +92,15 @@ const PaymentRequestDialog = ({
         onSubmit: async (values: PaymentFormValues) => {
             setSubmitting(true);
             try {
-                // Convert freelancer_id to a number if required by the API.
                 const payload = {
                     ...values,
                     freelancer_id: Number(values.freelancer_id),
                 };
-                // Call the hook to request a new payment withdrawal.
-                await requestNewPayment(payload);  // why this is not work
-                // Optionally, you could add a success toast or message here.
+                await requestNewPayment(payload);
                 onClose();
                 fetchWithdrawals();
             } catch (error: unknown) {
                 console.error('Submission error:', error);
-                // Optionally, you could set an error state and display a message to the user.
             } finally {
                 setSubmitting(false);
             }

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { Paper, Stack, Box, Typography, Button } from '@mui/material';
 import {Task, CheckSubmitRequest } from '@/types/bulkSubmissionReview';

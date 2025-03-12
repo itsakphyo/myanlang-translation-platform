@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from 'react';
 import { useEffect, useState } from "react";
 import {
@@ -29,7 +31,7 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
     const [maxTimePerTask, setMaxTimePerTask] = useState(editjob.max_time_per_task);
     const [taskPrice, setTaskPrice] = useState(editjob.task_price);
     const [instructions, setInstructions] = useState(editjob.instructions);
-    const [notes, setNotes] = useState(editjob.notes || ""); 
+    const [notes, setNotes] = useState(editjob.notes || "");
     const [errorMessage, setErrorMessage] = useState("");
 
     const { updateJob } = useJob();
@@ -86,9 +88,9 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
         };
 
         updateJob.mutate(
-            { job_id: jobData.job_id, data: jobData },  // Ensure correct structure
+            { job_id: jobData.job_id, data: jobData },
             {
-                onSuccess: (data) => {
+                onSuccess: (_) => {
                     onClose();
                 },
                 onError: (error: any) => {
@@ -139,38 +141,7 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
                         value={jobTitle}
                         onChange={(e) => setJobTitle(e.target.value)}
                     />
-                    {/* Source Language */}
-                    {/* <FormControl fullWidth required margin="dense" variant="outlined">
-                        <InputLabel id="source-language-label">Source Language</InputLabel>
-                        <Select
-                            labelId="source-language-label"
-                            value={sourceLanguage}
-                            onChange={handleSourceLanguageChange}
-                            label="Source Language"
-                        >
-                            {data?.map((language: Language) => (
-                                <MenuItem key={language.language_id} value={language.language_id}>
-                                    {language.language_name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl> */}
-                    {/* Target Language */}
-                    {/* <FormControl fullWidth required margin="dense" variant="outlined">
-                        <InputLabel id="target-language-label">Target Language</InputLabel>
-                        <Select
-                            labelId="target-language-label"
-                            value={targetLanguage}
-                            onChange={handleTargetLanguageChange}
-                            label="Target Language"
-                        >
-                            {data?.map((language: Language) => (
-                                <MenuItem key={language.language_id} value={language.language_id}>
-                                    {language.language_name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl> */}
+
                     {/* Max Time Per Task */}
                     <TextField
                         required

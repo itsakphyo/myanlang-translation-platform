@@ -5,11 +5,7 @@ import { OpenTask } from "@/types/task";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
-
 export const useTask = () => {
-  
-  // Example query for all language pairs.
   const getAllLanguagePairs = useQuery<LanguagePair[], Error>({
     queryKey: ["languagePairs"],
     queryFn: async () => {

@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from 'react';
 import {
   Button,
@@ -38,12 +40,10 @@ export default function CreateAssJobDialog({ open, onClose }: CreateJobProps) {
   const { data, isLoading, error } = useLanguage();
   const { createAssessmentJob } = useJob();
 
-// change
   const handleSourceLanguageChange = (event: SelectChangeEvent<number>) => {
     setSourceLanguage(event.target.value as number);
   };
 
-  // change
   const handleTargetLanguageChange = (event: SelectChangeEvent<number>) => {
     setTargetLanguage(event.target.value as number);
   };
@@ -59,12 +59,11 @@ export default function CreateAssJobDialog({ open, onClose }: CreateJobProps) {
     setCsvFile(null);
     setCsvFileName(null);
   };
-// change
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage(null);
 
-    // Validate required fields
     if (!csvFile) {
       setErrorMessage('CSV file is required');
       return;
@@ -97,10 +96,10 @@ export default function CreateAssJobDialog({ open, onClose }: CreateJobProps) {
       max_time_per_task: maxTimePerTask,
       instructions,
       csv: csvFile,
-    }; // adjust this
+    };
 
     createAssessmentJob.mutate(jobData, {
-      onSuccess: (data) => {
+      onSuccess: (_) => {
         onClose();
       },
       onError: (error: any) => {

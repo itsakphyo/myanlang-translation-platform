@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+"use client";
+
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -20,7 +22,6 @@ export default function QADashboard() {
   const navigate = useNavigate();
   const { data, isLoading, error } = useTaskInfo();
 
-  // Extract task counts (default to 0 if data is not available yet)
   const avaliable_tasks = data?.task.total ?? 0;
   const assessment_tasks = data?.assessmenttask.total ?? 0;
 

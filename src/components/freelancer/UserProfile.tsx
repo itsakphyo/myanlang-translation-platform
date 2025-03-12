@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import {
   Box,
@@ -10,7 +12,6 @@ import {
   CardContent,
   Divider,
   useTheme,
-  useMediaQuery,
   Stack,
   Chip,
 } from '@mui/material';
@@ -28,7 +29,6 @@ import { useCurrentUser } from '@/hooks/useAuth';
 const UserProfile = () => {
   const { data: user } = useCurrentUser();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // Show a loading state until the user data is available
   if (!user) {
@@ -268,28 +268,6 @@ const UserProfile = () => {
                 </Grid>
               </CardContent>
             </Card>
-
-            {/* Additional card for future content */}
-            {/* <Card elevation={2} sx={{ borderRadius: 3 }}>
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: theme.palette.primary.main }}>
-                  Account Activity
-                </Typography>
-                <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                  Your account is in good standing. Last login was on {new Date().toLocaleDateString()}.
-                </Typography>
-                <Box sx={{ 
-                  p: 3, 
-                  backgroundColor: theme.palette.background.default, 
-                  borderRadius: 2,
-                  textAlign: 'center'
-                }}>
-                  <Typography variant="body2" color="textSecondary">
-                    Account created on {new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toLocaleDateString()}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card> */}
           </Grid>
         </Grid>
       </Container>

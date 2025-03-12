@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import {
   Paper,
@@ -24,7 +26,6 @@ interface AssTaskTranslationInterfaceProps {
 
 const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = ({ tasks, freelancerId, onClose }) => {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
-  // Clone tasks to track translation updates locally
   const [updatedTasks, setUpdatedTasks] = useState<AssTask[]>(tasks.map(task => ({ ...task })));
   const [translation, setTranslation] = useState('');
   const { createAssessmentAttempts } = useCreateAssessmentAttempts();
@@ -40,7 +41,6 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
 
   const isLastTask = currentTaskIndex === updatedTasks.length - 1;
 
-  // Helper: update current task's translation in the updatedTasks array
   const updateCurrentTaskTranslation = () => {
     setUpdatedTasks(prevTasks => {
       const newTasks = [...prevTasks];
