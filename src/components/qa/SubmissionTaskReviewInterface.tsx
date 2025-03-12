@@ -1,11 +1,6 @@
 import React from 'react';
 import { Paper, Stack, Box, Typography, Button } from '@mui/material';
-
-interface submitRequiest {
-  task_id: number;
-  qa_id: number;
-  decision: boolean;
-}
+import { submitRequiest } from '@/types/submitRequiest';
 
 interface SubmissionTaskReviewInterfaceProps {
   taskId: number;

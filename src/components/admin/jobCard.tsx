@@ -338,7 +338,6 @@ export default function JobCard({ job }: JobCardProps) {
                       }}
                     >
                       <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <AttachMoneyIcon sx={{ mr: 0.25, color: theme.palette.text.secondary, fontSize: "0.85rem" }} />
                         <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
                           Price/Task
                         </Typography>

@@ -378,7 +378,7 @@ export default function Payment() {
                                         <TableRow key={request.withdrawal_id}>
                                             <TableCell sx={{ fontWeight: "medium" }}>{request.withdrawal_id}</TableCell>
                                             <TableCell>{request.freelancer_id}</TableCell>
-                                            <TableCell>${request.amount.toFixed(2)}</TableCell>
+                                            <TableCell>{request.amount.toFixed(2)} MMK</TableCell>
                                             <TableCell>{request.payment_method}</TableCell>
                                             <TableCell>{formatDate(request.requested_at)}</TableCell>
                                             <TableCell>{getStatusChip(request.withdrawal_status)}</TableCell>
@@ -431,7 +431,7 @@ export default function Payment() {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Typography variant="body2">${selectedRequest.amount.toFixed(2)}</Typography>
+                                    <Typography variant="body2">{selectedRequest.amount.toFixed(2)} MMK</Typography>
                                 </Grid>
 
                                 <Grid item xs={6}>

@@ -17,19 +17,7 @@ import {
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { requestNewPayment } from '@/hooks/useWithdrawal';
-
-interface PaymentFormValues {
-    freelancer_id: number;
-    payment_method: '' | 'paypal' | 'payoneer' | 'wavepay' | 'kpay' | 'bank';
-    amount: number;
-    paypal_link?: string;
-    payoneer_email?: string;
-    wavepay_phone?: string;
-    kpay_phone?: string;
-    account_holder_name?: string;
-    bank_name?: string;
-    account_number?: string;
-}
+import { PaymentFormValues } from '@/types/paymentFromValues';
 
 interface PaymentDialogProps {
     open: boolean;
@@ -57,7 +45,7 @@ const PaymentRequestDialog = ({
                 .positive('Amount must be positive')
                 .max(
                     currentBalance,
-                    `Amount exceeds available balance ($${currentBalance})`
+                    `Amount exceeds available balance (${currentBalance} MMK)`
                 ),
             paypal_link: Yup.string().when('payment_method', {
                 is: (val: string) => val === 'paypal',
@@ -255,7 +243,7 @@ const PaymentRequestDialog = ({
             <form onSubmit={formik.handleSubmit}>
                 <DialogContent>
                     <Typography variant="subtitle1" gutterBottom>
-                        Available Balance: ${currentBalance.toFixed(2)}
+                        Available Balance: {currentBalance.toFixed(2)} MMK
                     </Typography>
 
                     <TextField
@@ -283,7 +271,7 @@ const PaymentRequestDialog = ({
                         name="amount"
                         type="number"
                         InputProps={{
-                            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                            startAdornment: <InputAdornment position="start">MMK</InputAdornment>,
                             inputProps: { min: 0, max: currentBalance, step: 0.01 },
                         }}
                         value={formik.values.amount}

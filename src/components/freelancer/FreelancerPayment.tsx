@@ -19,25 +19,7 @@ import { format } from 'date-fns';
 import PaymentRequestDialog from './PaymentRequestDialog';
 import { freelancerService } from '@/hooks/useWithdrawal';
 import { useDialog } from '@/contexts/DialogContext';
-
-interface Withdrawal {
-  freelancer_id: number;
-  withdrawal_id: number;
-  admin_id: number | null;
-  payment_method: string;
-  amount: number;
-  requested_at: string;
-  processed_at: string | null;
-  withdrawal_status: string;
-  paypal_link: string | null;
-  payoneer_email: string | null;
-  wavepay_phone: string | null;
-  kpay_phone: string | null;
-  account_holder_name: string | null;
-  bank_name: string | null;
-  account_number: string | null;
-  proof_of_payment: string | null;
-}
+import { Withdrawal } from '@/types/withdrawal';
 
 const FreelancerPayment: React.FC = () => {
   const theme = useTheme();
@@ -207,7 +189,7 @@ const FreelancerPayment: React.FC = () => {
       </Box>
 
       <Box sx={{ mb: 3, p: 2, bgcolor: theme.palette.grey[100], borderRadius: 1 }}>
-        <Typography variant="h6">Current Balance: ${currentBalance.toFixed(2)}</Typography>
+        <Typography variant="h6">Current Balance: {currentBalance.toFixed(2)} Kyat</Typography>
       </Box>
 
       {loading ? (
@@ -235,7 +217,7 @@ const FreelancerPayment: React.FC = () => {
                   >
                     <Box>
                       <Typography variant="h6" component="div">
-                        ${withdrawal.amount.toFixed(2)}
+                        {withdrawal.amount.toFixed(2)} Kyat
                       </Typography>
                       <Chip
                         label={withdrawal.withdrawal_status}

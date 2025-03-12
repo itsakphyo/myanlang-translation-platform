@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
   allowedUserTypes: string[];
-  children: React.ReactNode; // Expect children (protected content)
+  children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedUserTypes, children }) => {
@@ -13,7 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedUserTypes, child
     return <Navigate to="/page-not-found" replace />;
   }
 
-  return <>{children}</>; // Render the protected content
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

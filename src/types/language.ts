@@ -10,3 +10,8 @@ export interface LanguagePair {
   source: string;
   target: string;
 }
+
+export interface LanguagePairResponse {
+  accuracy_rate?: number;
+  status?: string;
+}
