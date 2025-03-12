@@ -30,7 +30,6 @@ export default function QACard({ member }: QACardProps) {
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
   // Calculate acceptance rate
   const acceptanceRate =
@@ -39,15 +38,6 @@ export default function QACard({ member }: QACardProps) {
           (member.total_tasks_reviewed + member.total_tasks_rejected)) *
         100
       : 0;
-
-  // Get initials for avatar
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase();
-  };
 
   // Dialog handlers - keeping the same logic
   const handleRemoveQADialogOpen = () => {
@@ -89,17 +79,6 @@ export default function QACard({ member }: QACardProps) {
         >
           {/* Horizontal container for Avatar and Name/ID group */}
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Avatar
-              sx={{
-                width: { xs: 40, md: 60 },
-                height: { xs: 40, md: 60 },
-                bgcolor: theme.palette.primary.light,
-                border: "2px solid white",
-                fontSize: { xs: "1rem", md: "1.5rem" },
-              }}
-            >
-              {getInitials(member.full_name)}
-            </Avatar>
             {/* Fixed width container for Name and ID */}
             <Box
               sx={{

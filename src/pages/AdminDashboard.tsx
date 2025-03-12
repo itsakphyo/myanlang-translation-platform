@@ -66,28 +66,6 @@ export default function AdminDashboard({ window }: { window?: () => Window }) {
       segment: 'issues',
       title: 'User Reports',
       icon: <FlagIcon />,
-      children: [
-        {
-          kind: 'page',
-          segment: 'wrong-source-language',
-          title: '- Wrong Source Language',
-        },
-        {
-          kind: 'page',
-          segment: 'payment-delay',
-          title: '- Payment Delay',
-        },
-        {
-          kind: 'page',
-          segment: 'accuracy-appeal',
-          title: '- Accuracy Appeal',
-        },
-        {
-          kind: 'page',
-          segment: 'other',
-          title: '- Other',
-        },
-      ],
     },
     {
       kind: 'page',
@@ -104,10 +82,7 @@ export default function AdminDashboard({ window }: { window?: () => Window }) {
         return <QADashboard />;
       case 'assessment-tasks':
         return <TaskManage />;
-      case 'wrong-source-language':
-      case 'payment-delay':
-      case 'accuracy-appeal':
-      case 'other':
+      case 'issues':
         return <Issue />;
       default:
         return <JobDashboard />;
