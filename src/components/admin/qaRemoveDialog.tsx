@@ -9,6 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Typography, Box } from '@mui/material';
 import { QAMember } from '@/types/qaMember';
 import { useQA } from '@/hooks/useQA';
+import Toast from '@/utils/showToast';
 
 interface DeleteDialogProps {
     open: boolean;
@@ -23,6 +24,7 @@ export default function RemoveQADialog({ open, onClose, qa_member }: DeleteDialo
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         removeQAMember.mutate(qa_member.qa_member_id);
+        Toast.show('QA Member removed successfully');
         onClose();
     };
 

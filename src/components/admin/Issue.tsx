@@ -46,11 +46,12 @@ import {
   Refresh as RefreshIcon,
 } from "@mui/icons-material"
 import type { ReactElement } from "react"
-import type { Report, IssueTypeConfig, StatusColors, SnackbarState, Stats } from "@/types/reports"
+import type { Report, IssueTypeConfig, StatusColors, Stats } from "@/types/reports"
 import theme from "@/theme"
 import { fetchReports } from "@/hooks/reportIssue"
 import ResolveDialog from "./resolve-dialog"
 import { useResolveIssue, IssueResolveRequest } from "@/hooks/useResolveIssue"
+import Toast from "@/utils/showToast"
 
 // Map issue types to icons and colors
 const issueTypeConfig: Record<string, IssueTypeConfig> = {
@@ -95,7 +96,6 @@ export default function AdminDashboard(): ReactElement {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
   const [currentReport, setCurrentReport] = useState<Report | null>(null)
-  const [snackbar, setSnackbar] = useState<SnackbarState>({ open: false, message: "", severity: "success" })
   const [loading, setLoading] = useState<boolean>(false)
   const [imageDialogOpen, setImageDialogOpen] = useState<boolean>(false)
   const [currentImage, setCurrentImage] = useState<string>("")
@@ -186,23 +186,12 @@ export default function AdminDashboard(): ReactElement {
 
     try {
       await resolveIssue(payload);
-
       loadReports();
       setDialogOpen(false);
       setCurrentReport(null);
-      setSnackbar({
-        open: true,
-        message: `Report #${currentReport.report_id} has been ${resolution === "proceed" ? "proceed" : "rejected"
-          }.`,
-        severity: "success"
-      });
+      Toast.show(`Report #${currentReport.report_id} has been ${resolution === "proceed" ? "proceed" : "rejected"}.`);
     } catch (error) {
       console.error("Error resolving issue:", error);
-      setSnackbar({
-        open: true,
-        message: `Failed to resolve Report #${currentReport.report_id}.`,
-        severity: "error"
-      });
     } finally {
       setLoading(false);
     }
@@ -239,11 +228,6 @@ export default function AdminDashboard(): ReactElement {
     setFilterStatus("all")
     setFilterIssueType("all")
     setSearchQuery("")
-  }
-
-  // Close snackbar
-  const handleCloseSnackbar = (): void => {
-    setSnackbar({ ...snackbar, open: false })
   }
 
   // Calculate statistics
@@ -676,18 +660,6 @@ export default function AdminDashboard(): ReactElement {
           </Box>
         </DialogContent>
       </Dialog>
-
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled" sx={{ width: "100%" }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </ThemeProvider>
   )
 }

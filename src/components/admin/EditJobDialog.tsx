@@ -15,6 +15,7 @@ import {
 import { JobEdit } from '@/types/job';
 import { useJob } from '@/hooks/useJob';
 import theme from '@/theme';
+import Toast from '@/utils/showToast';
 
 interface EditJobProps {
     open: boolean;
@@ -91,6 +92,7 @@ export default function EditJob({ open, onClose, job_id, editjob }: EditJobProps
             { job_id: jobData.job_id, data: jobData },
             {
                 onSuccess: (_) => {
+                    Toast.show("Job updated successfully");
                     onClose();
                 },
                 onError: (error: any) => {

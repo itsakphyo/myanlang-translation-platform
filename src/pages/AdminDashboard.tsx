@@ -91,6 +91,7 @@ export default function AdminDashboard({ window }: { window?: () => Window }) {
   };
 
   return (
+    <div id="app-root">
     <AppProvider
       navigation={navigation}
       router={router}
@@ -128,5 +129,6 @@ export default function AdminDashboard({ window }: { window?: () => Window }) {
         {renderContent()}
       </DashboardLayout>
     </AppProvider>
+    </div>
   );
 }

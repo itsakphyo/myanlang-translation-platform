@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
+import Toast from "@/utils/showToast";
 
 interface CreateLanguageDialogProps {
     open: boolean;
@@ -25,6 +26,7 @@ export default function CreateLanguageDialog({ open, onClose }: CreateLanguageDi
         e.preventDefault();
         createLanguage.mutate(language, {
             onSuccess: () => {
+                Toast.show("Language created successfully");
                 onClose();
             },
         });

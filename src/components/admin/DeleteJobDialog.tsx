@@ -10,6 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Typography, Box } from '@mui/material';
 import { red } from '@mui/material/colors';
 import { useJob } from '@/hooks/useJob';
+import Toast from '@/utils/showToast';
 
 interface DeleteDialogProps {
     open: boolean;
@@ -26,6 +27,7 @@ export default function DeleteDialog({ open, onClose, job_id, job_title }: Delet
         event.preventDefault();
         if (inputValue !== `DELETE ${job_title}`) return;
         deleteJob.mutate(job_id);
+        Toast.show('Job deleted successfully');
         onClose();
         setInputValue('');
     };

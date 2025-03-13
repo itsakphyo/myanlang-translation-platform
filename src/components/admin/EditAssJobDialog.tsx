@@ -15,6 +15,7 @@ import {
 import { JobEdit } from '@/types/job';
 import { useJob } from '@/hooks/useJob';
 import theme from '@/theme';
+import Toast from '@/utils/showToast';
 
 interface EditJobProps {
     open: boolean;
@@ -85,7 +86,8 @@ export default function EditAssJobDialog({ open, onClose, job_id, editjob }: Edi
         updateJob.mutate(
             { job_id: jobData.job_id, data: jobData },
             {
-                onSuccess: (data) => {
+                onSuccess: (_) => {
+                    Toast.show('Assessment Tasks updated successfully');
                     onClose();
                 },
                 onError: (error: any) => {

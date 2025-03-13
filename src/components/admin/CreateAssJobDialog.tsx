@@ -20,6 +20,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { Language } from '@/types/language';
 import { useJob } from '@/hooks/useJob';
 import theme from '@/theme';
+import Toast from '@/utils/showToast';
 
 interface CreateJobProps {
   open: boolean;
@@ -100,6 +101,7 @@ export default function CreateAssJobDialog({ open, onClose }: CreateJobProps) {
 
     createAssessmentJob.mutate(jobData, {
       onSuccess: (_) => {
+        Toast.show('Assessment Tasks created successfully');
         onClose();
       },
       onError: (error: any) => {

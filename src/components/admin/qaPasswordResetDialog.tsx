@@ -11,6 +11,7 @@ import { QAMember } from '@/types/qaMember';
 import { useQA } from '@/hooks/useQA';
 import TextField from '@mui/material/TextField';
 import { QAMemberUpdate } from '@/types/qaMember';
+import Toast from '@/utils/showToast';
 
 interface DeleteDialogProps {
     open: boolean;
@@ -31,6 +32,7 @@ export default function ResetPasswordQADialog({ open, onClose, qa_member }: Dele
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         resetQAPassword.mutate(data);
+        Toast.show('Password for QA reset successfully');
         onClose();
     }
 

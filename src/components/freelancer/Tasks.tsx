@@ -145,7 +145,7 @@ export default function TranslationTaskPage() {
     assessmentQueryEnabled,
   )
 
-  const handleGetAsstask = useCallback(() => {}, [tasks, tasksLoading])
+  const handleGetAsstask = useCallback(() => { }, [tasks, tasksLoading])
 
   const handleFreelancerLanguagePairStatus = useCallback(
     async (freelancerId: number, sourceLanguageId: number, targetLanguageId: number) => {
@@ -529,16 +529,7 @@ export default function TranslationTaskPage() {
           !("message" in languagePairData) &&
           languagePairData.status === "complete" &&
           (languagePairData.accuracy_rate ?? 0) > 50 && (
-            <Paper
-              elevation={3}
-              sx={{
-                borderRadius: 2,
-                overflow: "hidden",
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
+            <>
               {taskLoading ? (
                 <Box
                   sx={{
@@ -594,21 +585,12 @@ export default function TranslationTaskPage() {
                   </Button>
                 </Box>
               )}
-            </Paper>
+            </>
           )}
 
         {/* Assessment Task Interface */}
         {takingAssessment && tasks && (
-          <Paper
-            elevation={3}
-            sx={{
-              borderRadius: 2,
-              overflow: "hidden",
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <>
             <AssTaskTranslationInterface
               tasks={tasks}
               freelancerId={user?.freelancer_id || 0}
@@ -617,7 +599,7 @@ export default function TranslationTaskPage() {
                 setSelectedLanguagePair(null)
               }}
             />
-          </Paper>
+          </>
         )}
 
         {/* Footer */}

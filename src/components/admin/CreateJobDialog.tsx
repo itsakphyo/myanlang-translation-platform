@@ -16,6 +16,7 @@ import { JobFormData } from '@/types/job';
 import theme from '@/theme';
 import LanguageSelectDialog from '../freelancer/LanguageSelectDialog';
 import { LanguagePair } from '@/types/language';
+import Toast from '@/utils/showToast';
 
 interface CreateJobProps {
   open: boolean;
@@ -102,6 +103,7 @@ export default function CreateJob({ open, onClose }: CreateJobProps) {
     // Submit job data
     createJob.mutate(jobData, {
       onSuccess: () => {
+        Toast.show('Job created successfully');
         onClose();
       },
       onError: (error: any) => {

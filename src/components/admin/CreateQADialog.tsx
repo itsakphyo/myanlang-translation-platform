@@ -13,6 +13,7 @@ import {
   import { useState } from "react";
   import { useQA } from "@/hooks/useQA";
   import { QAMemberCreate } from "@/types/qaMember";
+  import Toast from "@/utils/showToast";
   
   interface CreateQAProps {
     open: boolean;
@@ -54,6 +55,7 @@ import {
   
       createQAMember.mutate(qaMember, {
         onSuccess: () => {
+          Toast.show("QA Member created successfully");
           onClose();
           setQaMember({ full_name: "", email: "", password: "" });
         },

@@ -16,7 +16,7 @@ import { AssTask } from '@/types/task';
 import {useCreateAssessmentAttempts } from '@/hooks/useCreateAssessmentAttempts';
 import { AssessmentAttempt } from "@/types/task";
 import theme from '@/theme';
-
+import Toast from '@/utils/showToast';
 
 interface AssTaskTranslationInterfaceProps {
   tasks: AssTask[];
@@ -84,6 +84,7 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
     // Ensure createAssessmentAttempts.mutate expects the correct type
     createAssessmentAttempts.mutate(assessmentAttempts);
   
+    Toast.show('Assessment Attempts submitted successfully.');
     onClose();
   };
   

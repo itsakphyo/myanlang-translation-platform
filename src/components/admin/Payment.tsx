@@ -45,6 +45,7 @@ import { useWithdrawals } from "@/hooks/useWithdrawal"
 import CloudinaryUpload from "./CloudinaryUpload"
 import { useUpdateWithdrawal } from "@/hooks/useUpdateWithdrawal"
 import { WithdrawalRequest } from "@/types/withdrawal";
+import Toast from "@/utils/showToast";
 
 export default function Payment() {
     const { withdrawalRequests, fetchWithdrawals } = useWithdrawals();
@@ -139,33 +140,34 @@ export default function Payment() {
         }
 
         if (!selectedRequest) return;
-    
+
         if (!proofOfPayment && status === "completed") {
-          setDialogErrorMessage("Please upload proof of payment");
-          return;
+            setDialogErrorMessage("Please upload proof of payment");
+            return;
         }
-    
+
         setIsProcessing(true);
-    
+
         try {
-          const adminId = Number(localStorage.getItem("userId"));
-    
-          await updateWithdrawal({
-            withdrawal_id: selectedRequest.withdrawal_id,
-            admin_id: adminId,
-            proof_of_payment: proofOfPayment,
-          });
-    
-          setSelectedRequest(null);
-          setProofOfPayment("");
+            const adminId = Number(localStorage.getItem("userId"));
+
+            await updateWithdrawal({
+                withdrawal_id: selectedRequest.withdrawal_id,
+                admin_id: adminId,
+                proof_of_payment: proofOfPayment,
+            });
+
+            setSelectedRequest(null);
+            setProofOfPayment("");
+            Toast.show("Payment processed successfully");
         } catch (error) {
-          console.error("Error processing payment:", error);
+            console.error("Error processing payment:", error);
         } finally {
-          setDialogErrorMessage(null);
-          setIsProcessing(false);
-          fetchWithdrawals();
+            setDialogErrorMessage(null);
+            setIsProcessing(false);
+            fetchWithdrawals();
         }
-      };
+    };
 
     // Format date for display
     const formatDate = (dateString: string) => {

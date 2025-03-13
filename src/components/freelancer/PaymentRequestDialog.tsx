@@ -20,6 +20,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { requestNewPayment } from '@/hooks/useWithdrawal';
 import { PaymentFormValues } from '@/types/paymentFromValues';
+import Toast from '@/utils/showToast';
 
 interface PaymentDialogProps {
     open: boolean;
@@ -97,6 +98,7 @@ const PaymentRequestDialog = ({
                     freelancer_id: Number(values.freelancer_id),
                 };
                 await requestNewPayment(payload);
+                Toast.show('Withdrawal request submitted successfully');
                 onClose();
                 fetchWithdrawals();
             } catch (error: unknown) {

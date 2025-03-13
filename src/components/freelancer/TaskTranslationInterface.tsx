@@ -19,6 +19,7 @@ import ReportIcon from '@mui/icons-material/Report';
 import { OpenTask } from "@/types/task";
 import { useTask } from '@/hooks/useTask';
 import { useDialog } from '@/contexts/DialogContext';
+import Toast from '@/utils/showToast';
 
 interface TaskTranslationInterfaceProps {
   task: OpenTask | null;
@@ -68,6 +69,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   const handleSubmit = () => {
     if (task) {
       submitTask(task.task_id, userId, translation);
+      Toast.show('Translation submitted successfully.');
     } else {
       console.error('Task data is not available.');
     }

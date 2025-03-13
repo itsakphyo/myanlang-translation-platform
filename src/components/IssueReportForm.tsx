@@ -21,6 +21,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime"
 import TranslateIcon from "@mui/icons-material/Translate"
 import { IssueReportRequest } from '@/types/IssueReportRequest';
 import { reportIssue } from "@/hooks/reportIssue";
+import Toast from "@/utils/showToast";
 
 const handleReportIssue = async (data: IssueReportRequest) => {
   try {
@@ -51,7 +52,7 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ taskId }) => {
     }
 
     handleReportIssue(reportData)
-    console.log("Issue Report Data:", reportData)
+    Toast.show("Issue reported successfully")
     closeDialog()
   }
 

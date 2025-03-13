@@ -19,6 +19,7 @@ import SendIcon from '@mui/icons-material/Send';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { IssueReportRequest } from '@/types/IssueReportRequest';
 import { reportIssue } from "@/hooks/reportIssue";
+import Toast from "@/utils/showToast";
 
 const handleReportIssue = async (data: IssueReportRequest) => {
   try {
@@ -55,8 +56,7 @@ const PaymentDelayReportForm: React.FC<PaymentDelayReportFormProps> = ({ withdra
     };
 
     handleReportIssue(reportData);
-
-    console.log("Payment Delay Report Data:", reportData);
+    Toast.show("Issue reported successfully");
 
     setIsSubmitting(false);
     closeDialog();

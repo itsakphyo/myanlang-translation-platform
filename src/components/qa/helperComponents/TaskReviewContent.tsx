@@ -11,6 +11,7 @@ import { useAssReviewedSubmit } from "@/hooks/useAssTask";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetSubmittedTaskForReview } from "@/hooks/useGetSubmittedTaskForReview";
 import { useSubTaskdecision } from "@/hooks/useGetSubmittedTaskForReview";
+import Toast from "@/utils/showToast";
 
 const TaskReviewContent = ({
   selectedLanguagePair,
@@ -99,6 +100,7 @@ const TaskReviewContent = ({
     sentDecision(data, {
       onSuccess: () => {
         refetchSubmittedData();
+        Toast.show("Reviewed Task submitted successfully");
       }
     });
   };
@@ -121,6 +123,7 @@ const TaskReviewContent = ({
         });
         setAssTaskOpen(false);
         setSelectedLanguagePair(null);
+        Toast.show("All reviewed tasks submitted successfully");
         queryClient.setQueryData(
           ['assessmentTasks', selectedLanguagePair?.source_id, selectedLanguagePair?.target_id],
           []
@@ -135,6 +138,7 @@ const TaskReviewContent = ({
         queryClient.invalidateQueries({
           queryKey: ['assessmentTasks', selectedLanguagePair?.source_id, selectedLanguagePair?.target_id],
         });
+        Toast.show("Reviewed Task submitted successfully");
       },
     });
   };

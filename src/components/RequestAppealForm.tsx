@@ -19,6 +19,7 @@ import { useDialog } from "@/contexts/DialogContext";
 import { DescriptionOutlined } from "@mui/icons-material";
 import { IssueReportRequest } from '@/types/IssueReportRequest';
 import { reportIssue } from "@/hooks/reportIssue";
+import Toast from "@/utils/showToast";
 
 interface RequestAppealFormProps {
   souce_language_id: number;
@@ -45,12 +46,10 @@ const RequestAppealForm: React.FC<RequestAppealFormProps> = ({ souce_language_id
   const handleReportIssue = async (data: IssueReportRequest) => {
     try {
       setIsSubmitting(true);
-      const result = await reportIssue(data);
-      console.log(result);
+      await reportIssue(data);
+      Toast.show("Appeal submitted successfully");
       closeDialog();
     } catch (err) {
-      console.error("Failed to report issue:", err);
-      alert('Failed to report issue.');
       setIsSubmitting(false);
     }
   };
