@@ -39,11 +39,13 @@ export default function ForgotPassword() {
     confirm_password: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false); // State to track loading
   const [_, setPasswordRequirements] = useState(getPasswordRequirements(''));
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
+    setLoading(true); // Set loading to true when the request starts
     try {
       await sendResetCode.mutateAsync(formData.email);
       setActiveStep(1);
@@ -53,6 +55,8 @@ export default function ForgotPassword() {
           error.response?.data?.message || 'Failed to send reset code'
         );
       }
+    } finally {
+      setLoading(false); // Set loading to false when the request completes
     }
   };
 
@@ -160,8 +164,14 @@ export default function ForgotPassword() {
                 required
               />
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                <Button fullWidth type="submit" variant="contained" sx={{ mt: 2 }}>
-                  Send Verification Code
+                <Button
+                  fullWidth
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 2 }}
+                  disabled={loading} // Disable button when loading
+                >
+                  {loading ? 'Sending...' : 'Send Verification Code'}
                 </Button>
               </Box>
             </Box>

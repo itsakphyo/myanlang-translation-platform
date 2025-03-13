@@ -3,8 +3,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ..schemas.freelancer import *
 from ..core.database import get_db
 from sqlalchemy.orm import Session
-from ..services.auth import get_current_user, send_verification_email, get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, check_existing_user
-from datetime import timedelta
+from ..services.auth import get_current_user, generate_code, send_verification_email, get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, check_existing_user
+from datetime import datetime, timedelta
+from ..schemas.verification_code import VerificationCode
 
 router = APIRouter()    
 
@@ -36,19 +37,54 @@ async def send_verification_code(email_data: EmailVerification, db: Session = De
     existing_user, _ = await check_existing_user(db, email_data.email)
     if existing_user is not None:
         raise HTTPException(status_code=409, detail="Email already registered")
-    code = 90909
-    # await send_verification_email(email_data.email, code)
-    return {"message": "Verification code sent"}
+
+    code = generate_code()
+    expires_at = datetime.utcnow() + timedelta(minutes=10)
+
+    existing_entry = db.query(VerificationCode).filter(VerificationCode.email == email_data.email).first()
+
+    if existing_entry:
+        existing_entry.code = code
+        existing_entry.expires_at = expires_at
+        existing_entry.is_verified = False
+    else:
+        new_entry = VerificationCode(email=email_data.email, code=code, expires_at=expires_at)
+        db.add(new_entry)
+
+    db.commit()
+
+    await send_verification_email(email_data.email, code)
+
+    return {"message", code}
 
 @router.post("/auth/verify-code")
-async def verify_code(verification: CodeVerification):
-    stored_code = 90909
-    if not stored_code or stored_code != verification.code:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid verification code"
-        )
+async def verify_code(verification: CodeVerification, db: Session = Depends(get_db)):
+    entry = db.query(VerificationCode).filter(VerificationCode.email == verification.email).first()
+    print(type(verification.code), type(entry.code))
+    print(verification.code, entry.code)
+
+
+    if not entry:
+        raise HTTPException(status_code=400, detail="Email not found")
+
+    if entry.is_verified:
+        print(verification.code, entry.code)
+
+        raise HTTPException(status_code=400, detail="Email already verified")
+
+    if entry.code != str(verification.code):
+        raise HTTPException(status_code=400, detail="Invalid verification code")
+    
+    print(verification.code, entry.code)
+
+    if datetime.utcnow() > entry.expires_at:
+        raise HTTPException(status_code=400, detail="Verification code expired")
+
+    entry.is_verified = True
+    db.commit()
+
     return {"message": "Code verified successfully"}
+
 
 @router.post("/auth/login")
 async def login(form_data: LoginRequest, db: Session = Depends(get_db)):

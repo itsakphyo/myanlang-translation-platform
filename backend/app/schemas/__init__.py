@@ -8,3 +8,4 @@ from .language import Language
 from .task import Task
 from .qa_member import QAMember
 from .withdrawal import Withdrawal
+from .verification_code import VerificationCode

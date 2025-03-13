@@ -11,6 +11,8 @@ from ..core.config import get_settings
 from ..schemas.freelancer import Freelancer
 from ..schemas.admin import Admin
 from ..schemas.qa_member import QAMember
+import random
+import string
 
 settings = get_settings()
 SECRET_KEY = settings.SECRET_KEY
@@ -113,3 +115,7 @@ async def get_current_user(
     
     # Return the user object, which will be passed to endpoints that depend on this function
     return user
+
+
+def generate_code(length=5):
+    return ''.join(random.choices(string.digits, k=length))

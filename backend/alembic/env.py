@@ -16,6 +16,7 @@ from app.schemas.admin import Admin
 from app.schemas.task import Task
 from app.schemas.withdrawal import Withdrawal
 from app.schemas.assessment_attempt import AssessmentAttempt
+from app.schemas.verification_code import VerificationCode
 
 from app.core.config import get_settings
 
