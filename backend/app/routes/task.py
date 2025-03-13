@@ -285,7 +285,7 @@ def submit_task(
     assigned_at_aware = assigned_local.astimezone(timezone.utc)
     
     elapsed_initial = (now - assigned_at_aware).total_seconds() / 60  # elapsed time in minutes
-    elapsed = elapsed_initial - 1 
+    elapsed = elapsed_initial
     
     if elapsed > task.max_time_per_task:
         task.task_status = "OPEN"

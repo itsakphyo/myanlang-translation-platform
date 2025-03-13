@@ -6,21 +6,13 @@ from datetime import datetime
 from ..schemas.enums import Issues, RPstatus
 from ..core.database import get_db
 from ..schemas.freelancer import Freelancer
-from ..schemas.issue_report import IssueReport
+from ..schemas.issue_report import IssueReport, IssueResolveRequest, IssueReportRequest
 from ..schemas.task import Task
 from ..schemas.freelancer_language_pair import FreelancerLanguagePair
+from ..schemas.admin import Admin
+from ..schemas.enums import TaskStatus
 
 router = APIRouter()
-
-class IssueReportRequest(BaseModel):
-    freelancer_id: int
-    issue_type: str
-    task_id: Optional[int] = None
-    description: Optional[str] = None
-    withdrawalId: Optional[int] = None
-    documentationUrl: Optional[str] = None
-    source_language_id: Optional[int] = None
-    target_language_id: Optional[int] = None
 
 @router.post("/report_issue")
 async def report_issue(request_body: IssueReportRequest, db: Session = Depends(get_db)):
@@ -100,5 +92,38 @@ async def get_issue_reports(db: Session = Depends(get_db)):
 
     return result
 
+@router.post("/resolve_issue")
+async def resolve_issue(request_body: IssueResolveRequest, db: Session = Depends(get_db)):
+    issue_report = db.query(IssueReport).filter(IssueReport.report_id == request_body.report_id).first()
+    if not issue_report:
+        raise HTTPException(status_code=404, detail="Issue report not found")
 
+    admin = db.query(Admin).filter(Admin.admin_id == request_body.admin_id).first()
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
 
+    if request_body.decision:
+        issue_report.report_status = RPstatus.PROCEED
+        issue_report.resolved_at = datetime.now()
+
+        if request_body.task_id:
+            task = db.query(Task).filter(Task.task_id == request_body.task_id).first()
+            if task:
+                if request_body.added_min is not None:
+                    task.max_time_per_task = request_body.added_min
+                else:
+                    task.task_status = TaskStatus.COMPLETE
+                    task.translated_text = "Admin closed this task"
+
+        if request_body.language_pair_id:
+            language_pair = db.query(FreelancerLanguagePair).filter(
+                FreelancerLanguagePair.language_pair_id == request_body.language_pair_id
+            ).first()
+            if language_pair:
+                db.delete(language_pair)
+
+    else:
+        issue_report.report_status = RPstatus.REJECTED
+
+    db.commit()
+    return issue_report

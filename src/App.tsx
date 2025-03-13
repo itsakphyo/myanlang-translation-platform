@@ -69,6 +69,8 @@ function App() {
             }
           />
           <Route path="/page-not-found" element={<PageNotFound />} />
+          {/* Catch-all route for undefined paths */}
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Router>
       {/* Global Dialog Component */}

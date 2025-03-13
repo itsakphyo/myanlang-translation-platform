@@ -50,6 +50,7 @@ import type { Report, IssueTypeConfig, StatusColors, SnackbarState, Stats } from
 import theme from "@/theme"
 import { fetchReports } from "@/hooks/reportIssue"
 import ResolveDialog from "./resolve-dialog"
+import { useResolveIssue, IssueResolveRequest } from "@/hooks/useResolveIssue"
 
 // Map issue types to icons and colors
 const issueTypeConfig: Record<string, IssueTypeConfig> = {
@@ -62,9 +63,8 @@ const issueTypeConfig: Record<string, IssueTypeConfig> = {
 // Map status to colors
 const statusColors: StatusColors = {
   under_review: "warning",
-  approved: "success",
+  proceed: "success",
   rejected: "error",
-  resolved: "info",
 }
 
 // Format date
@@ -100,6 +100,8 @@ export default function AdminDashboard(): ReactElement {
   const [imageDialogOpen, setImageDialogOpen] = useState<boolean>(false)
   const [currentImage, setCurrentImage] = useState<string>("")
   const [reports, setReports] = useState<Report[]>([])
+
+  const { resolveIssue } = useResolveIssue();
 
   const loadReports = async () => {
     try {
@@ -147,55 +149,64 @@ export default function AdminDashboard(): ReactElement {
     setCurrentReport(null)
   }
 
-  // Handle resolution submission
-  const handleResolveSubmit = (resolution: string, updatedTime?: number): void => {
-    setLoading(true)
+  const handleResolveSubmit = async (resolution: string, updatedTime?: number): Promise<void> => {
+    if (!currentReport) return;
+    setLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      if (!currentReport) return
+    // Get user ID from localStorage
+    const userIdStr = localStorage.getItem("userId");
+    if (!userIdStr) {
+      setLoading(false);
+      return;
+    }
+    const userId = Number(userIdStr);
 
-      // Get user ID from localStorage
-      const userId = localStorage.getItem("userId")
+    // Build the payload based on the report issue type
+    const payload: IssueResolveRequest = {
+      report_id: currentReport.report_id,
+      admin_id: userId,
+      decision: resolution === "approve"
+    };
 
-      // Log different data based on issue type
-      if (currentReport.issue_type === "wrong_source_language") {
-        console.log(userId, resolution, currentReport.report_id, currentReport.taskId)
-      } else if (currentReport.issue_type === "not_enough_time" && currentReport.task) {
-        console.log(userId, resolution, currentReport.report_id, currentReport.taskId, updatedTime)
-      } else if (currentReport.issue_type === "accuracy_appeal" && currentReport.language_pair) {
-        console.log(userId, resolution, currentReport.report_id, currentReport.language_pair.language_pair_id)
-      } else if (currentReport.issue_type === "payment_delay") {
-        console.log(userId, resolution, currentReport.report_id)
+    if (currentReport.issue_type === "wrong_source_language" && currentReport.taskId) {
+      payload.task_id = currentReport.taskId;
+      console.log(userId, resolution, currentReport.report_id, currentReport.taskId);
+    } else if (currentReport.issue_type === "not_enough_time" && currentReport.task && currentReport.taskId) {
+      payload.task_id = currentReport.taskId;
+      if (updatedTime !== undefined) {
+        payload.added_min = updatedTime;
       }
+      console.log(userId, resolution, currentReport.report_id, currentReport.taskId, updatedTime);
+    } else if (currentReport.issue_type === "accuracy_appeal" && currentReport.language_pair) {
+      payload.language_pair_id = currentReport.language_pair.language_pair_id;
+      console.log(userId, resolution, currentReport.report_id, currentReport.language_pair.language_pair_id);
+    } else if (currentReport.issue_type === "payment_delay") {
+      console.log(userId, resolution, currentReport.report_id);
+    }
 
-      // Update the reports state
-      const updatedReports = reports.map((report) =>
-        report.report_id === currentReport.report_id
-          ? {
-              ...report,
-              report_status:
-                resolution === "approve"
-                  ? "approved"
-                  : ("rejected" as "under_review" | "approved" | "rejected" | "resolved"),
-              resolved_at: new Date().toISOString(),
-            }
-          : report,
-      )
+    try {
+      await resolveIssue(payload);
 
-      setReports(updatedReports)
-      setDialogOpen(false)
-      setCurrentReport(null)
-      setLoading(false)
-
-      // Show success message
+      loadReports();
+      setDialogOpen(false);
+      setCurrentReport(null);
       setSnackbar({
         open: true,
-        message: `Report #${currentReport.report_id} has been ${resolution === "approve" ? "approved" : "rejected"}.`,
-        severity: "success",
-      })
-    }, 1000)
-  }
+        message: `Report #${currentReport.report_id} has been ${resolution === "proceed" ? "proceed" : "rejected"
+          }.`,
+        severity: "success"
+      });
+    } catch (error) {
+      console.error("Error resolving issue:", error);
+      setSnackbar({
+        open: true,
+        message: `Failed to resolve Report #${currentReport.report_id}.`,
+        severity: "error"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Open document dialog or new tab based on file type
   const handleImageClick = (url: string): void => {
@@ -239,7 +250,7 @@ export default function AdminDashboard(): ReactElement {
   const stats: Stats = {
     total: reports.length,
     underReview: reports.filter((r) => r.report_status === "under_review").length,
-    approved: reports.filter((r) => r.report_status === "approved").length,
+    proceed: reports.filter((r) => r.report_status === "proceed").length,
     rejected: reports.filter((r) => r.report_status === "rejected").length,
   }
 
@@ -291,10 +302,10 @@ export default function AdminDashboard(): ReactElement {
                 <Card>
                   <CardContent>
                     <Typography variant="h6" component="div" color="text.secondary" gutterBottom>
-                      Approved
+                      Proceed
                     </Typography>
                     <Typography variant="h3" component="div" color="success.main">
-                      {stats.approved}
+                      {stats.proceed}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -339,7 +350,7 @@ export default function AdminDashboard(): ReactElement {
                     >
                       <MenuItem value="all">All Statuses</MenuItem>
                       <MenuItem value="under_review">Under Review</MenuItem>
-                      <MenuItem value="approved">Approved</MenuItem>
+                      <MenuItem value="proceed">Proceed</MenuItem>
                       <MenuItem value="rejected">Rejected</MenuItem>
                     </Select>
                   </FormControl>

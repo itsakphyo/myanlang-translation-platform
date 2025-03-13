@@ -4,7 +4,7 @@ import type { ReactElement } from "react"
 
 export interface Report {
     report_id: number
-    report_status: "under_review" | "approved" | "rejected" | "resolved"
+    report_status: "under_review" | "proceed" | "rejected" | "resolved"
     withdrawalId: number | null
     taskId: number | null
     source_language_id: number | null
@@ -70,6 +70,6 @@ export interface SnackbarState {
 export interface Stats {
     total: number
     underReview: number
-    approved: number
+    proceed: number
     rejected: number
 }

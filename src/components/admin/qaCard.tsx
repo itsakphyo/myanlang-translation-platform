@@ -121,7 +121,7 @@ export default function QACard({ member }: QACardProps) {
         {/* Stats Section */}
         <Box
           sx={{
-            flex: 2,
+            flex: 3,
             p: { xs: 1, md: 2 },
             borderLeft: isMobile ? "none" : `1px solid ${theme.palette.divider}`,
             borderRight: isMobile ? "none" : `1px solid ${theme.palette.divider}`,
@@ -149,16 +149,11 @@ export default function QACard({ member }: QACardProps) {
             {/* Reviewed Tasks */}
             <Grid item xs={12} sm={4}>
               <Card
-                elevation={2}
                 sx={{
                   p: 1,
                   borderRadius: 2,
                   transition: "transform 0.2s",
-                  minHeight: "12vh",
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                  },
+                  minHeight: "10vh",
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
@@ -197,16 +192,11 @@ export default function QACard({ member }: QACardProps) {
             {/* Rejected Tasks */}
             <Grid item xs={12} sm={4}>
               <Card
-                elevation={2}
                 sx={{
                   p: 1,
                   borderRadius: 2,
                   transition: "transform 0.2s",
-                  minHeight: "12vh",
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                  },
+                  minHeight: "10vh",
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
@@ -245,16 +235,11 @@ export default function QACard({ member }: QACardProps) {
             {/* Acceptance Rate */}
             <Grid item xs={12} sm={4}>
               <Card
-                elevation={2}
                 sx={{
                   p: 1,
                   borderRadius: 2,
                   transition: "transform 0.2s",
-                  minHeight: "12vh",
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                  },
+                  minHeight: "10vh",
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
@@ -326,7 +311,7 @@ export default function QACard({ member }: QACardProps) {
           }}
         >
           <Stack
-            direction={isMobile ? "column" : "row"}
+            direction={"column"}
             spacing={1}
             sx={{
               width: "100%",

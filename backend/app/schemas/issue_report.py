@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, Enum, String
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, Enum, String, Boolean
 from sqlalchemy.orm import relationship
 from .base import Base
 from .enums import Issues, RPstatus
+from typing import Optional
+from pydantic import BaseModel
 
 class IssueReport(Base):
     __tablename__ = "issue_report"
@@ -22,3 +24,21 @@ class IssueReport(Base):
 
     freelancer = relationship("Freelancer", back_populates="reports")
     admin = relationship("Admin", back_populates="reports")
+
+class IssueReportRequest(BaseModel):
+    freelancer_id: int
+    issue_type: str
+    task_id: Optional[int] = None
+    description: Optional[str] = None
+    withdrawalId: Optional[int] = None
+    documentationUrl: Optional[str] = None
+    source_language_id: Optional[int] = None
+    target_language_id: Optional[int] = None
+
+class IssueResolveRequest(BaseModel):
+    report_id: int
+    admin_id: int
+    task_id: Optional[int] = None
+    added_min: Optional[int] = None
+    language_pair_id: Optional[int] = None
+    decision: bool
