@@ -76,22 +76,13 @@ async def create_assessment_attempts(
     add_language_pair(db, freelancer_id, first_task.source_language_id, first_task.target_language_id)
 
     # Add additional language pairs if source and target languages are different
-    if first_task.source_language_id != first_task.target_language_id:
-        add_language_pair(db, freelancer_id, first_task.source_language_id, first_task.source_language_id)
-        add_language_pair(db, freelancer_id, first_task.target_language_id, first_task.target_language_id)
+    # if first_task.source_language_id != first_task.target_language_id:
+    #     add_language_pair(db, freelancer_id, first_task.source_language_id, first_task.source_language_id)
+    #     add_language_pair(db, freelancer_id, first_task.target_language_id, first_task.target_language_id)
 
     db.commit()
 
     return {"message": f"{len(attempts)} assessment attempt(s) created successfully"}
-
-
-    # qa_member_id = Column(Integer, primary_key=True, autoincrement=True)
-    # full_name = Column(String, nullable=False)
-    # email = Column(String, nullable=False, unique=True)
-    # initial_password = Column(Boolean, nullable=False, default=True)
-    # password_hash = Column(String, nullable=False)
-    # total_tasks_reviewed = Column(Integer, nullable=False, default=0)
-    # total_tasks_rejected = Column(Integer, nullable=False, default=0)
 
 @router.post("/update_ass_reviewed_data")
 async def update_ass_reviewed_data(reviews: CheckSubmitRequest, db: Session = Depends(get_db)):
@@ -129,71 +120,71 @@ async def update_ass_reviewed_data(reviews: CheckSubmitRequest, db: Session = De
         attempt.attempt_status = AssTaskStatus.COMPLETE
 
     # Update FreelancerLanguagePair records
-    if source_lang_id == target_lang_id:
+    # if source_lang_id == target_lang_id:
         # Non-translation task: update single row
-        freelancer_language_pair = db.query(FreelancerLanguagePair).filter(
-            FreelancerLanguagePair.freelancer_id == fl_id,
-            FreelancerLanguagePair.source_language_id == source_lang_id,
-            FreelancerLanguagePair.target_language_id == target_lang_id,
-        ).first()
+    freelancer_language_pair = db.query(FreelancerLanguagePair).filter(
+        FreelancerLanguagePair.freelancer_id == fl_id,
+        FreelancerLanguagePair.source_language_id == source_lang_id,
+        FreelancerLanguagePair.target_language_id == target_lang_id,
+    ).first()
 
-        if not freelancer_language_pair:
-            raise HTTPException(status_code=404, detail="Freelancer language pair record not found.")
+    if not freelancer_language_pair:
+        raise HTTPException(status_code=404, detail="Freelancer language pair record not found.")
 
-        previous_complete_task = freelancer_language_pair.complete_task or 0
-        previous_rejected_task = freelancer_language_pair.rejected_task or 0
-        freelancer_language_pair.status = AssSubmission.COMPLETE
-        freelancer_language_pair.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
-        freelancer_language_pair.complete_task = previous_complete_task + total_reviews
-        freelancer_language_pair.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
+    previous_complete_task = freelancer_language_pair.complete_task or 0
+    previous_rejected_task = freelancer_language_pair.rejected_task or 0
+    freelancer_language_pair.status = AssSubmission.COMPLETE
+    freelancer_language_pair.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
+    freelancer_language_pair.complete_task = previous_complete_task + total_reviews
+    freelancer_language_pair.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
 
-    else:
+    # else:
         # Translation task: update three rows
 
         # 1. (fl_id, source_lang_id, target_lang_id) – update accuracy and status.
-        pair_original = db.query(FreelancerLanguagePair).filter(
-            FreelancerLanguagePair.freelancer_id == fl_id,
-            FreelancerLanguagePair.source_language_id == source_lang_id,
-            FreelancerLanguagePair.target_language_id == target_lang_id,
-        ).first()
-        if not pair_original:
-            raise HTTPException(status_code=404, detail="Freelancer language pair (source-target) record not found.")
-        pair_original.status = AssSubmission.COMPLETE
-        previous_complete_task = pair_original.complete_task or 0
-        previous_rejected_task = pair_original.rejected_task or 0
-        pair_original.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
-        pair_original.complete_task = previous_complete_task + total_reviews
-        pair_original.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
+        # pair_original = db.query(FreelancerLanguagePair).filter(
+        #     FreelancerLanguagePair.freelancer_id == fl_id,
+        #     FreelancerLanguagePair.source_language_id == source_lang_id,
+        #     FreelancerLanguagePair.target_language_id == target_lang_id,
+        # ).first()
+        # if not pair_original:
+        #     raise HTTPException(status_code=404, detail="Freelancer language pair (source-target) record not found.")
+        # pair_original.status = AssSubmission.COMPLETE
+        # previous_complete_task = pair_original.complete_task or 0
+        # previous_rejected_task = pair_original.rejected_task or 0
+        # pair_original.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
+        # pair_original.complete_task = previous_complete_task + total_reviews
+        # pair_original.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
 
         # 2. (fl_id, target_lang_id, target_lang_id) – update status.
-        pair_target = db.query(FreelancerLanguagePair).filter(
-            FreelancerLanguagePair.freelancer_id == fl_id,
-            FreelancerLanguagePair.source_language_id == target_lang_id,
-            FreelancerLanguagePair.target_language_id == target_lang_id,
-        ).first()
-        if not pair_target:
-            raise HTTPException(status_code=404, detail="Freelancer language pair (target-target) record not found.")
-        pair_target.status = AssSubmission.COMPLETE
-        previous_complete_task = pair_target.complete_task or 0
-        previous_rejected_task = pair_target.rejected_task or 0
-        pair_target.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
-        pair_target.complete_task = previous_complete_task + total_reviews
-        pair_target.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
+        # pair_target = db.query(FreelancerLanguagePair).filter(
+        #     FreelancerLanguagePair.freelancer_id == fl_id,
+        #     FreelancerLanguagePair.source_language_id == target_lang_id,
+        #     FreelancerLanguagePair.target_language_id == target_lang_id,
+        # ).first()
+        # if not pair_target:
+        #     raise HTTPException(status_code=404, detail="Freelancer language pair (target-target) record not found.")
+        # pair_target.status = AssSubmission.COMPLETE
+        # previous_complete_task = pair_target.complete_task or 0
+        # previous_rejected_task = pair_target.rejected_task or 0
+        # pair_target.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
+        # pair_target.complete_task = previous_complete_task + total_reviews
+        # pair_target.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
 
         # 3. (fl_id, source_lang_id, source_lang_id) – update status.
-        pair_source = db.query(FreelancerLanguagePair).filter(
-            FreelancerLanguagePair.freelancer_id == fl_id,
-            FreelancerLanguagePair.source_language_id == source_lang_id,
-            FreelancerLanguagePair.target_language_id == source_lang_id,
-        ).first()
-        if not pair_source:
-            raise HTTPException(status_code=404, detail="Freelancer language pair (source-source) record not found.")
-        pair_source.status = AssSubmission.COMPLETE
-        previous_complete_task = pair_source.complete_task or 0
-        previous_rejected_task = pair_source.rejected_task or 0
-        pair_source.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
-        pair_source.complete_task = previous_complete_task + total_reviews
-        pair_source.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
+        # pair_source = db.query(FreelancerLanguagePair).filter(
+        #     FreelancerLanguagePair.freelancer_id == fl_id,
+        #     FreelancerLanguagePair.source_language_id == source_lang_id,
+        #     FreelancerLanguagePair.target_language_id == source_lang_id,
+        # ).first()
+        # if not pair_source:
+        #     raise HTTPException(status_code=404, detail="Freelancer language pair (source-source) record not found.")
+        # pair_source.status = AssSubmission.COMPLETE
+        # previous_complete_task = pair_source.complete_task or 0
+        # previous_rejected_task = pair_source.rejected_task or 0
+        # pair_source.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
+        # pair_source.complete_task = previous_complete_task + total_reviews
+        # pair_source.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
 
     db.commit()
     return {"message": "Data updated successfully"}

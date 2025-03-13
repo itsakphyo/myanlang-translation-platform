@@ -28,6 +28,11 @@ class ReportStatus(Enum):
     UNDER_REVIEW = "under_review"
     PROCEED = "proceed"
 
+class RPstatus(Enum):
+    REJECTED = "rejected"
+    UNDER_REVIEW = "under_review"
+    PROCEED = "proceed"
+
 class PaymentMethod(Enum):
     PAYPAL = "PayPal"
     PAYONEER = "Payoneer"

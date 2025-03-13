@@ -47,7 +47,6 @@ import { useUpdateWithdrawal } from "@/hooks/useUpdateWithdrawal"
 import { WithdrawalRequest } from "@/types/withdrawal";
 
 export default function Payment() {
-    // Sample data - in a real app, this would come from an API
     const { withdrawalRequests, fetchWithdrawals } = useWithdrawals();
     const { updateWithdrawal } = useUpdateWithdrawal();
 

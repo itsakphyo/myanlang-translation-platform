@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-from ..schemas.enums import Issues, ReportStatus
+from ..schemas.enums import Issues, RPstatus
 from ..core.database import get_db
 from ..schemas.freelancer import Freelancer
 from ..schemas.issue_report import IssueReport
@@ -31,7 +31,7 @@ async def report_issue(request_body: IssueReportRequest, db: Session = Depends(g
     issue_report = IssueReport(
         freelancer_id=request_body.freelancer_id,
         reported_at=datetime.now(),
-        report_status=ReportStatus.UNDER_REVIEW,
+        report_status=RPstatus.UNDER_REVIEW,
         description=request_body.description,
         taskId=request_body.task_id,
         withdrawalId=request_body.withdrawalId,

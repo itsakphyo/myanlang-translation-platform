@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, DateTime, ForeignKey, Enum, String
 from sqlalchemy.orm import relationship
 from .base import Base
-from .enums import Issues, ReportStatus
+from .enums import Issues, RPstatus
 
 class IssueReport(Base):
     __tablename__ = "issue_report"
@@ -11,7 +11,7 @@ class IssueReport(Base):
     admin_id = Column(Integer, ForeignKey("admin.admin_id"), nullable=True, index=True)
     issue_type = Column(Enum(Issues), nullable=False)
     reported_at = Column(DateTime, nullable=False)
-    report_status = Column(Enum(ReportStatus), nullable=False)
+    report_status = Column(Enum(RPstatus), nullable=False)
     resolved_at = Column(DateTime, nullable=True)
     withdrawalId = Column(Integer, nullable=True)
     description = Column(String, nullable=True)
