@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .header { color: #2c3e50; padding: 20px; background-color: #f8f9fa; }
+        .content { padding: 30px; }
+        .decision-box { 
+            padding: 15px; 
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .decision-box.approved {
+            background-color: #e8f5e9;
+            border: 1px solid #a5d6a7;
+        }
+        .decision-box.rejected {
+            background-color: #ffebee;
+            border: 1px solid #ef9a9a;
+        }
+        .footer { padding: 20px; background-color: #f8f9fa; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>MyanLang Team</h2>
+    </div>
+
+    <div class="content">
+        <p>Dear {{freelancer_name}},</p>
+        <div class="decision-box {% if decision %}approved{% else %}rejected{% endif %}">
+            {% if decision %}
+                <h3>✅ Resolution Approved</h3>
+            {% else %}
+                <h3>❌ Resolution Rejected</h3>
+            {% endif %}
+
+            {% if issue_type == "wrong_source_language" %}
+                <p>Your source language dispute has been {% if decision %}approved{% else %}rejected{% endif %} after verification.</p>
+            {% elif issue_type == "payment_delay" %}
+                <p>Payment delay issue has been {% if decision %}resolved{% else %}rejected{% endif %} following our investigation.</p>
+            {% elif issue_type == "accuracy_appeal" %}
+                <p>Accuracy appeal has been {% if decision %}approved{% else %}rejected{% endif %} based on quality review.</p>
+            {% else %}
+                <p>Your request has been {% if decision %}approved{% else %}carefully reviewed and declined{% endif %}.</p>
+            {% endif %}
+
+            {% if admin_comment %}
+                <p><strong>Admin Comment:</strong> {{admin_comment}}</p>
+            {% else %}
+                <p><strong>Reason:</strong> 
+                    {% if decision %}
+                        Our team found sufficient evidence to support your claim.
+                    {% else %}
+                        The decision was made due to insufficient or mismatch supporting documentation.
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+
+        {% if added_min %}
+            <p>🕒 <strong>{{added_min}} minutes</strong> added to your task</p>
+        {% endif %}
+
+        {% if resolution_details %}
+            <p>{{resolution_details}}</p>
+        {% endif %}
+
+        <p>If you have any questions about this decision, please reply to this email.</p>
+
+        <p>Best regards,<br>
+        MyanLang Support Team</p>
+    </div>
+
+    <div class="footer">
+        <p>© 2023 MyanLang Team</p>
+        <p>support@myanlang.com</p>
+    </div>
+</body>
+</html>

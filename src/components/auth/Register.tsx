@@ -16,15 +16,16 @@ import {
   ListItemText,
   Stack,
   Alert,
-  Checkbox
+  Checkbox, FormControl, InputLabel, Select, MenuItem, FormHelperText
 } from '@mui/material';
-import { MuiTelInput } from 'mui-tel-input';
 import { useAuth } from '@/hooks/useAuth';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import axios from 'axios';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { getPasswordRequirements } from '@/utils/passwordRequirements';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 
 const steps = ['Email Verification', 'Enter Code', 'Complete Registration'];
@@ -47,6 +48,7 @@ export default function Register() {
     password: ''
   });
   const [isChecked, setIsChecked] = useState(false);
+  const currentYear = new Date().getFullYear();
 
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -260,33 +262,32 @@ export default function Register() {
             onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
             required
           />
-          <TextField
-            fullWidth
-            label="Age"
-            type="number"
-            margin="normal"
-            value={formData.age}
-            onChange={(e) => {
-              const age = parseInt(e.target.value);
-              setFormData({ ...formData, age: e.target.value });
-              setErrors(prev => ({
-                ...prev,
-                age: age < 18 ? 'You must be at least 18 years old' : ''
-              }));
-            }}
-            slotProps= {{ htmlInput: { min: 18 }}}
-            required
-            error={!!errors.age}
-            helperText={errors.age}
-          />
-          <MuiTelInput
-            fullWidth
-            label="Phone Number"
-            value={formData.phone_number}
-            onChange={(value) => setFormData({ ...formData, phone_number: value })}
-            margin="normal"
-            required
-          />
+          <FormControl fullWidth margin="normal" error={!!errors.age}>
+            <InputLabel>Year of Birth</InputLabel>
+            <Select
+              value={formData.age.toString()}
+              onChange={(e) => {
+                const selectedYear = parseInt(e.target.value as string);
+                const calculatedAge = currentYear - selectedYear;
+
+                setFormData({ ...formData, age: selectedYear.toString() });
+
+                setErrors(prev => ({
+                  ...prev,
+                  age: calculatedAge < 18 ? 'You must be at least 18 years old' : ''
+                }));
+              }}
+              label="Year of Birth"
+              required
+            >
+              {Array.from({ length: 100 }, (_, i) => currentYear - i).map((year) => (
+                <MenuItem key={year} value={year.toString()}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.age && <FormHelperText>{errors.age}</FormHelperText>}
+          </FormControl>
           <TextField
             fullWidth
             label="Password"

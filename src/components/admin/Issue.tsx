@@ -26,8 +26,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Alert,
-  Snackbar,
   ThemeProvider,
   CssBaseline,
   type SelectChangeEvent,
@@ -105,15 +103,25 @@ export default function AdminDashboard(): ReactElement {
 
   const loadReports = async () => {
     try {
-      setLoading(true)
-      const data = await fetchReports()
-      setReports(data)
+      setLoading(true);
+      const data = await fetchReports();
+      // Sort so that 'under_review' comes first
+      const sortedData = data.sort((a, b) => {
+        if (a.report_status === "under_review" && b.report_status !== "under_review") {
+          return -1;
+        }
+        if (b.report_status === "under_review" && a.report_status !== "under_review") {
+          return 1;
+        }
+        return 0;
+      });
+      setReports(sortedData);
     } catch (err) {
-      console.error(err)
+      console.error(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     loadReports()

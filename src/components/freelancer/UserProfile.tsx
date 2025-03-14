@@ -60,8 +60,7 @@ const UserProfile = () => {
   // Info items for personal details
   const personalInfo = [
     { icon: <EmailIcon />, label: "Email", value: user.email },
-    { icon: <PersonIcon />, label: "Age", value: user.age },
-    { icon: <PhoneIcon />, label: "Phone", value: user.phone_number || 'Not provided' },
+    { icon: <PersonIcon />, label: "Year of Birth", value: user.age },
     { icon: <BadgeIcon />, label: "User ID", value: user.freelancer_id },
   ];
 
@@ -183,7 +182,7 @@ const UserProfile = () => {
         <Grid container spacing={4}>
           {/* Personal Information Card */}
           <Grid item xs={12} md={4}>
-            <Card elevation={2} sx={{ height: '100%', borderRadius: 3 }}>
+            <Card elevation={2} sx={{ height: '93%', borderRadius: 3 }}>
               <CardContent sx={{ p: 3 }}>
                 <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: theme.palette.primary.main }}>
                   Personal Information

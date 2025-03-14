@@ -1,0 +1,55 @@
+<html>
+<body style="margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
+<div style="width: 100%; background: #E3F2FD; min-height: 100vh; padding: 20px 0;">
+  <div style="margin: 0 auto; max-width: 600px; text-align: left;">
+    <div style="padding: 20px;">
+      <h1 style="color: #1976D2; font-size: 32px; margin-bottom: 30px; letter-spacing: 1px; text-align: center;">Payment Processed Successfully</h1>
+      
+      <div style="background: #FFFFFF; border-radius: 15px; padding: 40px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <p style="color: #424242; margin-bottom: 15px;">Dear {{ freelancer_name }},</p>
+        <p style="color: #424242; margin-bottom: 30px;">We're pleased to confirm your payment of <strong style="color: #1976D2;">{{ amount }} Kyat</strong> has been processed via <strong>{{ payment_method|title }}</strong>.</p>
+        
+        <div style="background: #F5F5F5; border-radius: 10px; padding: 20px; margin-bottom: 25px;">
+          <!-- Dynamic Payment Details Section -->
+          {% if payment_method == 'paypal' %}
+            <p style="margin: 5px 0;">PayPal Account: <strong>{{ paypal_link }}</strong></p>
+          {% elif payment_method == 'payoneer' %}
+            <p style="margin: 5px 0;">Payoneer Email: <strong>{{ payoneer_email }}</strong></p>
+          {% elif payment_method == 'wavepay' %}
+            <p style="margin: 5px 0;">WavePay Phone: <strong>{{ wavepay_phone }}</strong></p>
+            <p style="margin: 5px 0;">Account Name: <strong>{{ account_holder_name }}</strong></p>
+          {% elif payment_method == 'kpay' %}
+            <p style="margin: 5px 0;">KPay Phone: <strong>{{ kpay_phone }}</strong></p>
+            <p style="margin: 5px 0;">Account Name: <strong>{{ account_holder_name }}</strong></p>
+          {% elif payment_method == 'bank' %}
+            <p style="margin: 5px 0;">Bank Name: <strong>{{ bank_name }}</strong></p>
+            <p style="margin: 5px 0;">Account Holder: <strong>{{ account_holder_name }}</strong></p>
+            <p style="margin: 5px 0;">Account Number: <strong>{{ account_number }}</strong></p>
+          {% endif %}
+        </div>
+
+        <p style="color: #424242; margin-bottom: 20px;">
+          Transaction Date: {{ processed_at }}<br>
+          Transaction ID: {{ withdrawal_id }}
+        </p>
+
+        {% if proof_of_payment %}
+        <div style="margin-top: 25px; padding: 15px; background: #FFF8E1; border-radius: 8px;">
+          <p style="margin: 0; color: #1976D2;">
+            📎 Proof of Payment: <a href="{{ proof_of_payment }}" style="color: #1976D2; text-decoration: underline;">Download Receipt</a>
+          </p>
+        </div>
+        {% endif %}
+
+        <div style="border-top: 1px solid #BBDEFB; margin: 30px 0; padding-top: 25px;">
+          <p style="color: #757575; margin-bottom: 15px; line-height: 1.5;">
+            Need help? Contact our support team at 
+            <a href="mailto:support@myanlang.com" style="color: #1976D2; text-decoration: none;">support@myanlang.com</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

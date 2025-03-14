@@ -48,14 +48,11 @@ async def send_verification_code(email_data: EmailVerification, db: Session = De
 @router.post("/auth/verify-code")
 async def verify_code(verification: CodeVerification, db: Session = Depends(get_db)):
     entry = db.query(VerificationCode).filter(VerificationCode.email == verification.email).first()
-    print(type(verification.code), type(entry.code))
 
     if not entry:
         raise HTTPException(status_code=400, detail="Email not found")
 
     if entry.is_verified:
-        print(verification.code, entry.code)
-
         raise HTTPException(status_code=400, detail="Email already verified")
 
     if entry.code != str(verification.code):

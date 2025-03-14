@@ -26,7 +26,7 @@ const handleReportIssue = async (data: IssueReportRequest) => {
     const result = await reportIssue(data);
     console.log(result);
   } catch (err) {
-    alert('Failed to report issue.');
+    console.error(err);
   }
 };
 

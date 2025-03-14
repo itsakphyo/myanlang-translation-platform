@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+import asyncio
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -11,12 +12,22 @@ from ..schemas.task import Task
 from ..schemas.freelancer_language_pair import FreelancerLanguagePair
 from ..schemas.admin import Admin
 from ..schemas.enums import TaskStatus
+from ..schemas.language import Language
+from ..services.email import send_appeal_accept_email, send_issue_report_email, send_issue_resolution_email
 
 router = APIRouter()
 
+
 @router.post("/report_issue")
-async def report_issue(request_body: IssueReportRequest, db: Session = Depends(get_db)):
-    freelancer = db.query(Freelancer).filter(Freelancer.freelancer_id == request_body.freelancer_id).first()
+async def report_issue(
+    request_body: IssueReportRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
+    freelancer = db.query(Freelancer).filter(
+        Freelancer.freelancer_id == request_body.freelancer_id
+    ).first()
+    
     if not freelancer:
         raise HTTPException(status_code=404, detail="Freelancer not found")
 
@@ -36,6 +47,17 @@ async def report_issue(request_body: IssueReportRequest, db: Session = Depends(g
     db.add(issue_report)
     db.commit()
     db.refresh(issue_report)
+
+    # Email sending logic
+    email_params = {
+        "freelancer_name": freelancer.full_name,
+        "issue_type": Issues(request_body.issue_type).value,
+        "reported_at": issue_report.reported_at,
+    }
+    
+    background_tasks.add_task(
+        lambda: asyncio.run(send_issue_report_email(**email_params))
+    )
 
     return issue_report
 
@@ -93,7 +115,11 @@ async def get_issue_reports(db: Session = Depends(get_db)):
     return result
 
 @router.post("/resolve_issue")
-async def resolve_issue(request_body: IssueResolveRequest, db: Session = Depends(get_db)):
+async def resolve_issue(
+    request_body: IssueResolveRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
     issue_report = db.query(IssueReport).filter(IssueReport.report_id == request_body.report_id).first()
     if not issue_report:
         raise HTTPException(status_code=404, detail="Issue report not found")
@@ -109,21 +135,75 @@ async def resolve_issue(request_body: IssueResolveRequest, db: Session = Depends
         if request_body.task_id:
             task = db.query(Task).filter(Task.task_id == request_body.task_id).first()
             if task:
+                freelancer = db.query(Freelancer).filter(Freelancer.freelancer_id == issue_report.freelancer_id).first()
+                
                 if request_body.added_min is not None:
-                    task.max_time_per_task = request_body.added_min
+                    email_params = {
+                        "email": freelancer.email,
+                        "freelancer_name": freelancer.full_name,
+                        "issue_type": Issues(issue_report.issue_type).value,
+                        "decision": True,
+                        "added_min": request_body.added_min,
+                    }
+                    print(email_params)
+
+                    background_tasks.add_task(
+                        lambda: asyncio.run(send_issue_resolution_email(**email_params))
+                    )
+
                 else:
-                    task.task_status = TaskStatus.COMPLETE
-                    task.translated_text = "Admin closed this task"
+                    email_params = {
+                        "email": freelancer.email,
+                        "freelancer_name": freelancer.full_name,
+                        "issue_type": Issues(issue_report.issue_type).value,
+                        "decision": True,
+                        "resolution_details": "Task has been closed by admin",
+                    }
+                    print(email_params)
+
+                    background_tasks.add_task(
+                        lambda: asyncio.run(send_issue_resolution_email(**email_params))
+                    )
+
 
         if request_body.language_pair_id:
             language_pair = db.query(FreelancerLanguagePair).filter(
                 FreelancerLanguagePair.language_pair_id == request_body.language_pair_id
             ).first()
+            source_language_id = issue_report.source_language_id
+            target_language_id = issue_report.target_language_id
+
             if language_pair:
                 db.delete(language_pair)
 
+                freelancer = db.query(Freelancer).filter(Freelancer.freelancer_id == issue_report.freelancer_id).first()
+                source_language = db.query(Language).filter(Language.language_id == source_language_id).first()
+                target_language = db.query(Language).filter(Language.language_id == target_language_id).first()
+
+                if freelancer and source_language and target_language:
+                    email_params = {
+                        "email": freelancer.email,
+                        "freelancer_name": freelancer.full_name,
+                        "source_language_name": source_language.language_name,
+                        "target_language_name": target_language.language_name
+                    }
+                    print(email_params)
+
+                    background_tasks.add_task(lambda: asyncio.run(send_appeal_accept_email(**email_params)))
+
     else:
+        # Reject the issue
         issue_report.report_status = RPstatus.REJECTED
+        freelancer = db.query(Freelancer).filter(Freelancer.freelancer_id == issue_report.freelancer_id).first()
+        email_params = {
+            "email": freelancer.email,
+            "freelancer_name": freelancer.full_name,
+            "issue_type": Issues(issue_report.issue_type).value,
+            "decision": False,
+        }
+        print(email_params)
+        background_tasks.add_task(
+            lambda: asyncio.run(send_issue_resolution_email(**email_params)))
 
     db.commit()
     return issue_report
