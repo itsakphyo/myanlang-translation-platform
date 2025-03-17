@@ -25,8 +25,7 @@ export default function AdminDashboard({ window }: { window?: () => Window }) {
   const logoutAction = (
     <div
       onClick={() => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userType');
+        localStorage.clear();
         navigate('/auth', { state: { logout: true } });
       }}
       style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: '100%' }}

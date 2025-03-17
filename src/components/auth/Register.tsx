@@ -24,11 +24,9 @@ import axios from 'axios';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { getPasswordRequirements } from '@/utils/passwordRequirements';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
+import { translations } from '@/contexts/translation';
+import { useSystemLanguage } from '@/contexts/language-context';
 
-
-const steps = ['Email Verification', 'Enter Code', 'Complete Registration'];
 
 export default function Register() {
   const navigate = useNavigate();
@@ -50,6 +48,11 @@ export default function Register() {
   const [isChecked, setIsChecked] = useState(false);
   const currentYear = new Date().getFullYear();
 
+  const { systemLanguage } = useSystemLanguage();
+
+  const steps = [ translations[systemLanguage].email_varification, translations[systemLanguage].enter_code ,  translations[systemLanguage].complete_registration];
+
+
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,14 +64,14 @@ export default function Register() {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) {
-          setErrorMessage('User already exists. Please use a different email.');
+          setErrorMessage(translations[systemLanguage].user_already_exists);
         } else if (error.response?.status === 422) {
-          setErrorMessage('Please enter a valid email address');
+          setErrorMessage(translations[systemLanguage].please_enter_valid_email);
         } else {
-          setErrorMessage('Failed to send verification code. Please try again.');
+          setErrorMessage(translations[systemLanguage].fail_to_send_verification_code);
         }
       } else {
-        setErrorMessage('An unexpected error occurred. Please try again.');
+        setErrorMessage(translations[systemLanguage].unexpected_error_occurred);
       }
     }
   };
@@ -83,19 +86,19 @@ export default function Register() {
       setActiveStep(2);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 400) {
-        setErrorMessage('Invalid verification code. Please try again.');
+        setErrorMessage(translations[systemLanguage].invalid_verification_code);
       } else {
-        setErrorMessage('Verification failed. Please try again.');
+        setErrorMessage(translations[systemLanguage].verification_failed);
       }
     }
   };
 
   const validatePassword = (password: string) => {
-    if (password.length < 8) return 'Password must be at least 8 characters';
-    if (!/[A-Z]/.test(password)) return 'Password must contain an uppercase letter';
-    if (!/[a-z]/.test(password)) return 'Password must contain a lowercase letter';
-    if (!/[0-9]/.test(password)) return 'Password must contain a number';
-    if (!/[!@#$%^&*]/.test(password)) return 'Password must contain a special character';
+    if (password.length < 8) return translations[systemLanguage].password_characters;
+    if (!/[A-Z]/.test(password)) return translations[systemLanguage].password_uppercase;
+    if (!/[a-z]/.test(password)) return translations[systemLanguage].password_lowercase;
+    if (!/[0-9]/.test(password)) return translations[systemLanguage].password_number;
+    if (!/[!@#$%^&*]/.test(password)) return translations[systemLanguage].password_special;
     return '';
   };
 
@@ -107,13 +110,13 @@ export default function Register() {
 
     if (age < 18 || passwordError) {
       setErrors({
-        age: age < 18 ? 'You must be at least 18 years old' : '',
+        age: age < 18 ? translations[systemLanguage].you_must_be_at_least_18_years_old  : '',
         password: passwordError,
       });
       return;
     }
     if (!isChecked) {
-      setErrorMessage('You must agree to the terms and conditions');
+      setErrorMessage(translations[systemLanguage].you_must_agree_to_terms);
       return;
     }
 
@@ -221,14 +224,14 @@ export default function Register() {
         <Box component="form" onSubmit={handleEmailSubmit}>
           <TextField
             fullWidth
-            label="Email"
+            label= {translations[systemLanguage].email}
             type="email"
             margin="normal"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
           />
-          {/* Add your CAPTCHA component here */}
+          {/* CAPTCHA component here */}
           <Button
             fullWidth
             type="submit"
@@ -236,7 +239,7 @@ export default function Register() {
             sx={{ mt: 2 }}
             disabled={sendVerificationCode.isPending}
           >
-            Send Verification Code
+            {translations[systemLanguage].sent_verification_code}
           </Button>
         </Box>
       )}
@@ -244,7 +247,7 @@ export default function Register() {
       {activeStep === 1 && (
         <Box>
           <Typography align="center" sx={{ mb: 2 }}>
-            Enter the verification code sent to your email
+            {translations[systemLanguage].enter_varification_code_sent_to_your_mail}
           </Typography>
           <VerificationCodeInput
             onChange={(value) => handleCodeVerification(value)}
@@ -256,14 +259,14 @@ export default function Register() {
         <Box component="form" onSubmit={handleRegistration}>
           <TextField
             fullWidth
-            label="Full Name"
+            label= {translations[systemLanguage].full_name}
             margin="normal"
             value={formData.full_name}
             onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
             required
           />
           <FormControl fullWidth margin="normal" error={!!errors.age}>
-            <InputLabel>Year of Birth</InputLabel>
+            <InputLabel>{translations[systemLanguage].y_o_b}</InputLabel>
             <Select
               value={formData.age.toString()}
               onChange={(e) => {
@@ -274,10 +277,10 @@ export default function Register() {
 
                 setErrors(prev => ({
                   ...prev,
-                  age: calculatedAge < 18 ? 'You must be at least 18 years old' : ''
+                  age: calculatedAge < 18 ? translations[systemLanguage].you_must_be_at_least_18_years_old : ''
                 }));
               }}
-              label="Year of Birth"
+              label= {translations[systemLanguage].year_of_birth}
               required
             >
               {Array.from({ length: 100 }, (_, i) => currentYear - i).map((year) => (
@@ -290,7 +293,7 @@ export default function Register() {
           </FormControl>
           <TextField
             fullWidth
-            label="Password"
+            label= {translations[systemLanguage].password}
             type="password"
             margin="normal"
             value={formData.password}
@@ -307,10 +310,10 @@ export default function Register() {
           />
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <Typography variant="body1" sx={{ fontSize: '1rem', mb: 1, mt: 2 }}>
-              Password must meet the following requirements:
+              {translations[systemLanguage].password_requirements}
             </Typography>
             <List dense sx={{ mt: 1, mb: 2 }}>
-              {getPasswordRequirements(formData.password).map((requirement, index) => (
+              {getPasswordRequirements(formData.password, systemLanguage).map((requirement, index) => (
                 <ListItem key={index} dense>
                   <ListItemIcon sx={{ minWidth: 36 }}>
                     {requirement.checked ? (
@@ -333,7 +336,7 @@ export default function Register() {
                 </ListItem>
               ))}
             </List>
-            <FormControlLabel control={<Checkbox checked={isChecked} onChange={() => setIsChecked(!isChecked)} />} label="I agree to the terms and conditions" />
+            <FormControlLabel control={<Checkbox checked={isChecked} onChange={() => setIsChecked(!isChecked)} />} label={translations[systemLanguage].agree_terms} />
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
               <Button
                 fullWidth
@@ -342,9 +345,11 @@ export default function Register() {
                 sx={{ mt: 2 }}
                 disabled={register.isPending}
               >
-                Complete Registration
+                {translations[systemLanguage].register}
               </Button>
             </Box>
+            <Box sx={{ height: 100 }} />
+
           </Box>
         </Box>
       )}

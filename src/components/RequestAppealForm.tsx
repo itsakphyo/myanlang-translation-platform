@@ -20,6 +20,8 @@ import { DescriptionOutlined } from "@mui/icons-material";
 import { IssueReportRequest } from '@/types/IssueReportRequest';
 import { reportIssue } from "@/hooks/reportIssue";
 import Toast from "@/utils/showToast";
+import { translations } from "@/contexts/translation";
+import { useSystemLanguage } from "@/contexts/language-context";
 
 interface RequestAppealFormProps {
   souce_language_id: number;
@@ -38,6 +40,7 @@ const RequestAppealForm: React.FC<RequestAppealFormProps> = ({ souce_language_id
   const formRef = useRef<HTMLFormElement>(null);
 
   const documentUrlRef = useRef(documentationUrl);
+  const { systemLanguage } = useSystemLanguage();
 
   useEffect(() => {
     documentUrlRef.current = documentationUrl;
@@ -47,7 +50,7 @@ const RequestAppealForm: React.FC<RequestAppealFormProps> = ({ souce_language_id
     try {
       setIsSubmitting(true);
       await reportIssue(data);
-      Toast.show("Appeal submitted successfully");
+      Toast.show( `${translations[systemLanguage].appealsubmit_success_message}`);
       closeDialog();
     } catch (err) {
       setIsSubmitting(false);
@@ -103,8 +106,7 @@ const RequestAppealForm: React.FC<RequestAppealFormProps> = ({ souce_language_id
     >
       <CardContent>
         <TextField
-          label="Appeal Message"
-          placeholder="Please describe your appeal reason in detail..."
+          label= {translations[systemLanguage].appeal_message}
           multiline
           rows={4}
           fullWidth
@@ -129,7 +131,7 @@ const RequestAppealForm: React.FC<RequestAppealFormProps> = ({ souce_language_id
           <Stack direction="row" alignItems="center" spacing={1}>
             <DescriptionOutlined color="primary" fontSize="small" />
             <Typography variant="subtitle1" fontWeight="500">
-              Additional Documentation
+              {translations[systemLanguage].additional_docs}
             </Typography>
           </Stack>
 
@@ -155,7 +157,7 @@ const RequestAppealForm: React.FC<RequestAppealFormProps> = ({ souce_language_id
                   border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
                 }}>
                   <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
-                    Uploaded file: {documentationUrl}
+                    {translations[systemLanguage].uploaded_file} : {documentationUrl}
                   </Typography>
                 </Box>
               )}
@@ -188,7 +190,7 @@ const RequestAppealForm: React.FC<RequestAppealFormProps> = ({ souce_language_id
           }}
           disabled={isSubmitting || isUploading}
         >
-          Cancel
+          {translations[systemLanguage].cancel_btn}
         </Button>
         <Button
           type="submit"
@@ -212,7 +214,7 @@ const RequestAppealForm: React.FC<RequestAppealFormProps> = ({ souce_language_id
             }
           }}
         >
-          {isSubmitting ? "Submitting..." : "Submit Appeal"}
+          {isSubmitting ? "Submitting..." : translations[systemLanguage].submit_appel_btn}
         </Button>
       </Box>
     </Box>

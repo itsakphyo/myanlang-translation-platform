@@ -11,12 +11,15 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { translations } from '@/contexts/translation';
+import { useSystemLanguage } from '@/contexts/language-context';
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState('');
+  const { systemLanguage } = useSystemLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,19 +54,19 @@ export default function Login() {
           }
         }
       } else {
-        setErrorMessage("Login failed. Invalid response from server.");
+        setErrorMessage(translations[systemLanguage].login_failed_invalid_response_from_server);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
-          setErrorMessage("Invalid email or password");
+          setErrorMessage(translations[systemLanguage].invalid_email_or_password);
         } else if (error.response?.status === 404) {
-          setErrorMessage("User not found");
+          setErrorMessage(translations[systemLanguage].user_not_found);
         } else {
-          setErrorMessage(error.response?.data?.message || "Login failed. Please try again.");
+          setErrorMessage(error.response?.data?.message || translations[systemLanguage].login_failed_please_try_again);
         }
       } else {
-        setErrorMessage("An unexpected error occurred. Please try again.");
+        setErrorMessage(translations[systemLanguage].unexpected_error_occurred);
       }
     }
   };
@@ -90,7 +93,7 @@ export default function Login() {
           )}
           <TextField
             fullWidth
-            label="Email"
+            label={translations[systemLanguage].email}
             type="email"
             margin="normal"
             value={formData.email}
@@ -99,7 +102,7 @@ export default function Login() {
           />
           <TextField
             fullWidth
-            label="Password"
+            label={translations[systemLanguage].password}
             type="password"
             margin="normal"
             value={formData.password}
@@ -113,7 +116,7 @@ export default function Login() {
             sx={{ mt: 2 }}
             disabled={login.isPending} 
           >
-            {login.isPending ? 'Logging in...' : 'Login'}
+            {login.isPending ? 'Logging in...' : translations[systemLanguage].login}
           </Button>
           <Button
             color="primary"
@@ -121,7 +124,7 @@ export default function Login() {
             onClick={() => navigate('/forgot-password')}
             fullWidth
           >
-            Forgot Password?
+            {translations[systemLanguage].forgot_password}
           </Button>
         </Box>
       </Box>

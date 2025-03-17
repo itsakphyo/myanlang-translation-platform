@@ -21,6 +21,8 @@ import * as Yup from 'yup';
 import { requestNewPayment } from '@/hooks/useWithdrawal';
 import { PaymentFormValues } from '@/types/paymentFromValues';
 import Toast from '@/utils/showToast';
+import { translations } from '@/contexts/translation';
+import { useSystemLanguage } from '@/contexts/language-context';
 
 interface PaymentDialogProps {
     open: boolean;
@@ -40,46 +42,48 @@ const PaymentRequestDialog = ({
     const theme = useTheme();
     const [submitting, setSubmitting] = useState(false);
 
+    const { systemLanguage } = useSystemLanguage();
+
     const validationSchema = (currentBalance: number) =>
         Yup.object().shape({
             payment_method: Yup.string().required('Payment method is required'),
             amount: Yup.number()
-                .required('Amount is required')
-                .positive('Amount must be positive')
+                .required(translations[systemLanguage].amount_is_required)
+                .positive(translations[systemLanguage].amount_must_be_positive)
                 .max(
                     currentBalance,
-                    `Amount exceeds available balance (${currentBalance} MMK)`
+                    `${translations[systemLanguage].ammount_exceeds_available_balance}`
                 ),
             paypal_link: Yup.string().when('payment_method', {
                 is: (val: string) => val === 'paypal',
-                then: (schema) => schema.required('PayPal email is required'),
+                then: (schema) => schema.required(translations[systemLanguage].paypal_email_is_required),
             }),
             payoneer_email: Yup.string().when('payment_method', {
                 is: (val: string) => val === 'payoneer',
-                then: (schema) => schema.required('Payoneer email is required'),
+                then: (schema) => schema.required(translations[systemLanguage].payoneer_email_is_required),
             }),
             wavepay_phone: Yup.string().when('payment_method', {
                 is: (val: string) => val === 'wavepay',
-                then: (schema) => schema.required('WavePay phone number is required'),
+                then: (schema) => schema.required(translations[systemLanguage].wavepay_phone_is_required),
             }),
             kpay_phone: Yup.string().when('payment_method', {
                 is: (val: string) => val === 'kpay',
-                then: (schema) => schema.required('KPay phone number is required'),
+                then: (schema) => schema.required(translations[systemLanguage].kpay_phone_is_required),
             }),
             account_holder_name: Yup.string().when('payment_method', {
                 is: (method: string) =>
                     ['wavepay', 'kpay', 'bank'].includes(method),
                 then: (schema) =>
-                    schema.required('Account holder name is required'),
+                    schema.required(translations[systemLanguage].account_holder_name_is_required),
             }),
             bank_name: Yup.string().when('payment_method', {
                 is: (val: string) => val === 'bank',
-                then: (schema) => schema.required('Bank name is required'),
+                then: (schema) => schema.required(translations[systemLanguage].bank_name_is_required),
             }),
             account_number: Yup.string().when('payment_method', {
                 is: (val: string) => val === 'bank',
                 then: (schema) =>
-                    schema.required('Account number is required'),
+                    schema.required(translations[systemLanguage].account_number_is_required),
             }),
         });
 
@@ -98,7 +102,7 @@ const PaymentRequestDialog = ({
                     freelancer_id: Number(values.freelancer_id),
                 };
                 await requestNewPayment(payload);
-                Toast.show('Withdrawal request submitted successfully');
+                Toast.show(translations[systemLanguage].withdraw_request_success_text);
                 onClose();
                 fetchWithdrawals();
             } catch (error: unknown) {
@@ -115,7 +119,7 @@ const PaymentRequestDialog = ({
                 return (
                     <TextField
                         fullWidth
-                        label="PayPal Email"
+                        label= {translations[systemLanguage].paypal_link}
                         name="paypal_link"
                         value={formik.values.paypal_link || ''}
                         onChange={formik.handleChange}
@@ -128,7 +132,7 @@ const PaymentRequestDialog = ({
                 return (
                     <TextField
                         fullWidth
-                        label="Payoneer Email"
+                        label= {translations[systemLanguage].payoneer_email}
                         name="payoneer_email"
                         value={formik.values.payoneer_email || ''}
                         onChange={formik.handleChange}
@@ -143,7 +147,7 @@ const PaymentRequestDialog = ({
                         <Grid item xs={6}>
                             <TextField
                                 fullWidth
-                                label="Account Holder Name"
+                                label= {translations[systemLanguage].account_holder_name}
                                 name="account_holder_name"
                                 value={formik.values.account_holder_name || ''}
                                 onChange={formik.handleChange}
@@ -154,7 +158,7 @@ const PaymentRequestDialog = ({
                         <Grid item xs={6}>
                             <TextField
                                 fullWidth
-                                label="Phone Number"
+                                label= {translations[systemLanguage].wavepay_phone}
                                 name="wavepay_phone"
                                 value={formik.values.wavepay_phone || ''}
                                 onChange={formik.handleChange}
@@ -170,7 +174,7 @@ const PaymentRequestDialog = ({
                         <Grid item xs={6}>
                             <TextField
                                 fullWidth
-                                label="Account Holder Name"
+                                label= {translations[systemLanguage].account_holder_name}
                                 name="account_holder_name"
                                 value={formik.values.account_holder_name || ''}
                                 onChange={formik.handleChange}
@@ -181,7 +185,7 @@ const PaymentRequestDialog = ({
                         <Grid item xs={6}>
                             <TextField
                                 fullWidth
-                                label="Phone Number"
+                                label= {translations[systemLanguage].kpay_phone}
                                 name="kpay_phone"
                                 value={formik.values.kpay_phone || ''}
                                 onChange={formik.handleChange}
@@ -197,7 +201,7 @@ const PaymentRequestDialog = ({
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
-                                label="Account Holder Name"
+                                label= {translations[systemLanguage].account_holder_name}
                                 name="account_holder_name"
                                 value={formik.values.account_holder_name || ''}
                                 onChange={formik.handleChange}
@@ -208,7 +212,7 @@ const PaymentRequestDialog = ({
                         <Grid item xs={6}>
                             <TextField
                                 fullWidth
-                                label="Bank Name"
+                                label= {translations[systemLanguage].bank_name}
                                 name="bank_name"
                                 value={formik.values.bank_name || ''}
                                 onChange={formik.handleChange}
@@ -219,7 +223,7 @@ const PaymentRequestDialog = ({
                         <Grid item xs={6}>
                             <TextField
                                 fullWidth
-                                label="Account Number"
+                                label= {translations[systemLanguage].account_number}
                                 name="account_number"
                                 value={formik.values.account_number || ''}
                                 onChange={formik.handleChange}
@@ -237,19 +241,19 @@ const PaymentRequestDialog = ({
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle sx={{ bgcolor: theme.palette.primary.main, color: 'white' }}>
-                Request Payment Withdrawal
+                {translations[systemLanguage].request_new_payment_btn}
             </DialogTitle>
             <Divider />
             <form onSubmit={formik.handleSubmit}>
                 <DialogContent>
                     <Typography variant="subtitle1" gutterBottom>
-                        Available Balance: {currentBalance.toFixed(2)} MMK
+                        {translations[systemLanguage].current_balance} {currentBalance.toFixed(2)} {translations[systemLanguage].currency}
                     </Typography>
 
                     <TextField
                         select
                         fullWidth
-                        label="Payment Method"
+                        label= {translations[systemLanguage].method}
                         name="payment_method"
                         value={formik.values.payment_method}
                         onChange={formik.handleChange}
@@ -267,11 +271,11 @@ const PaymentRequestDialog = ({
 
                     <TextField
                         fullWidth
-                        label="Amount"
+                        label= {translations[systemLanguage].ammount}
                         name="amount"
                         type="number"
                         InputProps={{
-                            startAdornment: <InputAdornment position="start">MMK</InputAdornment>,
+                            startAdornment: <InputAdornment position="start"> {translations[systemLanguage].currency} </InputAdornment>,
                             inputProps: { min: 0, max: currentBalance, step: 0.01 },
                         }}
                         value={formik.values.amount}
@@ -285,7 +289,7 @@ const PaymentRequestDialog = ({
                 </DialogContent>
                 <DialogActions sx={{ p: 3 }}>
                     <Button onClick={onClose} color="secondary">
-                        Cancel
+                        {translations[systemLanguage].cancel_btn}
                     </Button>
                     <Button
                         type="submit"
@@ -294,7 +298,7 @@ const PaymentRequestDialog = ({
                         disabled={submitting}
                         startIcon={submitting && <CircularProgress size={20} />}
                     >
-                        {submitting ? 'Processing...' : 'Request Withdrawal'}
+                        {submitting ? 'Processing...' : translations[systemLanguage].reauest_withdraw_btn}
                     </Button>
                 </DialogActions>
             </form>

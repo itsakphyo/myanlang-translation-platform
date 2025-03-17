@@ -26,8 +26,7 @@ export default function QADashboard() {
   const assessment_tasks = data?.assessmenttask.total ?? 0;
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userType');
+    localStorage.clear();
     navigate('/auth', { state: { logout: true } });
   };
 

@@ -6,7 +6,7 @@ import {
   Stack,
   Fade,
 } from "@mui/material";
-import { Language, ArrowDropDown } from "@mui/icons-material";
+import { ArrowDropDown } from "@mui/icons-material";
 import { alpha } from "@mui/material/styles";
 import { LanguagePair } from "@/types/language";
 import theme from "@/theme";
@@ -22,7 +22,6 @@ const LanguageSelector = ({ selectedLanguagePair, onOpen }: { selectedLanguagePa
       }}
     >
       <Stack direction="row" alignItems="center" spacing={1}>
-        <Language sx={{ color: "primary.main" }} />
         {selectedLanguagePair ? (
           <Fade in={!!selectedLanguagePair}>
             <Typography fontWeight={600}>
@@ -30,7 +29,7 @@ const LanguageSelector = ({ selectedLanguagePair, onOpen }: { selectedLanguagePa
             </Typography>
           </Fade>
         ) : (
-          <Typography fontWeight={600}>Select Language</Typography>
+          <Typography fontWeight={600}>Select Language Pair</Typography>
         )}
         <ArrowDropDown sx={{ color: "primary.main" }} />
       </Stack>

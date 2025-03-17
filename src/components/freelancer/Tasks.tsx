@@ -19,7 +19,6 @@ import {
   useTheme,
 } from "@mui/material"
 import {
-  Language,
   ArrowDropDown,
   ArrowRightAlt,
   Assessment,
@@ -44,6 +43,8 @@ import { useTask } from "@/hooks/useTask"
 import type { OpenTask } from "@/types/task"
 import theme from "@/theme"
 import { useDialog } from "@/contexts/DialogContext"
+import { translations } from "@/contexts/translation"
+import { useSystemLanguage } from "@/contexts/language-context"
 
 export default function TranslationTaskPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -54,6 +55,8 @@ export default function TranslationTaskPage() {
   const { openDialog } = useDialog()
   const muiTheme = useTheme()
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"))
+
+  const { systemLanguage } = useSystemLanguage()
 
   const handleRequestAppeal = (souce_language_id: number, target_language_id: number) => {
     openDialog("appeal-request", { souce_language_id, target_language_id })
@@ -160,8 +163,8 @@ export default function TranslationTaskPage() {
 
     if (!selectedLanguagePair) {
       return {
-        title: "Welcome to MyanLang Translation!",
-        body: "Please select a source and target language to begin your translation task. Let's get started!",
+        title: translations[systemLanguage].welcome_to_title,
+        body: translations[systemLanguage].welcome_to_body,
         icon: <Info fontSize="large" color="primary" />,
         severity: "info",
       }
@@ -169,8 +172,8 @@ export default function TranslationTaskPage() {
 
     if (languagePairLoading || !languagePairData || "message" in languagePairData) {
       return {
-        title: "Loading...",
-        body: "Fetching language pair details, please wait a moment...",
+        title: translations[systemLanguage].loading_title,
+        body: translations[systemLanguage].loading_body,
         icon: <HourglassEmpty fontSize="large" color="primary" />,
         severity: "info",
       }
@@ -178,9 +181,8 @@ export default function TranslationTaskPage() {
 
     if (languagePairData.status === "complete" && (languagePairData.accuracy_rate ?? 0) < 50) {
       return {
-        title: "Language Pair Not Available",
-        body: `Your accuracy rate is ${languagePairData.accuracy_rate}%, which does not meet our minimum requirement of 50%.  
-               You can choose another language pair, try again later, or submit an appeal request if you believe this rating is incorrect.`,
+        title: translations[systemLanguage].language_pair_not_available_title,
+        body: translations[systemLanguage].language_pair_not_available_body,
         icon: <ErrorOutline fontSize="large" color="error" />,
         severity: "error",
       }
@@ -188,8 +190,8 @@ export default function TranslationTaskPage() {
 
     if (languagePairData.status === "under_review") {
       return {
-        title: "Review In Progress",
-        body: "Our QA team is currently reviewing your assessment task for this language pair. Please wait until the review process is completed. Thank you for your patience!",
+        title: translations[systemLanguage].review_in_progress_title,
+        body: translations[systemLanguage].review_in_progress_body,
         icon: <HourglassEmpty fontSize="large" color="warning" />,
         severity: "warning",
       }
@@ -197,8 +199,8 @@ export default function TranslationTaskPage() {
 
     if (languagePairData.status === "not_found") {
       return {
-        title: "Assessment Required",
-        body: "The selected language pair was not found in our system. To proceed, please complete an assessment test. Let's get you started!",
+        title: translations[systemLanguage].assessment_required_title,
+        body: translations[systemLanguage].assessment_required_body,
         icon: <Assessment fontSize="large" color="primary" />,
         severity: "info",
       }
@@ -254,7 +256,7 @@ export default function TranslationTaskPage() {
       return (
         <Chip
           icon={<ErrorOutline />}
-          label={`Not Qualified (${languagePairData.accuracy_rate}%)`}
+          label={`Not Qualified (${languagePairData.accuracy_rate?.toFixed}%)`}
           color="error"
           variant="outlined"
         />
@@ -330,7 +332,7 @@ export default function TranslationTaskPage() {
                       navigate("/dashboard")
                     } else {
                       alert(
-                        "You have unsaved changes. Please submit your translation or close the task before leaving.",
+                        translations[systemLanguage].you_have_unsaved_changes,
                       )
                     }
                   }}
@@ -339,7 +341,7 @@ export default function TranslationTaskPage() {
                   <Typography
                     variant="h6"
                     sx={{
-                      ml: 1,
+                      ml: 3,
                       fontWeight: 600,
                       display: { xs: "none", sm: "block" },
                       color: "#2c3e50",
@@ -366,7 +368,7 @@ export default function TranslationTaskPage() {
                   setDialogOpen(true)
                 } else {
                   alert(
-                    "You have unsaved changes. Please submit your translation or close the task before changing languages.",
+                    translations[systemLanguage].you_have_unsaved_changes,
                   )
                 }
               }}
@@ -389,22 +391,21 @@ export default function TranslationTaskPage() {
                 },
               }}
             >
-              <Language sx={{ mr: { xs: 0.5, sm: 1 } }} />
               {!isMobile ? (
                 <>
                   {selectedLanguagePair
                     ? `${selectedLanguagePair.source.charAt(0).toUpperCase() + selectedLanguagePair.source.slice(1)}`
-                    : "Choose Source Language "}
+                    : translations[systemLanguage].select_source_language}
                   {selectedLanguagePair && <ArrowRightAlt sx={{ mx: 1 }} />}
                   {selectedLanguagePair
                     ? `${selectedLanguagePair.target.charAt(0).toUpperCase() + selectedLanguagePair.target.slice(1)}`
-                    : "and Target Language"}
+                    : translations[systemLanguage].and_select_target_language}
                 </>
               ) : (
                 <>
                   {selectedLanguagePair
                     ? `${selectedLanguagePair.source.charAt(0).toUpperCase() + selectedLanguagePair.source.slice(1)} → ${selectedLanguagePair.target.charAt(0).toUpperCase() + selectedLanguagePair.target.slice(1)}`
-                    : "Select Languages"}
+                    : translations[systemLanguage].select_language_btn}
                 </>
               )}
               <ArrowDropDown sx={{ ml: 0.5 }} />
@@ -475,7 +476,7 @@ export default function TranslationTaskPage() {
                             px: 3,
                           }}
                         >
-                          Take Assessment Test
+                        {translations[systemLanguage].take_assessment_btn}
                         </Button>
                       )}
                       {showAppealButton && selectedLanguagePair && (
@@ -492,7 +493,7 @@ export default function TranslationTaskPage() {
                             px: 3,
                           }}
                         >
-                          Submit Appeal Request
+                          {translations[systemLanguage].submit_appel_btn}
                         </Button>
                       )}
                     </Box>
@@ -569,11 +570,10 @@ export default function TranslationTaskPage() {
                 >
                   <ErrorOutline color="error" sx={{ fontSize: 60, mb: 2, opacity: 0.7 }} />
                   <Typography variant="h5" color="textSecondary" gutterBottom>
-                    No available tasks for this language pair
+                    {translations[systemLanguage].no_task_unavaliable_for_this_language_pair}
                   </Typography>
                   <Typography variant="body1" color="textSecondary" sx={{ mb: 3, maxWidth: 500 }}>
-                    There are currently no tasks available for your selected language pair. Please try again later or
-                    select a different language pair.
+                    {translations[systemLanguage].task_unavailable_message}
                   </Typography>
                   <Button
                     variant="contained"
@@ -581,7 +581,7 @@ export default function TranslationTaskPage() {
                     sx={{ mt: 2, borderRadius: 2, px: 3 }}
                     onClick={handleGetOpenTask}
                   >
-                    Retry
+                    {translations[systemLanguage].retry_btn}
                   </Button>
                 </Box>
               )}

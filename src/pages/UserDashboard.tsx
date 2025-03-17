@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { ThemeProvider } from "@mui/material/styles"
-import { AppProvider, type Navigation } from "@toolpad/core/AppProvider"
-import { useDemoRouter } from "@toolpad/core/internal"
-import { useNavigate } from "react-router-dom"
+import type React from "react";
+import { useState } from "react";
+import { ThemeProvider } from "@mui/material/styles";
+import { AppProvider, type Navigation } from "@toolpad/core/AppProvider";
+import { useDemoRouter } from "@toolpad/core/internal";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   AppBar,
@@ -23,77 +23,80 @@ import {
   BottomNavigationAction,
   Fade,
   Tooltip,
-} from "@mui/material"
+} from "@mui/material";
 
 // Icons
-import LogoutIcon from "@mui/icons-material/Logout"
-import PaymentIcon from "@mui/icons-material/Payment"
-import TravelExploreIcon from "@mui/icons-material/TravelExplore"
-import HomeIcon from "@mui/icons-material/Home"
-import MoreVertIcon from "@mui/icons-material/MoreVert"
-import theme from "@/theme"
+import LogoutIcon from "@mui/icons-material/Logout";
+import PaymentIcon from "@mui/icons-material/Payment";
+import TravelExploreIcon from "@mui/icons-material/TravelExplore";
+import HomeIcon from "@mui/icons-material/Home";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import theme from "@/theme";
+import { translations } from "@/contexts/translation";
+import { useSystemLanguage } from "@/contexts/language-context";
 
 // Components
-import UserProfile from "@/components/freelancer/UserProfile"
-import FreelancerPayment from "@/components/freelancer/FreelancerPayment"
+import UserProfile from "@/components/freelancer/UserProfile";
+import FreelancerPayment from "@/components/freelancer/FreelancerPayment";
 
 export default function UserDashboard({ window }: { window?: () => Window }) {
-  const router = useDemoRouter("/dashboard")
-  const currentSegment = router.pathname.split("/").pop() || "job-dashboard"
-  const navigate = useNavigate()
-  const isMobile = useMediaQuery("(max-width:600px)")
+  const router = useDemoRouter("/dashboard");
+  const currentSegment = router.pathname.split("/").pop() || "job-dashboard";
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width:800px)");
+
+  const { systemLanguage } = useSystemLanguage();
 
   // State for menu
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleMenuClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   const handleLogout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("userType")
-    navigate("/auth", { state: { logout: true } })
-    handleMenuClose()
-  }
+    localStorage.clear();
+    navigate("/auth", { state: { logout: true } });
+    handleMenuClose();
+  };
 
   // Replace the handleNavigate function with this implementation:
   const handleNavigate = (segment: string) => {
     // This just updates the current segment without actual navigation
-    router.navigate(`/dashboard/${segment}`)
-  }
+    router.navigate(`/dashboard/${segment}`);
+  };
 
   // Navigation items
   const navigationItems = [
     {
       segment: "job-dashboard",
-      title: "Dashboard",
+      title: `${translations[systemLanguage].dashboard}`,
       icon: <HomeIcon />,
     },
     {
       segment: "request-payment",
-      title: "Withdrawal History",
+      title: `${translations[systemLanguage].withdrawal_history}`,
       icon: <PaymentIcon />,
     },
-  ]
+  ];
 
   // For AppProvider compatibility
   const logoutAction = (
     <div onClick={handleLogout} style={{ display: "flex", alignItems: "center", cursor: "pointer", width: "100%" }}>
       <span style={{ marginLeft: 8 }}>Logout</span>
     </div>
-  )
+  );
 
   const navigation: Navigation = [
     {
       kind: "page",
       segment: "request-payment",
-      title: "Withdrawal History",
+      title: `${translations[systemLanguage].withdrawal_history}`,
       icon: <PaymentIcon />,
     },
     {
@@ -101,17 +104,16 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
       icon: <LogoutIcon />,
       action: logoutAction,
     },
-  ]
+  ];
 
-  // Replace the renderContent function with this implementation to ensure it works exactly as before:
   const renderContent = () => {
     switch (currentSegment) {
       case "request-payment":
-        return <FreelancerPayment />
+        return <FreelancerPayment />;
       default:
-        return <UserProfile />
+        return <UserProfile />;
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -133,11 +135,9 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
           {/* Top AppBar */}
           <AppBar position="sticky" color="default" elevation={0}>
             <Toolbar>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography variant="h6" component="div" sx={{ display: { xs: "none", sm: "block" } }}>
-                  Welcome Back, {localStorage.getItem("userName")}
-                </Typography>
-              </Box>
+              <Typography variant="h6" component="div" sx={{ display: { xs: "none", sm: "block" } }}>
+                {translations[systemLanguage].welcome}, {localStorage.getItem("userName") || ''}
+              </Typography>
 
               {/* top navigation buttoms */}
               {!isMobile && (
@@ -169,15 +169,15 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
                         "&::after":
                           currentSegment === item.segment
                             ? {
-                                content: '""',
-                                position: "absolute",
-                                bottom: 0,
-                                left: 0,
-                                width: "100%",
-                                height: "3px",
-                                bgcolor: "primary.main",
-                                borderRadius: "3px 3px 0 0",
-                              }
+                              content: '""',
+                              position: "absolute",
+                              bottom: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "3px",
+                              bgcolor: "primary.main",
+                              borderRadius: "3px 3px 0 0",
+                            }
                             : {},
                       }}
                     >
@@ -195,6 +195,7 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
                     onClick={() => navigate("/explore-task")}
                     sx={{
                       borderRadius: "8px",
+                      mr: 5,
                       background: "linear-gradient(45deg, #17aa24 30%, #36c463 90%)",
                       color: "white",
                       boxShadow: "0 3px 5px 2px rgba(93, 247, 144, 0.3)",
@@ -206,7 +207,7 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
                       display: { xs: "none", sm: "flex" },
                     }}
                   >
-                    Explore Tasks
+                    {translations[systemLanguage].explore}
                   </Button>
                 </Tooltip>
 
@@ -234,23 +235,23 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
           >
             <MenuItem
               onClick={() => {
-                handleNavigate("job-dashboard")
-                handleMenuClose()
+                handleNavigate("job-dashboard");
+                handleMenuClose();
               }}
             >
-              <HomeIcon sx={{ mr: 1 }} /> Dashboard
+              <HomeIcon sx={{ mr: 1 }} /> {translations[systemLanguage].dashboard}
             </MenuItem>
             <MenuItem
               onClick={() => {
-                handleNavigate("request-payment")
-                handleMenuClose()
+                handleNavigate("request-payment");
+                handleMenuClose();
               }}
             >
-              <PaymentIcon sx={{ mr: 1 }} /> Withdrawal History
+              <PaymentIcon sx={{ mr: 1 }} /> {translations[systemLanguage].withdrawal_history}
             </MenuItem>
             <Divider />
             <MenuItem onClick={handleLogout}>
-              <LogoutIcon sx={{ mr: 1 }} /> Logout
+              <LogoutIcon sx={{ mr: 1 }} /> {translations[systemLanguage].logout}
             </MenuItem>
           </Menu>
 
@@ -288,18 +289,26 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
                 showLabels
                 value={navigationItems.findIndex((item) => item.segment === currentSegment)}
                 onChange={(_, newValue) => {
-                  handleNavigate(navigationItems[newValue].segment)
+                  if (newValue === navigationItems.length) {
+                    navigate("/explore-task");
+                  } else {
+                    handleNavigate(navigationItems[newValue].segment);
+                  }
                 }}
               >
                 {navigationItems.map((item) => (
                   <BottomNavigationAction key={item.segment} label={item.title} icon={item.icon} />
                 ))}
+                <BottomNavigationAction
+                  label="Explore Tasks"
+                  icon={<TravelExploreIcon />}
+                />
               </BottomNavigation>
             </Paper>
           )}
         </Box>
       </AppProvider>
     </ThemeProvider>
-  )
+  );
 }
 

@@ -14,12 +14,13 @@ import {
 } from '@mui/material';
 import Paid from '@mui/icons-material/Paid';
 import AccessTime from '@mui/icons-material/AccessTime';
-import Translate from '@mui/icons-material/Translate';
 import ReportIcon from '@mui/icons-material/Report';
 import { OpenTask } from "@/types/task";
 import { useTask } from '@/hooks/useTask';
 import { useDialog } from '@/contexts/DialogContext';
 import Toast from '@/utils/showToast';
+import { translations } from '@/contexts/translation';
+import { useSystemLanguage } from '@/contexts/language-context';
 
 interface TaskTranslationInterfaceProps {
   task: OpenTask | null;
@@ -36,6 +37,8 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   const totalTime = task?.max_time_per_task ? task.max_time_per_task * 60 : 900;
   const [remainingTime, setRemainingTime] = useState(totalTime);
   const { openDialog } = useDialog();
+
+  const { systemLanguage } = useSystemLanguage();
 
   const handleReportIssue = (taskId: number) => {
     openDialog('issue-report', { taskId });
@@ -69,7 +72,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   const handleSubmit = () => {
     if (task) {
       submitTask(task.task_id, userId, translation);
-      Toast.show('Translation submitted successfully.');
+      Toast.show(`${translations[systemLanguage].tran_submit_sucess_message}`);
     } else {
       console.error('Task data is not available.');
     }
@@ -92,11 +95,11 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           <Paid color="primary" />
           <Typography variant="h6" color="primary.main">
-            Reward: {task.price} Kyat
+           {translations[systemLanguage].reward} {task.price} {translations[systemLanguage].currency}
           </Typography>
           <AccessTime color="primary" />
           <Typography variant="h6" color="primary.main">
-            Time Left: {minutes}:{seconds.toString().padStart(2, "0")}
+            {translations[systemLanguage].time_left} {minutes}:{seconds.toString().padStart(2, "0")}
           </Typography>
 
           {/* Report Issue Button as a Small Icon */}
@@ -120,8 +123,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
         {/* Translation Task Section */}
         <Box>
           <Typography variant="h6" gutterBottom fontWeight="bold">
-            <Translate sx={{ mr: 1 }} />
-            Translation Task
+            {translations[systemLanguage].instructions}
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {task.instruction}
@@ -131,7 +133,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
         {/* Original Text Section */}
         <Box>
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-            Original Text ({task.source_language_name})
+           {translations[systemLanguage].original_text} ({task.source_language_name})
           </Typography>
           <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
             <Typography variant="body1">{task.source_text}</Typography>
@@ -141,14 +143,13 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
         {/* Translation Input Section */}
         <Box>
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-            Your Translation ({task.target_language_name})
+            {translations[systemLanguage].your_translation} ({task.target_language_name})
           </Typography>
           <TextField
             fullWidth
             multiline
             minRows={4}
             variant="outlined"
-            placeholder="Enter your translation here..."
             value={translation}
             onChange={(e) => setTranslation(e.target.value)}
           />
@@ -178,7 +179,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
               onClose();
             }}
           >
-            Reject &amp; Close
+            {translations[systemLanguage].reject_and_close_btn}
           </Button>
 
           <Button
@@ -195,7 +196,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
               onClose();
             }}
           >
-            Submit &amp; Close
+            {translations[systemLanguage].submit_and_close_btn}
           </Button>
 
           <Button
@@ -212,7 +213,7 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
               onShowNext();
             }}
           >
-            Submit &amp; Show Next
+            {translations[systemLanguage].submit_and_show_next_btn}
           </Button>
         </Box>
       </Stack>

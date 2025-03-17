@@ -22,6 +22,8 @@ import PaymentRequestDialog from './PaymentRequestDialog';
 import { freelancerService } from '@/hooks/useWithdrawal';
 import { useDialog } from '@/contexts/DialogContext';
 import { Withdrawal } from '@/types/withdrawal';
+import { translations } from '@/contexts/translation';
+import { useSystemLanguage } from '@/contexts/language-context';
 
 const FreelancerPayment: React.FC = () => {
   const theme = useTheme();
@@ -38,6 +40,8 @@ const FreelancerPayment: React.FC = () => {
   const handleReportIssue = (withdrawalId: number) => {
     openDialog('payment-issue', { withdrawalId });
   };
+
+  const { systemLanguage } = useSystemLanguage();
 
   const fetchWithdrawals = async () => {
     if (freelancerId) {
@@ -83,13 +87,13 @@ const FreelancerPayment: React.FC = () => {
 
   const renderPaymentDetails = (withdrawal: Withdrawal) => {
     const fields = [
-      { label: 'PayPal Link', value: withdrawal.paypal_link },
-      { label: 'Payoneer Email', value: withdrawal.payoneer_email },
-      { label: 'WavePay Phone', value: withdrawal.wavepay_phone },
-      { label: 'KPay Phone', value: withdrawal.kpay_phone },
-      { label: 'Account Holder Name', value: withdrawal.account_holder_name },
-      { label: 'Bank Name', value: withdrawal.bank_name },
-      { label: 'Account Number', value: withdrawal.account_number },
+      { label: translations[systemLanguage].paypal_link , value: withdrawal.paypal_link },
+      { label: translations[systemLanguage].payoneer_email , value: withdrawal.payoneer_email },
+      { label: translations[systemLanguage].wavepay_phone, value: withdrawal.wavepay_phone },
+      { label: translations[systemLanguage].kpay_phone, value: withdrawal.kpay_phone },
+      { label: translations[systemLanguage].account_holder_name, value: withdrawal.account_holder_name },
+      { label: translations[systemLanguage].bank_name, value: withdrawal.bank_name },
+      { label: translations[systemLanguage].account_number, value: withdrawal.account_number },
       { label: 'Proof of Payment', value: withdrawal.proof_of_payment },
     ];
 
@@ -113,7 +117,7 @@ const FreelancerPayment: React.FC = () => {
                   fontSize="small"
                   underline="hover"
                 >
-                  See Proof of Payment
+                  {translations[systemLanguage].see_proof_of_payment}
                 </Link>
               ) : (
                 <>
@@ -158,7 +162,7 @@ const FreelancerPayment: React.FC = () => {
         }}
       >
         <Typography variant="h5" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <AccountBalanceWallet /> Withdrawal History
+          <AccountBalanceWallet /> {translations[systemLanguage].withdrawal_history}
         </Typography>
 
         <Box
@@ -177,7 +181,7 @@ const FreelancerPayment: React.FC = () => {
             fullWidth={isSmallScreen}
             color='primary'
           >
-            Refresh
+            {translations[systemLanguage].refresn_btn}
           </Button>
           <Button
             variant="contained"
@@ -185,13 +189,13 @@ const FreelancerPayment: React.FC = () => {
             onClick={() => setShowPaymentDialog(true)}
             fullWidth={isSmallScreen}
           >
-            Request New Payment
+            {translations[systemLanguage].request_new_payment_btn}
           </Button>
         </Box>
       </Box>
 
       <Box sx={{ mb: 3, p: 2, bgcolor: theme.palette.grey[100], borderRadius: 1 }}>
-        <Typography variant="h6">Current Balance: {currentBalance.toFixed(2)} Kyat</Typography>
+        <Typography variant="h6"> {translations[systemLanguage].current_balance} {currentBalance.toFixed(2)}  {translations[systemLanguage].currency}</Typography>
       </Box>
 
       {loading ? (
@@ -201,7 +205,7 @@ const FreelancerPayment: React.FC = () => {
       ) : withdrawals.length === 0 ? (
         <Box textAlign="center" p={4}>
           <Typography variant="body1" color="text.secondary">
-            No withdrawal history found
+            {translations[systemLanguage].no_withdrawal_history}
           </Typography>
         </Box>
       ) : (
@@ -219,7 +223,7 @@ const FreelancerPayment: React.FC = () => {
                   >
                     <Box>
                       <Typography variant="h6" component="div">
-                        {withdrawal.amount.toFixed(2)} Kyat
+                        {withdrawal.amount.toFixed(2)} {translations[systemLanguage].currency}
                       </Typography>
                       <Chip
                         label={withdrawal.withdrawal_status}
@@ -231,12 +235,12 @@ const FreelancerPayment: React.FC = () => {
                     <Box sx={{ mt: { xs: 2, sm: 0 } }}>
                       <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                         <Schedule fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-                        Requested: {format(new Date(withdrawal.requested_at), 'MMM dd, yyyy HH:mm')}
+                        {translations[systemLanguage].requested_at} {format(new Date(withdrawal.requested_at), 'MMM dd, yyyy HH:mm')}
                       </Typography>
                       {withdrawal.processed_at && (
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                           <CheckCircleOutline fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-                          Processed: {format(new Date(withdrawal.processed_at), 'MMM dd, yyyy HH:mm')}
+                          {translations[systemLanguage].processed_at} {format(new Date(withdrawal.processed_at), 'MMM dd, yyyy HH:mm')}
                         </Typography>
                       )}
                     </Box>
@@ -252,7 +256,7 @@ const FreelancerPayment: React.FC = () => {
                   >
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
                       <Payment fontSize="small" sx={{ mr: 1 }} />
-                      Method: <strong style={{ marginLeft: '5px' }}>{withdrawal.payment_method}</strong>
+                      {translations[systemLanguage].method} <strong style={{ marginLeft: '5px' }}>{withdrawal.payment_method}</strong>
                     </Typography>
                   </Box>
                   {renderPaymentDetails(withdrawal)}
@@ -264,7 +268,7 @@ const FreelancerPayment: React.FC = () => {
                         startIcon={<ReportProblem />}
                         onClick={() => handleReportIssue(withdrawal.withdrawal_id)}
                       >
-                        Report Payment Delay
+                        {translations[systemLanguage].report_payment_delay}
                       </Button>
                     </Box>
                   )}

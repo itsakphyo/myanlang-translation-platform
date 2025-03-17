@@ -16,6 +16,8 @@ import {
 import { LanguagePair } from '@/types/language';
 import { useTask } from '@/hooks/useTask';
 import theme from '@/theme';
+import { translations } from '@/contexts/translation';
+import { useSystemLanguage } from '@/contexts/language-context';
 
 interface LanguageSelectDialogProps {
   open: boolean;
@@ -31,6 +33,8 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
 
   const [selectedPairIndex, setSelectedPairIndex] = useState<number>(0);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const { systemLanguage } = useSystemLanguage()
 
   const { getAllLanguagePairs } = useTask();
   const language_pairs: LanguagePair[] = getAllLanguagePairs.data ?? [];
@@ -55,7 +59,7 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
         },
       }}
     >
-      <DialogTitle>Select Language Pair</DialogTitle>
+      <DialogTitle>{translations[systemLanguage].select_lang_pair_dialog_title}</DialogTitle>
       <DialogContent sx={{ pt: '20px !important' }}>
         <Stack spacing={3}>
           <FormControl fullWidth>
@@ -86,7 +90,7 @@ const LanguageSelectDialog: React.FC<LanguageSelectDialogProps> = ({
               onClose();
             }}
           >
-            Confirm Selection
+            {translations[systemLanguage].select_lang_pair_dialog_btn}
           </Button>
         </Stack>
       </DialogContent>

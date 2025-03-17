@@ -123,10 +123,8 @@ async def read_current_user(current_user: Freelancer = Depends(get_current_user)
     This endpoint returns the current user's information.
     It ensures the user info is always fresh by querying the database.
     """
-    # Convert the current_user object to a dictionary
     user_dict = {key: value for key, value in current_user.__dict__.items() if key != "password_hash"}
     
-    # Remove the '_sa_instance_state' key added by SQLAlchemy
     user_dict.pop('_sa_instance_state', None)
     
     return user_dict

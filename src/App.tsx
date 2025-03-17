@@ -11,12 +11,11 @@ import TaskReviewPage from './components/qa/TaskReviewPage';
 import PageNotFound from './pages/PageNotFound';
 import { GlobalDialog } from './components/GlobalDialog';
 import { DialogProvider } from './contexts/DialogContext';
-import { Toaster } from "react-hot-toast";
+import { LanguageProvider } from './contexts/language-context';
 
 function App() {
   return (
-    <>
-      <Toaster />
+    <LanguageProvider>
       <DialogProvider>
         <Router>
           <Routes>
@@ -79,7 +78,7 @@ function App() {
         {/* Global Dialog Component */}
         <GlobalDialog />
       </DialogProvider>
-    </>
+    </LanguageProvider>
   );
 }
 

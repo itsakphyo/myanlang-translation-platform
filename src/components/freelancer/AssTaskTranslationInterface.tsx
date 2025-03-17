@@ -11,12 +11,13 @@ import {
   Chip,
 } from '@mui/material';
 import AccessTime from '@mui/icons-material/AccessTime';
-import Translate from '@mui/icons-material/Translate';
 import { AssTask } from '@/types/task';
 import {useCreateAssessmentAttempts } from '@/hooks/useCreateAssessmentAttempts';
 import { AssessmentAttempt } from "@/types/task";
 import theme from '@/theme';
 import Toast from '@/utils/showToast';
+import { translations } from '@/contexts/translation';
+import { useSystemLanguage } from '@/contexts/language-context';
 
 interface AssTaskTranslationInterfaceProps {
   tasks: AssTask[];
@@ -33,6 +34,8 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
   // Load the current task from our updatedTasks state
   const currentTask = updatedTasks[currentTaskIndex] ?? null;
   const maxTime = currentTask?.max_time_per_task || 0;
+
+  const { systemLanguage } = useSystemLanguage();
 
   // When the task changes, load its saved translation (or reset to empty)
   useEffect(() => {
@@ -84,7 +87,7 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
     // Ensure createAssessmentAttempts.mutate expects the correct type
     createAssessmentAttempts.mutate(assessmentAttempts);
   
-    Toast.show('Assessment Attempts submitted successfully.');
+    Toast.show(`${translations[systemLanguage].ass_att_submit_success_message}`);
     onClose();
   };
   
@@ -101,7 +104,7 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
       {/* Time Indicator Chip */}
       <Chip
         icon={<AccessTime style={{ color: 'white' }} />}
-        label={`Time allowed for each task: ${maxTime} minute${maxTime !== 1 ? 's' : ''}`}
+        label={`${translations[systemLanguage].time_allowed} ${maxTime} minute${maxTime !== 1 ? 's' : ''}`}
         sx={{
           position: 'absolute',
           right: -8,
@@ -124,16 +127,8 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
         {currentTask && (
           <>
             <Box sx={{ mt: 2 }}>
-              <Typography variant="h5" gutterBottom fontWeight="bold">
-                <Translate sx={{
-                  mr: 1,
-                  color: 'primary.main',
-                  verticalAlign: 'text-bottom'
-                }} />
-                Translation Task
-              </Typography>
-              <Typography variant="body1" color="text.secondary" mt={2}>
-                Task Instruction 
+              <Typography variant="h6" gutterBottom fontWeight="bold">
+                {translations[systemLanguage].instructions}
               </Typography>
               <Box component="ul" sx={{
                 pl: 2.5,
@@ -146,7 +141,7 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
 
             <Box>
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                Original Text ({currentTask.source_language_name})
+                {translations[systemLanguage].original_text} ({currentTask.source_language_name})
               </Typography>
               <Paper variant="outlined" sx={{
                 p: 2,
@@ -161,7 +156,7 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
 
             <Box>
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                Your Translation ({currentTask.target_language_name})
+              {translations[systemLanguage].your_translation} ({currentTask.target_language_name})
               </Typography>
               <TextField
                 fullWidth
@@ -206,7 +201,7 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
               order: { xs: 0, sm: 0 }
             }}
           >
-            ← Previous Task
+            ← {translations[systemLanguage].previous_btn}
           </Button>
 
           {/* Page Indicator */}
@@ -250,7 +245,7 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
                 order: { xs: 1, sm: 2 }
               }}
             >
-              Submit Tasks
+              {translations[systemLanguage].submit_assTasks_btn}
             </Button>
           ) : (
             <Button
@@ -265,7 +260,7 @@ const AssTaskTranslationInterface: React.FC<AssTaskTranslationInterfaceProps> = 
                 order: { xs: 1, sm: 2 }
               }}
             >
-              Next Task →
+              {translations[systemLanguage].next_btn} →
             </Button>
           )}
         </Box>

@@ -22,6 +22,8 @@ import TranslateIcon from "@mui/icons-material/Translate"
 import { IssueReportRequest } from '@/types/IssueReportRequest';
 import { reportIssue } from "@/hooks/reportIssue";
 import Toast from "@/utils/showToast";
+import { translations } from "@/contexts/translation";
+import { useSystemLanguage } from "@/contexts/language-context";
 
 const handleReportIssue = async (data: IssueReportRequest) => {
   try {
@@ -42,6 +44,8 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ taskId }) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
   const current_user_id = localStorage.getItem("userId")
+
+  const { systemLanguage } = useSystemLanguage();
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
@@ -69,7 +73,7 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ taskId }) => {
         }}
       >
         <Alert severity="info" sx={{ mb: 2 }}>
-          You are reporting an issue for Task #{taskId}
+          Task ID : {taskId}
         </Alert>
 
         <FormControl fullWidth variant="outlined">
@@ -88,16 +92,13 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ taskId }) => {
               },
             }}
           >
-            <MenuItem value="" disabled>
-              <em>Select an issue type</em>
-            </MenuItem>
             <MenuItem value="not_enough_time" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <AccessTimeIcon fontSize="small" color="action" />
-              Not enough time for translation
+              {translations[systemLanguage].not_enough_time}
             </MenuItem>
             <MenuItem value="wrong_source_language" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <TranslateIcon fontSize="small" color="action" />
-              Wrong source language
+              {translations[systemLanguage].wrong_source_lang}
             </MenuItem>
           </Select>
         </FormControl>
@@ -111,7 +112,7 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ taskId }) => {
             color="inherit"
             fullWidth={isMobile}
           >
-            Cancel
+            {translations[systemLanguage].cancel_btn}
           </Button>
           <Button
             type="submit"
@@ -126,7 +127,7 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ taskId }) => {
               },
             }}
           >
-            Submit Report
+            {translations[systemLanguage].submit_report_btn}
           </Button>
         </Stack>
       </Box>

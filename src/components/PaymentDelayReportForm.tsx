@@ -20,6 +20,8 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { IssueReportRequest } from '@/types/IssueReportRequest';
 import { reportIssue } from "@/hooks/reportIssue";
 import Toast from "@/utils/showToast";
+import { translations } from "@/contexts/translation";
+import { useSystemLanguage } from "@/contexts/language-context";
 
 const handleReportIssue = async (data: IssueReportRequest) => {
   try {
@@ -42,6 +44,8 @@ const PaymentDelayReportForm: React.FC<PaymentDelayReportFormProps> = ({ withdra
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const { systemLanguage } = useSystemLanguage();
+
   const current_user_id = localStorage.getItem("userId")
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -56,7 +60,7 @@ const PaymentDelayReportForm: React.FC<PaymentDelayReportFormProps> = ({ withdra
     };
 
     handleReportIssue(reportData);
-    Toast.show("Issue reported successfully");
+    Toast.show(translations[systemLanguage].issue_reported_successfully);
 
     setIsSubmitting(false);
     closeDialog();
@@ -71,7 +75,7 @@ const PaymentDelayReportForm: React.FC<PaymentDelayReportFormProps> = ({ withdra
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
             <Chip
               icon={<AccessTimeIcon />}
-              label={`Withdrawal ID: ${withdrawalId}`}
+              label={`${translations[systemLanguage].withdrawal} ID: ${withdrawalId}`}
               color="primary"
               variant="outlined"
               sx={{
@@ -82,12 +86,11 @@ const PaymentDelayReportForm: React.FC<PaymentDelayReportFormProps> = ({ withdra
           </Box>
 
           <Alert severity="info" sx={{ mb: 2 }}>
-            You can provide additional details about the payment delay you're experiencing.
+            {translations[systemLanguage].alert_text_for_payment_delay}
           </Alert>
 
           <TextField
-            label="Additional Details"
-            placeholder="Describe the issue you're facing with this payment..."
+            label= {translations[systemLanguage].additional_details}
             multiline
             rows={isMobile ? 3 : 4}
             fullWidth
@@ -128,7 +131,7 @@ const PaymentDelayReportForm: React.FC<PaymentDelayReportFormProps> = ({ withdra
               fontWeight: 500
             }}
           >
-            Cancel
+            {translations[systemLanguage].cancel_btn}
           </Button>
           <Button
             type="submit"
@@ -144,7 +147,7 @@ const PaymentDelayReportForm: React.FC<PaymentDelayReportFormProps> = ({ withdra
               boxShadow: 2
             }}
           >
-            {isSubmitting ? "Submitting..." : "Submit Report"}
+            {isSubmitting ? "Submitting..." :  translations[systemLanguage].submit_report_btn} 
           </Button>
         </Stack>
       </Box>
