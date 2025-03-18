@@ -34,7 +34,7 @@ import {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       setQaMember((prev) => ({ ...prev, [name]: value }));
-      setErrors((prev) => ({ ...prev, [name]: undefined })); // Clear error when user types
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     };
   
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

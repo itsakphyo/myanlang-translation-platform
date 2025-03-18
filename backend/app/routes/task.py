@@ -41,7 +41,6 @@ async def download_tasks(job_id: int, db: Session = Depends(get_db)):
     if not tasks:
         return {"error": "No tasks found"}
 
-    # Convert task objects to dictionary format while excluding SQLAlchemy instance state
     task_dicts = [
         {
             "job_id": task.job_id,
@@ -62,13 +61,10 @@ async def download_tasks(job_id: int, db: Session = Depends(get_db)):
     source_text_column_name = f"{source_language.language_name}_text (Source)"
     target_text_column_name = f"{target_language.language_name}_text (Translated)"
 
-    # Rename columns
     tasks_df.rename(columns={"source_text": source_text_column_name, "translated_text": target_text_column_name}, inplace=True)
 
-    # Convert DataFrame to CSV
     csv_data = tasks_df.to_csv(index=False)
 
-    # Create a streamable response
     response_stream = io.StringIO(csv_data)
     return StreamingResponse(response_stream, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=tasks.csv"})
 
@@ -87,7 +83,6 @@ async def get_all_languages_pairs(db: Session = Depends(get_db)):
             logger.warning("No language pairs found.")
             return []
 
-        # Fetch all languages and create an ID-to-name mapping
         languages_query = db.query(Language).all()
 
         if not languages_query:
@@ -96,7 +91,6 @@ async def get_all_languages_pairs(db: Session = Depends(get_db)):
 
         languages = {lang.language_id: lang.language_name.lower() for lang in languages_query}
 
-        # Convert language IDs to names, handling missing IDs
         language_pairs = [
             {
                 "source_id": pair[0],
@@ -255,7 +249,6 @@ def get_open_task(
         db.rollback()
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
-# ---------- Route 2: Submit a Task ----------
 
 
 @router.post("/submit", response_model=SubmitTaskResponse)
@@ -277,11 +270,8 @@ def submit_task(
     if task.assigned_at is None:
         raise HTTPException(status_code=400, detail="Task has no assignment time set")
     
-    # Assume your stored time is in local time (e.g., 'Asia/Bangkok' for UTC+7)
     local_tz = ZoneInfo("Asia/Bangkok")
-    # First, treat the naive time as local
     assigned_local = task.assigned_at.replace(tzinfo=local_tz)
-    # Convert to UTC
     assigned_at_aware = assigned_local.astimezone(timezone.utc)
     
     elapsed_initial = (now - assigned_at_aware).total_seconds() / 60  # elapsed time in minutes
@@ -302,8 +292,6 @@ def submit_task(
 
 @router.get("/get_all_task_info")
 def get_all_task_info(db: Session = Depends(get_db)):
-    # Query for Assessment Tasks:
-    # Join AssessmentAttempt with Task to obtain the language pair
     assessment_total = (
         db.query(func.count(AssessmentAttempt.attempt_id))
           .join(Task, Task.task_id == AssessmentAttempt.task_id)
@@ -323,8 +311,6 @@ def get_all_task_info(db: Session = Depends(get_db)):
         .all()
     )
 
-    # Query for Submission Tasks:
-    # From Task table where is_assessment is False and task_status is UNDER_REVIEW and no QA assigned
     submission_total = (
         db.query(func.count(Task.task_id))
           .filter(Task.is_assessment.is_(False), Task.task_status == TaskStatus.UNDER_REVIEW, Task.qa_assigned_id == None)
@@ -377,11 +363,9 @@ def get_assessment_tasks(source_language_id: int, target_language_id: int, db: S
     attempt status is UNDER_REVIEW.
     """
     try:
-        # Create aliases for the Language table for source and target languages.
         source_lang_alias = aliased(Language)
         target_lang_alias = aliased(Language)
 
-        # Query all tasks, assessment attempts, and join with the source and target language tables.
         results = (
             db.query(Task, AssessmentAttempt, source_lang_alias, target_lang_alias)
             .join(AssessmentAttempt, Task.task_id == AssessmentAttempt.task_id)
@@ -398,7 +382,6 @@ def get_assessment_tasks(source_language_id: int, target_language_id: int, db: S
         if not results:
             return None
 
-        # Group results by the tuple (freelancer_id, source_language_id, target_language_id)
         grouped_data = {}
         for task, attempt, src_lang, tgt_lang in results:
             key = (attempt.freelancer_id, task.source_language_id, task.target_language_id)
@@ -417,7 +400,6 @@ def get_assessment_tasks(source_language_id: int, target_language_id: int, db: S
                 "submittedText": attempt.submission_text
             })
 
-        # Return the grouped data as a list of objects.
         return list(grouped_data.values())
 
     except SQLAlchemyError as e:
@@ -429,7 +411,6 @@ async def get_submitted_tasks(
     qa_id: int, source_language_id: int, target_language_id: int, db: Session = Depends(get_db)
 ):
     try:
-        # Check if the QA Member exists before assigning
         qa_member = db.query(QAMember).filter(QAMember.qa_member_id == qa_id).first()
         if not qa_member:
             raise HTTPException(status_code=400, detail="QA Member not found")
@@ -443,7 +424,6 @@ async def get_submitted_tasks(
             Task.qa_assigned_id.is_(None)
         ).first()
 
-        # If no task is available, return None (which becomes JSON null)
         if task is None:
             return None
 
@@ -480,7 +460,7 @@ class QaReviewSubmit(BaseModel):
 
 @router.post("/submit_qa_review")
 def submit_qa_review(
-    review_data: QaReviewSubmit,  # Receive as request body
+    review_data: QaReviewSubmit,
     db: Session = Depends(get_db)
 ):
     now = datetime.now(timezone.utc)

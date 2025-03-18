@@ -38,6 +38,3 @@ app.include_router(freelancer_router, tags=["freelancer"], prefix="/freelancer")
 app.include_router(assessment_router, tags=["assessment"], prefix="/assessment")
 app.include_router(payment_router, tags=["payment"], prefix="/payment")
 app.include_router(reports_router, tags=["reports"], prefix="/reports")
-
-# if __name__ == "__main__":
-#     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

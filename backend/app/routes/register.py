@@ -139,7 +139,6 @@ async def login_for_access_token(
     This endpoint is used for the OAuth2 flow (Swagger UI).
     It accepts form data (username and password) and returns the access token.
     """
-    # Use form_data.username as the email
     existing_user, user_type = await check_existing_user(db, form_data.username)
     
     if existing_user is None:

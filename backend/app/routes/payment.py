@@ -93,7 +93,6 @@ def request_new_payment(
     db.commit()
     db.refresh(db_withdrawal)
 
-    # Prepare email parameters
     email_params = {
         "freelancer_name": freelancer.full_name,
         "payment_method": payment_method,
@@ -172,7 +171,7 @@ def update_withdrawal(
     amount = withdrawal.amount
     processed_at = withdrawal.processed_at
     withdrawal_id = withdrawal.withdrawal_id
-    payment_method = withdrawal.payment_method  # e.g., 'paypal', 'bank', etc.
+    payment_method = withdrawal.payment_method
     proof_of_payment = withdrawal.proof_of_payment
 
     email_params = {

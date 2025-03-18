@@ -26,6 +26,7 @@ import axios from 'axios';
 import VerificationCodeInput from '@/components/auth/VerificationCodeInput';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/images/logo.png';
+import { useSystemLanguage } from '@/contexts/language-context';
 
 const steps = ['Email Verification', 'Enter Code', 'Reset Password'];
 
@@ -40,7 +41,8 @@ export default function ForgotPassword() {
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false); // State to track loading
-  const [_, setPasswordRequirements] = useState(getPasswordRequirements(''));
+  const { systemLanguage } = useSystemLanguage();
+  const [_, setPasswordRequirements] = useState(getPasswordRequirements('', systemLanguage));
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +88,7 @@ export default function ForgotPassword() {
       return;
     }
 
-    const passwordValidation = getPasswordRequirements(formData.new_password);
+    const passwordValidation = getPasswordRequirements(formData.new_password, systemLanguage);
     setPasswordRequirements(passwordValidation);
 
     if (passwordValidation.some((req) => !req.valid)) {
@@ -113,7 +115,7 @@ export default function ForgotPassword() {
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
     setFormData({ ...formData, new_password: newPassword });
-    setPasswordRequirements(getPasswordRequirements(newPassword));
+    setPasswordRequirements(getPasswordRequirements(newPassword, systemLanguage));
   };
 
   return (
@@ -215,7 +217,7 @@ export default function ForgotPassword() {
                 </Typography>
 
                 <List dense sx={{ mt: 1, mb: 2 }}>
-                  {getPasswordRequirements(formData.new_password).map(
+                  {getPasswordRequirements(formData.new_password, systemLanguage).map(
                     (requirement, index) => (
                       <ListItem key={index} dense>
                         <ListItemIcon sx={{ minWidth: 36 }}>

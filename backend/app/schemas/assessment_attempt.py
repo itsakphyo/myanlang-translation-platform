@@ -15,10 +15,6 @@ class AssessmentAttempt(Base):
     attempt_status = Column(Enum(AssTaskStatus, name="ass_task_status"), nullable=False, default=AssTaskStatus.UNDER_REVIEW)
     decision = Column(Boolean, nullable=True)
 
-    # Use string-based relationships to avoid circular imports
-    # task = relationship("Task", back_populates="assessment_attempts")
-    # freelancer = relationship("Freelancer", foreign_keys=[freelancer_id])
-
 # Pydantic Schema
 class AssessmentAttemptInput(BaseModel):
     freelancer_id: int

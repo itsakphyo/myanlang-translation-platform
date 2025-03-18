@@ -10,10 +10,9 @@ import { SystemLanguageCode } from "@/types/systemLanguages"
 interface SystemLanguage {
     code: string
     name: string
-    flag: string | JSX.Element // Can be emoji or SVG element
+    flag: string | JSX.Element
 }
 
-// Hardcoded language options with flags (mix of emoji and SVG)
 const systemlanguages: SystemLanguage[] = [
     { code: "en", name: "English", flag: "🇺🇸" },
     { code: "my", name: "မြန်မာ", flag: <CustomFlags.Myanmar /> },
@@ -27,7 +26,7 @@ export function SystemLanguageSelector(): JSX.Element {
     const handleSystemLanguageSelect = (languageCode: string): void => {
         const langCode = languageCode as SystemLanguageCode
         localStorage.setItem("selectedLanguage", langCode)
-        setSystemLanguage(langCode) // Update context state
+        setSystemLanguage(langCode)
         console.log("selectedLanguage:", langCode)
         setOpen(false)
     }

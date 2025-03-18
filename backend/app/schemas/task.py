@@ -12,7 +12,6 @@ class Task(Base):
     task_id = Column(Integer, primary_key=True, autoincrement=True)
     job_id = Column(Integer, ForeignKey("job.job_id", ondelete="CASCADE"), nullable=False, index=True)
     job_status = Column(Enum(JobStatus, name="jobstatus"), nullable=False, default=JobStatus.IN_PROGRESS)
-    # still not needed job status, but it will be useful in the future
     source_language_id = Column(Integer, ForeignKey("language.language_id"), nullable=False, index=True)
     source_text = Column(String, nullable=False)
     target_language_id = Column(Integer, ForeignKey("language.language_id"), nullable=False, index=True)
@@ -47,7 +46,7 @@ class OpenTaskResponse(BaseModel):
     task_id: int
     instruction: str
     max_time_per_task: int
-    price: Optional[float]  # Ensure price is included
+    price: Optional[float]
     source_text: str
     translated_text: Optional[str]
     source_language_name: str

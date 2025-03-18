@@ -9,7 +9,7 @@ export const useTaskInfo = () => {
     queryKey: ["taskInfo"],
     queryFn: async () => {
       const response = await axios.get<TaskInfo>(`${API_URL}/task/get_all_task_info`);
-      localStorage.setItem("taskInfo", JSON.stringify(response.data)); // Store in localStorage
+      localStorage.setItem("taskInfo", JSON.stringify(response.data));
       return response.data;
     },
   });

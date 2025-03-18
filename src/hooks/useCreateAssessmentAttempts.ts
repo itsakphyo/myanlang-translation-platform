@@ -21,7 +21,6 @@ export const useCreateAssessmentAttempts = () => {
       return response.data;
     },
     onSuccess: () => {
-      // Invalidate or refetch any queries that might be affected
       queryClient.invalidateQueries({ queryKey: ["assessmentAttempts"] });
     },
   });

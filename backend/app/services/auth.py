@@ -112,8 +112,6 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
 
-    
-    # Return the user object, which will be passed to endpoints that depend on this function
     return user
 
 

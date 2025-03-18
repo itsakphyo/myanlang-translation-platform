@@ -65,9 +65,7 @@ export default function UserDashboard({ window }: { window?: () => Window }) {
     handleMenuClose();
   };
 
-  // Replace the handleNavigate function with this implementation:
   const handleNavigate = (segment: string) => {
-    // This just updates the current segment without actual navigation
     router.navigate(`/dashboard/${segment}`);
   };
 

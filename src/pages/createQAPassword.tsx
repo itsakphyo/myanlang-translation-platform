@@ -9,6 +9,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import axios from 'axios';
 import { useQA } from '@/hooks/useQA';
+import { useSystemLanguage } from '@/contexts/language-context';
 
 
 export default function CreatePassword() {
@@ -22,7 +23,8 @@ export default function CreatePassword() {
         confirm_password: '',
     });
     const [errorMessage, setErrorMessage] = useState('');
-    const [_, setPasswordRequirements] = useState(getPasswordRequirements(''));
+    const { systemLanguage } = useSystemLanguage();
+    const [_, setPasswordRequirements] = useState(getPasswordRequirements('', systemLanguage));
 
     const handlePasswordReset = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,7 +35,7 @@ export default function CreatePassword() {
             return;
         }
 
-        const passwordValidation = getPasswordRequirements(formData.new_password);
+        const passwordValidation = getPasswordRequirements(formData.new_password, systemLanguage);
         setPasswordRequirements(passwordValidation);
 
         if (passwordValidation.some((req) => !req.valid)) {
@@ -53,7 +55,7 @@ export default function CreatePassword() {
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newPassword = e.target.value;
         setFormData({ ...formData, new_password: newPassword });
-        setPasswordRequirements(getPasswordRequirements(newPassword));
+        setPasswordRequirements(getPasswordRequirements(newPassword, systemLanguage));
     };
 
     return (
@@ -95,7 +97,7 @@ export default function CreatePassword() {
                             </Typography>
 
                             <List dense sx={{ mt: 1, mb: 2 }}>
-                                {getPasswordRequirements(formData.new_password).map((requirement, index) => (
+                                {getPasswordRequirements(formData.new_password, systemLanguage).map((requirement, index) => (
                                     <ListItem key={index} dense>
                                         <ListItemIcon sx={{ minWidth: 36 }}>
                                             {requirement.checked ? (

@@ -11,16 +11,14 @@ const CloudinaryUpload: React.FC<CloudinaryUploadProps> = ({ onUploadSuccess }) 
   const widgetRef = useRef<any>();
 
   useEffect(() => {
-    // Initialize the Cloudinary widget
     cloudinaryRef.current = (window as any).cloudinary;
     widgetRef.current = cloudinaryRef.current.createUploadWidget(
       {
-        cloudName: 'dnxizfrxa', // Your Cloudinary cloud name
-        uploadPreset: 'texta-proof-of-payments', // Your unsigned upload preset
+        cloudName: 'dnxizfrxa', 
+        uploadPreset: 'texta-proof-of-payments',
       },
       (error: any, result: any) => {
         if (!error && result && result.event === 'success') {
-          // Pass the secure URL back to the parent component
           onUploadSuccess(result.info.secure_url);
         }
       }

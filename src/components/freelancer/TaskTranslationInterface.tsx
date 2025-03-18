@@ -47,7 +47,6 @@ const TaskTranslationInterface: React.FC<TaskTranslationInterfaceProps> = ({
   useEffect(() => {
     if (task) {
       setTranslation(task.translated_text || '');
-      // Update remaining time, converting minutes to seconds
       setRemainingTime(task.max_time_per_task ? task.max_time_per_task * 60 : 900);
     }
   }, [task]);

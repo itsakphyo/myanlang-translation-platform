@@ -11,7 +11,6 @@ export const useAssessmentTasks = (source_language_id: number, target_language_i
       const response = await axios.get<AssTask[]>(
         `${API_URL}/task/get_assessment_tasks_up_to_5?source_language_id=${source_language_id}&target_language_id=${target_language_id}`
       );
-      // Using the generic type ensures that response.data is typed as AssTask[]
       return response.data;
     },
     enabled: enabled,
@@ -36,9 +35,9 @@ export const useAssReviewedSubmit = () => {
 
   return {
     mutate: mutation.mutate,
-    isLoading: mutation.isPending, // Loading state for the mutation
-    isError: mutation.isError, // Error state for the mutation
-    error: mutation.error, // Error details
-    isSuccess: mutation.isSuccess, // Success state for the mutation
+    isLoading: mutation.isPending,
+    isError: mutation.isError, 
+    error: mutation.error, 
+    isSuccess: mutation.isSuccess, 
   };
 };
