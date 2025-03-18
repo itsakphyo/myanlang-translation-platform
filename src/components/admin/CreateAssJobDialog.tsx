@@ -134,7 +134,7 @@ export default function CreateAssJobDialog({ open, onClose }: CreateJobProps) {
             px: 3,
           }}
         >
-          Create Job
+          Create Assessment Tasks
         </DialogTitle>
         <DialogContent sx={{ py: 3, px: 3 }}>
           {/* Job Title */}

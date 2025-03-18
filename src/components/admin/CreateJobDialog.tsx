@@ -17,6 +17,7 @@ import theme from '@/theme';
 import LanguageSelectDialog from '../freelancer/LanguageSelectDialog';
 import { LanguagePair } from '@/types/language';
 import Toast from '@/utils/showToast';
+import { set } from 'date-fns';
 
 interface CreateJobProps {
   open: boolean;
@@ -104,6 +105,14 @@ export default function CreateJob({ open, onClose }: CreateJobProps) {
     createJob.mutate(jobData, {
       onSuccess: () => {
         Toast.show('Job created successfully');
+        setJobTitle('');
+        setMaxTimePerTask(undefined);
+        setTaskPrice(undefined);
+        setInstructions('');
+        setNotes('');
+        setCsvFile(null);
+        setCsvFileName(null);
+        setSelectedLanguagePair(null);
         onClose();
       },
       onError: (error: any) => {

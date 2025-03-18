@@ -27,6 +27,7 @@ export default function CreateLanguageDialog({ open, onClose }: CreateLanguageDi
         createLanguage.mutate(language, {
             onSuccess: () => {
                 Toast.show("Language created successfully");
+                setLanguage("");
                 onClose();
             },
         });

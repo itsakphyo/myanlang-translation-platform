@@ -560,12 +560,6 @@ export default function AdminDashboard(): ReactElement {
                                                 </Typography>
                                                 <Typography variant="body1">{report.task.source_text}</Typography>
                                               </Grid>
-                                              <Grid item xs={12}>
-                                                <Typography variant="body2" color="text.secondary">
-                                                  Instruction
-                                                </Typography>
-                                                <Typography variant="body1">{report.task.translated_text}</Typography>
-                                              </Grid>
                                             </>
                                           )}
                                           {report.resolved_at && (

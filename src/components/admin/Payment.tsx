@@ -546,7 +546,7 @@ export default function Payment() {
                                     </>
                                 )}
 
-                                {selectedRequest.withdrawal_status === "under_processing" && (
+                                {/* {selectedRequest.withdrawal_status === "under_processing" && (
                                     <>
                                         <Grid item xs={6}>
                                             <Typography variant="body2" fontWeight="medium">
@@ -555,6 +555,37 @@ export default function Payment() {
                                         </Grid>
                                         <Grid item xs={6}>
                                             <CloudinaryUpload onUploadSuccess={handleUploadSuccess} />
+                                        </Grid>
+                                    </>
+                                )} */}
+
+                                {selectedRequest.withdrawal_status === "under_processing" && (
+                                    <>
+                                        <Grid item xs={6}>
+                                            <Typography variant="body2" fontWeight="medium">
+                                                Upload Proof of Payment:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {proofOfPayment ? (
+                                                <Link
+                                                    href={proofOfPayment}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    sx={{
+                                                        textDecoration: "none",
+                                                        color: "primary.main",
+                                                        fontWeight: "bold",
+                                                        "&:hover": {
+                                                            textDecoration: "underline",
+                                                        },
+                                                    }}
+                                                >
+                                                    View Uploaded Proof
+                                                </Link>
+                                            ) : (
+                                                <CloudinaryUpload onUploadSuccess={handleUploadSuccess} />
+                                            )}
                                         </Grid>
                                     </>
                                 )}

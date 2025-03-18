@@ -256,7 +256,7 @@ export default function TranslationTaskPage() {
       return (
         <Chip
           icon={<ErrorOutline />}
-          label={`Not Qualified (${languagePairData.accuracy_rate?.toFixed}%)`}
+          label={`Not Qualified (${languagePairData.accuracy_rate?.toFixed(2)}%)`}
           color="error"
           variant="outlined"
         />

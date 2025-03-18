@@ -34,7 +34,7 @@ python -m venv venv
 #### Install Dependencies
 ```sh
 pip install -r requirements.txt
-pip install alembic pydantic pydantic[email] pydantic_settings python-jose passlib fastapi_mail python-multipart pandas bcrypt fastapi psycopg2-binary
+pip install alembic pydantic pydantic[email] pydantic_settings python-jose passlib fastapi_mail python-multipart pandas bcrypt fastapi psycopg2-binary uvicorn
 ```
 
 **Note:** Make sure PostgreSQL is installed before running `psycopg2-binary`.
@@ -44,6 +44,8 @@ Log in to your local PostgreSQL and create the database:
 ```sql
 CREATE DATABASE texta;
 ```
+
+After creating database change the Database URL in the .env file as needed.
 
 Run Alembic migrations in the activated venv of backend:
 ```sh

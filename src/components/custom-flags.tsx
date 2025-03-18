@@ -56,4 +56,24 @@ export const CustomFlags = {
       </g>
     </svg>
   ),
+  
+  // UK flag (Union Jack)
+  UK: (): React.ReactElement => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24" width="24" height="16">
+      {/* Blue background */}
+      <rect width="36" height="24" fill="#012169" />
+      
+      {/* White diagonal crosses (St. Andrew's Cross) */}
+      <path d="M0,0 L36,24 M36,0 L0,24" stroke="white" strokeWidth="4" />
+      
+      {/* Red diagonal crosses (St. Patrick's Cross) */}
+      <path d="M0,0 L36,24 M36,0 L0,24" stroke="#C8102E" strokeWidth="2" />
+      
+      {/* White cross (St. George's Cross) */}
+      <path d="M18,0 L18,24 M0,12 L36,12" stroke="white" strokeWidth="6" />
+      
+      {/* Red cross (St. George's Cross) */}
+      <path d="M18,0 L18,24 M0,12 L36,12" stroke="#C8102E" strokeWidth="3" />
+    </svg>
+  ),
 };

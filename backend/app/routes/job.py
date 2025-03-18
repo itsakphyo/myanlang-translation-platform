@@ -64,6 +64,9 @@ async def create_job(
 @router.get("/get_all_jobs")
 async def get_all_jobs(db: Session = Depends(get_db)):
     jobs = db.query(Job).filter(Job.is_assessment == "f").all()
+    for job in jobs:
+        job.source_language_name = db.query(Language).filter(Language.language_id == job.source_language_id).first().language_name
+        job.target_language_name = db.query(Language).filter(Language.language_id == job.target_language_id).first().language_name
     return jobs
 
 
@@ -180,4 +183,7 @@ async def create_assessment_job(
 @router.get("/get_all_ass_jobs")
 async def get_all_jobs(db: Session = Depends(get_db)):
     jobs = db.query(Job).filter(Job.is_assessment == "t").all()
+    for job in jobs:
+        job.source_language_name = db.query(Language).filter(Language.language_id == job.source_language_id).first().language_name
+        job.target_language_name = db.query(Language).filter(Language.language_id == job.target_language_id).first().language_name
     return jobs
