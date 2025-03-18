@@ -14,9 +14,9 @@ interface SystemLanguage {
 }
 
 const systemlanguages: SystemLanguage[] = [
-    { code: "en", name: "English", flag: "🇺🇸" },
+    { code: "en", name: "English", flag: "\u{1F1EC}\u{1F1E7}" },
     { code: "my", name: "မြန်မာ", flag: <CustomFlags.Myanmar /> },
-    { code: "cat", name: "Meow", flag: "🐱" },
+    { code: "cat", name: "Chin", flag: <CustomFlags.Chin /> },
 ]
 
 export function SystemLanguageSelector(): JSX.Element {
