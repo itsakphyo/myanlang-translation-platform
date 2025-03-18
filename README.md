@@ -82,4 +82,5 @@ Before creating assessment tasks and jobs, the admin must first add the language
 When creating a job with assessment tasks, the CSV file **must** include a column with no header. This column represents the original text for translation. You can find an example CSV file in the project folder.
 
 
-
+## Emails
+Currently, itsaungkhantphyo@gmail.com is used as company email (sending system notification to freelancers) and itsakphyo@gmail (recieving notification as admin).com is used as admin email. Admin email can be change easily in the .env file and changing company email will required credentials such as app password.
