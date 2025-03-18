@@ -102,7 +102,7 @@ async def send_payment_request_email(
     freelancer_name: str,
     payment_method: str,
     amount: float,
-    admin_email: str = "itsakphyo@gmail.com",
+    admin_email: str = settings.ADMIN_EMAIL,
 ):
     """
     Sends a payment request email to the admin.
@@ -133,7 +133,7 @@ async def send_issue_report_email(
     freelancer_name: str,
     issue_type: str,
     reported_at: str,
-    admin_email: str = "itsakphyo@gmail.com",
+    admin_email: str = settings.ADMIN_EMAIL,
 ):
     """
     Sends an issue report email to the admin
@@ -195,3 +195,33 @@ async def send_issue_resolution_email(
 
     except Exception as e:
         print(f"Failed to send resolution email: {e}")
+
+
+async def send_assessment_result_email(
+    email: str,
+    freelancer_name: str,
+    source_language_name: str,
+    target_language_name: str,
+):
+    """
+    Sends an assessment result email to the freelancer.
+    """
+    try:
+        template_body = {
+            "freelancer_name": freelancer_name,
+            "source_language_name": source_language_name,
+            "target_language_name": target_language_name,
+        }
+
+        message = MessageSchema(
+            subject="Assessment Review Result",
+            recipients=[email],
+            template_body=template_body,
+            subtype="html"
+        )
+
+        fm = FastMail(conf)
+        await fm.send_message(message, template_name="assessment_review_result.html")
+
+    except Exception as e:
+        print("Email sending failed:", e)

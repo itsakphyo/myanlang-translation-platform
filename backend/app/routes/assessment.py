@@ -8,6 +8,9 @@ from ..schemas.task import Task
 from typing import Any
 from ..schemas.enums import AssSubmission, AssTaskStatus
 from ..schemas.qa_member import QAMember
+from ..schemas.freelancer import Freelancer
+from ..schemas.language import Language
+from ..services.email import send_assessment_result_email
 
 from pydantic import BaseModel
 from typing import List
@@ -92,7 +95,6 @@ async def update_ass_reviewed_data(reviews: CheckSubmitRequest, db: Session = De
         raise HTTPException(status_code=400, detail="No review data provided.")
     
     approved_reviews = sum(1 for review in reviews.data if review.status == 'approved')
-    # accuracy = (approved_reviews / total_reviews) * 100  
 
     fl_id = reviews.fl_id
     qa_id = reviews.qa_id
@@ -119,9 +121,6 @@ async def update_ass_reviewed_data(reviews: CheckSubmitRequest, db: Session = De
     for attempt in assessment_attempts:
         attempt.attempt_status = AssTaskStatus.COMPLETE
 
-    # Update FreelancerLanguagePair records
-    # if source_lang_id == target_lang_id:
-        # Non-translation task: update single row
     freelancer_language_pair = db.query(FreelancerLanguagePair).filter(
         FreelancerLanguagePair.freelancer_id == fl_id,
         FreelancerLanguagePair.source_language_id == source_lang_id,
@@ -138,53 +137,19 @@ async def update_ass_reviewed_data(reviews: CheckSubmitRequest, db: Session = De
     freelancer_language_pair.complete_task = previous_complete_task + total_reviews
     freelancer_language_pair.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
 
-    # else:
-        # Translation task: update three rows
-
-        # 1. (fl_id, source_lang_id, target_lang_id) – update accuracy and status.
-        # pair_original = db.query(FreelancerLanguagePair).filter(
-        #     FreelancerLanguagePair.freelancer_id == fl_id,
-        #     FreelancerLanguagePair.source_language_id == source_lang_id,
-        #     FreelancerLanguagePair.target_language_id == target_lang_id,
-        # ).first()
-        # if not pair_original:
-        #     raise HTTPException(status_code=404, detail="Freelancer language pair (source-target) record not found.")
-        # pair_original.status = AssSubmission.COMPLETE
-        # previous_complete_task = pair_original.complete_task or 0
-        # previous_rejected_task = pair_original.rejected_task or 0
-        # pair_original.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
-        # pair_original.complete_task = previous_complete_task + total_reviews
-        # pair_original.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
-
-        # 2. (fl_id, target_lang_id, target_lang_id) – update status.
-        # pair_target = db.query(FreelancerLanguagePair).filter(
-        #     FreelancerLanguagePair.freelancer_id == fl_id,
-        #     FreelancerLanguagePair.source_language_id == target_lang_id,
-        #     FreelancerLanguagePair.target_language_id == target_lang_id,
-        # ).first()
-        # if not pair_target:
-        #     raise HTTPException(status_code=404, detail="Freelancer language pair (target-target) record not found.")
-        # pair_target.status = AssSubmission.COMPLETE
-        # previous_complete_task = pair_target.complete_task or 0
-        # previous_rejected_task = pair_target.rejected_task or 0
-        # pair_target.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
-        # pair_target.complete_task = previous_complete_task + total_reviews
-        # pair_target.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
-
-        # 3. (fl_id, source_lang_id, source_lang_id) – update status.
-        # pair_source = db.query(FreelancerLanguagePair).filter(
-        #     FreelancerLanguagePair.freelancer_id == fl_id,
-        #     FreelancerLanguagePair.source_language_id == source_lang_id,
-        #     FreelancerLanguagePair.target_language_id == source_lang_id,
-        # ).first()
-        # if not pair_source:
-        #     raise HTTPException(status_code=404, detail="Freelancer language pair (source-source) record not found.")
-        # pair_source.status = AssSubmission.COMPLETE
-        # previous_complete_task = pair_source.complete_task or 0
-        # previous_rejected_task = pair_source.rejected_task or 0
-        # pair_source.accuracy_rate = ((approved_reviews + (previous_complete_task - previous_rejected_task)) / (total_reviews + previous_complete_task)) * 100
-        # pair_source.complete_task = previous_complete_task + total_reviews
-        # pair_source.rejected_task = previous_rejected_task + (total_reviews - approved_reviews)
-
     db.commit()
+
+    if approved_reviews > (total_reviews / 2):
+        freelancer = db.query(Freelancer).filter(Freelancer.freelancer_id == fl_id).first()
+        if not freelancer:
+            raise HTTPException(status_code=404, detail="Freelancer record not found.")
+        source_language = db.query(Language).filter(Language.language_id == source_lang_id).first()
+        target_language = db.query(Language).filter(Language.language_id == target_lang_id).first()
+
+        await send_assessment_result_email(
+            email=freelancer.email,
+            freelancer_name=freelancer.full_name,
+            source_language_name=source_language.language_name if source_language else "Source Language",
+            target_language_name=target_language.language_name if target_language else "Target Language",)
+
     return {"message": "Data updated successfully"}

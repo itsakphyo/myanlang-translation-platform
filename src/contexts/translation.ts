@@ -244,7 +244,7 @@ export const translations: Translations = {
     submit_and_show_next_btn: "ပေးပို့ပြီး နောက်ထပ်တစ်ခု ပြပါ",
     time_allowed: "ဘာသာပြန်ဆိုမှူတစ်ခုချင်းစီအတွက် ခွင့်ပြုကြာချိန် :",
     previous_btn: "နောက်သို့",
-    next_btn: "နောက်သို့",
+    next_btn: "ရှေ့သို့",
     submit_assTasks_btn: "အစမ်းဖြေဆိုမှု ပေးပို့ပြီး ပိတ်ပါ",
     ass_att_submit_success_message: "အစမ်းဖြေဆိုမှုများကို အောင်မြင်စွာ ပေးပို့ပြီးပါပြီ။",
     tran_submit_sucess_message: "သင်၏ ဘာသာပြန်ဆိုမှူကို အောင်မြင်စွာ ပေးပို့ပြီးပါပြီ။",

@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     USE_CREDENTIALS: bool
     TEMPLATE_FOLDER: str
     MAIL_FROM_NAME: str
+    ADMIN_EMAIL: str
 
     class Config:
         env_file = ".env"
