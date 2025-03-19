@@ -26,7 +26,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { getPasswordRequirements } from '@/utils/passwordRequirements';
 import { translations } from '@/contexts/translation';
 import { useSystemLanguage } from '@/contexts/language-context';
-
+import { Link as MuiLink } from "@mui/material";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ export default function Register() {
 
   const { systemLanguage } = useSystemLanguage();
 
-  const steps = [ translations[systemLanguage].email_varification, translations[systemLanguage].enter_code ,  translations[systemLanguage].complete_registration];
+  const steps = [translations[systemLanguage].email_varification, translations[systemLanguage].enter_code, translations[systemLanguage].complete_registration];
 
 
 
@@ -110,7 +110,7 @@ export default function Register() {
 
     if (age < 18 || passwordError) {
       setErrors({
-        age: age < 18 ? translations[systemLanguage].you_must_be_at_least_18_years_old  : '',
+        age: age < 18 ? translations[systemLanguage].you_must_be_at_least_18_years_old : '',
         password: passwordError,
       });
       return;
@@ -224,7 +224,7 @@ export default function Register() {
         <Box component="form" onSubmit={handleEmailSubmit}>
           <TextField
             fullWidth
-            label= {translations[systemLanguage].email}
+            label={translations[systemLanguage].email}
             type="email"
             margin="normal"
             value={formData.email}
@@ -259,7 +259,7 @@ export default function Register() {
         <Box component="form" onSubmit={handleRegistration}>
           <TextField
             fullWidth
-            label= {translations[systemLanguage].full_name}
+            label={translations[systemLanguage].full_name}
             margin="normal"
             value={formData.full_name}
             onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
@@ -280,7 +280,7 @@ export default function Register() {
                   age: calculatedAge < 18 ? translations[systemLanguage].you_must_be_at_least_18_years_old : ''
                 }));
               }}
-              label= {translations[systemLanguage].year_of_birth}
+              label={translations[systemLanguage].year_of_birth}
               required
             >
               {Array.from({ length: 100 }, (_, i) => currentYear - i).map((year) => (
@@ -293,7 +293,7 @@ export default function Register() {
           </FormControl>
           <TextField
             fullWidth
-            label= {translations[systemLanguage].password}
+            label={translations[systemLanguage].password}
             type="password"
             margin="normal"
             value={formData.password}
@@ -336,7 +336,48 @@ export default function Register() {
                 </ListItem>
               ))}
             </List>
-            <FormControlLabel control={<Checkbox checked={isChecked} onChange={() => setIsChecked(!isChecked)} />} label={translations[systemLanguage].agree_terms} />
+            <FormControlLabel
+              control={<Checkbox checked={isChecked} onChange={() => setIsChecked(!isChecked)} />}
+              label={
+                <Typography variant="body2">
+                  {translations[systemLanguage].agree_terms}
+                </Typography>
+              }
+            />
+            {/* <a
+              href="/terms-and-conditions"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue", textDecoration: "underline" }}
+            >
+              Terms and Conditions
+            </a>
+            <a
+                href="/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "blue", textDecoration: "underline" }}
+              >
+                Privacy Policy
+            </a> */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', mt: 2 }}>
+              <MuiLink
+                href="/terms-and-conditions"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ color: "primary.main", textDecoration: "underline", mb: 1 }}
+              >
+                Terms and Conditions
+              </MuiLink>
+              <MuiLink
+                href="/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ color: "primary.main", textDecoration: "underline" }}
+              >
+                Privacy Policy
+              </MuiLink>
+            </Box>
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
               <Button
                 fullWidth

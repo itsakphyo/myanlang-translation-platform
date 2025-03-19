@@ -8,10 +8,13 @@ import logo from '@/assets/images/logo.png';
 import { SystemLanguageSelector } from '@/components/language-selector';
 import { translations } from '@/contexts/translation';
 import { useSystemLanguage } from '@/contexts/language-context';
+import { useNavigate } from "react-router-dom";
+
 
 export default function Auth() {
   const [tab, setTab] = useState(0);
   const { systemLanguage } = useSystemLanguage();
+  const navigate = useNavigate();
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -22,7 +25,7 @@ export default function Auth() {
       {/* Header Section */}
       <AppBar position="static" sx={{ backgroundColor: "#1976d2" }} elevation={1}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", alignItems: "center" }} onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
             <img src={logo || "/placeholder.svg"} alt="MyanLang logo" style={{ height: "40px", marginLeft: "10px" }} />
             <Typography variant="h6" component="div" sx={{ marginLeft: 2 }}>
               MyanLang Platform

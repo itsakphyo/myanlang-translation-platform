@@ -12,6 +12,9 @@ import PageNotFound from './pages/PageNotFound';
 import { GlobalDialog } from './components/GlobalDialog';
 import { DialogProvider } from './contexts/DialogContext';
 import { LanguageProvider } from './contexts/language-context';
+import TermsAndConditions from './pages/terms-and-conditions';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Home from './pages/Home';
 
 function App() {
   return (
@@ -44,7 +47,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<Navigate to="/auth" replace />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route
               path="/create-password"
@@ -70,9 +72,12 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/page-not-found" element={<PageNotFound />} />
             {/* Catch-all route for undefined paths */}
             <Route path="*" element={<PageNotFound />} />
+            <Route path="/" element={<Home />} />
           </Routes>
         </Router>
         {/* Global Dialog Component */}
