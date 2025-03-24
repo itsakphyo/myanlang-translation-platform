@@ -1,4 +1,4 @@
-export type SystemLanguageCode = 'en' | 'my' | 'cat';
+export type SystemLanguageCode = 'en' | 'my' | 'cat' | 'chin';
 export const defaultSystemLanguage: SystemLanguageCode = 'en';
 
 export type Translations = Record<SystemLanguageCode, { 

@@ -128,7 +128,7 @@ export default function Register() {
         phone_number: formData.phone_number,
         password: formData.password,
       });
-      navigate('/');
+      navigate('/auth');
     } catch (error) {
       console.error('Registration failed:', error);
     }

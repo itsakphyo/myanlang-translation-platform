@@ -6,6 +6,8 @@ import { Language as LanguageIcon } from "@mui/icons-material"
 import { CustomFlags } from "./custom-flags"
 import { useSystemLanguage } from "@/contexts/language-context"
 import { SystemLanguageCode } from "@/types/systemLanguages"
+import chinFlag from "@/assets/images/chin.svg";
+import kachinFlag from "@/assets/images/kachin.svg";
 
 interface SystemLanguage {
     code: string
@@ -16,7 +18,8 @@ interface SystemLanguage {
 const systemlanguages: SystemLanguage[] = [
     { code: "en", name: "English", flag: <CustomFlags.UK /> },
     { code: "my", name: "မြန်မာ", flag: <CustomFlags.Myanmar /> },
-    { code: "cat", name: "Chin", flag: <CustomFlags.Chin /> },
+    { code: "cat", name: "Kachin", flag: <img src={kachinFlag} alt="Kachin Flag" style={{ width: "36px", height: "24px" }} /> },
+    { code: "chin", name: "Chin", flag: <img src={chinFlag} alt="Chin Flag" style={{ width: "36px", height: "24px" }} /> },
 ]
 
 export function SystemLanguageSelector(): JSX.Element {
