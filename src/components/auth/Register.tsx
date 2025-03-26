@@ -30,7 +30,7 @@ import { Link as MuiLink } from "@mui/material";
 
 export default function Register() {
   const navigate = useNavigate();
-  const { sendVerificationCode, verifyCode, register } = useAuth();
+  const { sendVerificationCode, verifyCode, register, login } = useAuth();
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
     email: '',
@@ -121,6 +121,7 @@ export default function Register() {
     }
 
     try {
+
       await register.mutateAsync({
         full_name: formData.full_name,
         email: formData.email,
@@ -128,7 +129,34 @@ export default function Register() {
         phone_number: formData.phone_number,
         password: formData.password,
       });
-      navigate('/auth');
+
+      const response = await login.mutateAsync(formData);
+
+      if (response.access_token && response.token_type) {
+        localStorage.setItem('userName', response.full_name);
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('userType', response.user_type);
+        localStorage.setItem('userId', response.userId);
+
+        if (response.user_type === "admin") {
+          navigate('/admin-dashboard');
+        } else if (response.user_type === "freelancer") {
+          navigate('/dashboard');
+        } else if (response.user_type === "qa_member") {
+          // Check the initial_password flag for qa_member
+          if (response.initial_password) {
+            navigate('/create-password', {
+              state: { userId: response.user_id }
+            });
+          } else {
+            navigate('/qa-dashboard');
+          }
+        }
+      } else {
+        setErrorMessage(translations[systemLanguage].login_failed_invalid_response_from_server);
+      }
+      
+      navigate('/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);
     }

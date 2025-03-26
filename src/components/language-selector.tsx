@@ -18,8 +18,8 @@ interface SystemLanguage {
 const systemlanguages: SystemLanguage[] = [
     { code: "en", name: "English", flag: <CustomFlags.UK /> },
     { code: "my", name: "မြန်မာ", flag: <CustomFlags.Myanmar /> },
-    { code: "cat", name: "Kachin", flag: <img src={kachinFlag} alt="Kachin Flag" style={{ width: "36px", height: "24px" }} /> },
-    { code: "chin", name: "Chin", flag: <img src={chinFlag} alt="Chin Flag" style={{ width: "36px", height: "24px" }} /> },
+    { code: "cat", name: "Kachin (Jingpo)", flag: <img src={kachinFlag} alt="Kachin Flag" style={{ width: "36px", height: "24px" }} /> },
+    { code: "chin", name: "Chin (Tedim)", flag: <img src={chinFlag} alt="Chin Flag" style={{ width: "36px", height: "24px" }} /> },
 ]
 
 export function SystemLanguageSelector(): JSX.Element {
